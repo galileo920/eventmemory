@@ -868,7 +868,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.11.0</div>
+    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.11.1</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
@@ -1012,7 +1012,7 @@ function openDetail(id){
     ${row("ジャンル", genreOf(l))}
     ${(() => { const t = String(l.setlist || "").trim(); return t ? `<div class="field"><small>詳細</small><div>${linkify(t)}</div></div>` : ""; })()}
     ${(() => { const g = tagsOf(l); return g.length ? `<div class="field"><small>タグ</small><div>${g.map(n => lkBtn("tag", n)).join("、")}</div></div>` : ""; })()}
-    <div class="bbar"><div class="bbar-in" style="grid-template-columns:52px 1fr 1fr 52px"><button type="button" class="btn sec" id="prevEv" style="padding:0" aria-label="前のイベント"${nb.prev ? "" : " disabled"}>◀</button><button class="btn sec" id="back">戻る</button><button class="btn" id="edit">編集</button><button type="button" class="btn sec" id="nextEv" style="padding:0" aria-label="次のイベント"${nb.next ? "" : " disabled"}>▶</button></div></div>
+    <div class="bbar"><div class="bbar-in" style="grid-template-columns:1fr 1fr 52px 52px"><button class="btn sec" id="back">戻る</button><button class="btn" id="edit">編集</button><button type="button" class="btn sec" id="prevEv" style="padding:0" aria-label="前のイベント"${nb.prev ? "" : " disabled"}>◀</button><button type="button" class="btn sec" id="nextEv" style="padding:0" aria-label="次のイベント"${nb.next ? "" : " disabled"}>▶</button></div></div>
   `;
   bindPhotoGallery(l);
   $("#prevEv").onclick = () => { if(nb.prev){ openDetail(nb.prev); slideIn("r"); } };
