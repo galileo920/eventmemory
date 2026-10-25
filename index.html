@@ -306,7 +306,7 @@ const setAliases = a => { aliases = {venue: cleanAliasMap(a && a.venue), artist:
 try { setAliases(JSON.parse(localStorage.getItem(ALIAS_LS) || "{}")); } catch(e){}
 const canon = (kind, name) => { const m = aliases[kind] || {}; let n = String(name || "").trim(), i = 0; while(Object.prototype.hasOwnProperty.call(m, n) && i++ < 20) n = m[n]; return n; };
 const aliasNames = (kind, name) => { const c = canon(kind, name); return [c].concat(Object.keys(aliases[kind] || {}).filter(k => canon(kind, k) === c)); };
-const splitNames = s => String(s || "").split(/[、,，]/).map(x => x.trim()).filter(Boolean);
+const splitNames = s => String(s || "").split(/[、,，]|\s+[\/／]\s+|／/).map(x => x.trim()).filter(Boolean);
 /* 出演者は配列(artists)だけで持つ。古いデータ(artistが文字列・配列)は、読み込むときに artists にそろえる */
 const artistsOf = l => { if(!l) return []; const src = Array.isArray(l.artists) && l.artists.length ? l.artists : Array.isArray(l.artist) ? l.artist : splitNames(l.artist); return src.map(x => String(x).trim()).filter(Boolean); };
 const artistLine = l => artistsOf(l).join("、");
@@ -873,7 +873,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.12.2</div>
+    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.12.3</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
@@ -1256,7 +1256,7 @@ function openForm(existing){
   $("#f_venue").addEventListener("change", inferPref);
   $("#f_tags").addEventListener("input", e => { const el = e.target, v = el.value, i = Math.max(v.lastIndexOf("、"), v.lastIndexOf(","), v.lastIndexOf("，")), head = v.slice(0, i + 1); showSugg(el, tagCands(v.slice(i + 1), splitTags(head)), c => { el.value = head + c.name; }); });
   $("#f_venue").addEventListener("input", e => showSugg(e.target, regCands("venue", e.target.value), c => { e.target.value = c.name; if(c.pref){ const sel = $("#f_pref"); if(sel && !sel.value){ sel.value = c.pref; const sst = $("#stPref"); sst.className = "status ok"; sst.textContent = `登録済みのイベントから「${c.pref}」を入れました。違う場合は選び直してください。`; } } else inferPref(); }));
-  const parseArtists = raw => String(raw || "").split(/[、,，\n]/).map(x => x.trim()).filter(Boolean);
+  const parseArtists = raw => String(raw || "").split(/[、,，\n]|\s+[\/／]\s+|／/).map(x => x.trim()).filter(Boolean);
   $("#artApply").onclick = () => {
     const sa = $("#stApply"); let add;
     add = parseArtists($("#artIn").value);
