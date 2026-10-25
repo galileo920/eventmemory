@@ -146,7 +146,7 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
 .card h2{margin:0 0 4px;font-size:15px}
 .hint{font-size:12px;color:var(--sub);margin-top:6px}
-.status{margin-top:10px;font-size:14px}
+.status{margin-top:10px;font-size:14px;white-space:pre-line;overflow-wrap:anywhere}
 .alrow{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
 .alk{flex:none;font-size:12px;color:var(--sub);border:1px solid var(--line);border-radius:999px;padding:2px 8px}
 .aln{flex:1;min-width:0;overflow-wrap:anywhere}
@@ -498,9 +498,12 @@ async function geminiText(prompt, dataUrls, signal, tools){
     signal
   });
   if(!r.ok){
-    let msg = "";
-    try { msg = (await r.json()).error?.message || ""; } catch(e){}
-    throw Object.assign(new Error(`APIエラー(${r.status}) ${msg}`), {code: r.status === 429 ? "rate_limited" : (r.status === 400 && /API key/i.test(msg)) || r.status === 401 || r.status === 403 ? "bad_key" : "api"});
+    let msg = "", why = "", wait = "";
+    try { const e = (await r.json()).error || {}; msg = e.message || ""; (e.details || []).forEach(d => { (d.violations || []).forEach(v => { const q = v.quotaId || v.quotaMetric || ""; if(q && !why.includes(q)) why += (why ? "、" : "") + q; }); if(d.retryDelay) wait = d.retryDelay; }); } catch(e){}
+    /* 上限エラーのとき、どの機能・どのモデルで、Googleがどの上限と伝えているかを残す */
+    const feature = tools && tools[0] && tools[0].google_search ? "Google検索" : tools && tools[0] && tools[0].url_context ? "URL読み込み" : "テキスト・画像の読み取り";
+    const detail = [`機能: ${feature}`, `モデル: ${mName}`, why ? `上限: ${why}` : "", msg ? `Googleの返答: ${msg.replace(/\s+/g, " ").slice(0, 160)}` : "", wait ? `再試行の目安: ${wait}` : ""].filter(Boolean).join(" ／ ");
+    throw Object.assign(new Error(`APIエラー(${r.status}) ${msg}`), {detail, code: r.status === 429 ? "rate_limited" : (r.status === 400 && /API key/i.test(msg)) || r.status === 401 || r.status === 403 ? "bad_key" : "api"});
   }
   const j = await r.json();
   const block = j.promptFeedback && j.promptFeedback.blockReason;
@@ -870,7 +873,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.12.0</div>
+    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.12.1</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
@@ -1292,7 +1295,7 @@ function openForm(existing){
   const fetchErr = e => {
     const c = e && e.code;
     return c === "bad_key" || c === "no_key" ? "APIキーが正しくありません。データタブで確認してください。"
-      : c === "rate_limited" ? "利用回数の上限に達しました。少し待ってからお試しください。"
+      : c === "rate_limited" ? "利用回数の上限に達しました。少し待ってからお試しください。" + (e.detail ? `\n${e.detail}` : "")
       : c === "invalid_json" ? "結果を解析できませんでした。もう一度お試しください。"
       : c === "blocked" || c === "empty" || c === "too_long" ? `${e.message}。もう一度お試しください。`
       : "取得できませんでした。しばらくしてからもう一度お試しください。" + (e && e.message ? `(${String(e.message).slice(0, 120)})` : "");
@@ -1659,7 +1662,7 @@ async function bRunAll(only){
       if(bCtl.signal.aborted || (e && e.name === "AbortError")){ it.status = "wait"; break; }
       it.status = "err"; fail++;
       const c = e && e.code;
-      it.err = c === "invalid_json" ? "読み取り結果を解析できませんでした。もう一度試してください。" : c === "rate_limited" ? "利用回数の上限に達しました。" : c === "bad_key" ? "APIキーが正しくありません。" : (c === "blocked" || c === "empty" || c === "too_long") ? `${e.message}。` : "読み取りに失敗しました。";
+      it.err = c === "invalid_json" ? "読み取り結果を解析できませんでした。もう一度試してください。" : c === "rate_limited" ? "利用回数の上限に達しました。" + (e.detail ? `(${e.detail})` : "") : c === "bad_key" ? "APIキーが正しくありません。" : (c === "blocked" || c === "empty" || c === "too_long") ? `${e.message}。` : "読み取りに失敗しました。";
       if(c === "bad_key" || c === "no_key"){ stopped = "APIキーが正しくないため、読み取りを止めました。データタブで確認してください。"; break; }
       if(c === "rate_limited"){ stopped = "利用回数の上限に達したため止めました。少し待ってから、続きを読み取ってください。"; break; }
     }
