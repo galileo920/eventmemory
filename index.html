@@ -751,7 +751,7 @@ function renderList(){
     <div class="cw sw"><input class="search" id="q" type="search" placeholder="公演名・出演者・会場・タグで検索" value="${esc(query)}"><button type="button" class="cx" data-clr="q" aria-label="クリア">×</button></div>
     ${filterBar()}
     <div class="sortrow"><span class="cnt" id="listCnt"></span><span class="grp">${bulk ? `<button type="button" id="bulkAll">全選択</button>` : `<button type="button" id="bulkBtn">一括編集</button>`}<button type="button" id="sortToggle" aria-label="並び順を切り替え">${sortAsc ? "古い順" : "新しい順"} ⇅</button></span></div>
-    ${exact ? `<div class="exact"><span>${exact.kind === "venue" ? "会場" : exact.kind === "pref" ? "都道府県" : exact.kind === "tag" ? "タグ" : "出演者"}「${esc(exact.value)}」と完全一致${exact.kind !== "pref" && exact.kind !== "tag" && aliasNames(exact.kind, exact.value).length > 1 ? "(旧名を含む)" : ""}</span><button type="button" id="exOff">解除</button></div>` : ""}
+    ${exact ? `<div class="exact"><span>${exact.kind === "venue" ? "会場" : exact.kind === "pref" ? "都道府県" : exact.kind === "tag" ? "タグ" : "出演者"}${exact.value === NONE_KEY ? "が未入力のイベント" : `「${esc(exact.value)}」と完全一致`}${exact.kind !== "pref" && exact.kind !== "tag" && aliasNames(exact.kind, exact.value).length > 1 ? "(旧名を含む)" : ""}</span><button type="button" id="exOff">解除</button></div>` : ""}
     <div id="listBody"></div>${bulk ? `<div class="bbar"><div class="bbar-in"><button type="button" class="btn sec" id="bulkCancel">キャンセル</button><button type="button" class="btn" id="bulkGo">編集</button></div></div>` : ""}
   `;
   bindFilter();
@@ -769,10 +769,12 @@ function renderList(){
   qi.addEventListener("input", () => { if(comp) return; query = qi.value; fillList(); });
 }
 /* 検索欄は作り直さず、結果の部分だけ更新する(日本語入力を妨げないため) */
+/* 出演者・会場が未入力のイベントを表す印(集計の「未入力」と、一覧の絞り込みで使う) */
+const NONE_KEY = "__none__";
 function listRows(){
   const q = query.trim().toLowerCase();
   return filtered()
-    .filter(l => !exact || (exact.kind === "venue" ? canon("venue", l.venue) === exact.value : exact.kind === "pref" ? l.pref === exact.value : exact.kind === "tag" ? tagsOf(l).includes(exact.value) : canonArtists(l).includes(exact.value)))
+    .filter(l => !exact || (exact.value === NONE_KEY ? (exact.kind === "venue" ? !l.venue : !artistsOf(l).length) : exact.kind === "venue" ? canon("venue", l.venue) === exact.value : exact.kind === "pref" ? l.pref === exact.value : exact.kind === "tag" ? tagsOf(l).includes(exact.value) : canonArtists(l).includes(exact.value)))
     .filter(l => !q || ["title","artist","venue","tags"].some(f => String(f === "tags" ? tagsOf(l).join("\n") : f === "artist" ? artistsOf(l).join("\n") : l[f] ?? "").toLowerCase().includes(q)) || aliasHay(l).includes(q))
     .sort((a, b) => { const x = a.date || "", y = b.date || ""; if(!x || !y) return (x ? 0 : 1) - (y ? 0 : 1); if(x !== y) return sortAsc ? x.localeCompare(y) : y.localeCompare(x); const s = a.start || a.open || "", t = b.start || b.open || ""; if(s === t) return 0; if(!s || !t) return s ? -1 : 1; return sortAsc ? s.localeCompare(t) : t.localeCompare(s); });
 }
@@ -809,13 +811,13 @@ function renderStats(){
   lives.filter(l => !fGenre || genreOf(l) === fGenre).forEach(l => { const y = yearOf(l); if(!y) return; const o = years[y] || (years[y] = {n: 0, spend: 0}); o.n++; o.spend += Number(l.price) || 0; });
   fl.forEach(l => {
     const pr = Number(l.price) || 0, add = (o, k) => { const e = o[k] || (o[k] = {n: 0, s: 0}); e.n++; e.s += pr; };
-    canonArtists(l).forEach(a => add(artists, a));
-    if(l.venue) add(venues, canon("venue", l.venue));
+    const ca = canonArtists(l); if(ca.length) ca.forEach(a => add(artists, a)); else add(artists, NONE_KEY); /* 未入力も数える */
+    add(venues, l.venue ? canon("venue", l.venue) : NONE_KEY);
     if(l.pref) add(prefs, l.pref);
   });
   const mv = e => statMetric === "s" ? (e.s ?? e.spend) : e.n, dr = statDir === "asc" ? -1 : 1;
   const sorted = o => Object.entries(o).sort((a, b) => (mv(b[1]) - mv(a[1])) * dr || b[1].n - a[1].n || a[0].localeCompare(b[0], "ja"));
-  const list = (arr, kind) => arr.length ? arr.map(([k, v]) => `<button type="button" class="line" data-k="${kind}" data-q="${esc(k)}"><span>${esc(k)}</span>${spLine(v)}</button>`).join("") : `<div class="hint">データなし</div>`;
+  const list = (arr, kind) => arr.length ? arr.map(([k, v]) => `<button type="button" class="line" data-k="${kind}" data-q="${esc(k)}"><span>${k === NONE_KEY ? "未入力" : esc(k)}</span>${spLine(v)}</button>`).join("") : `<div class="hint">データなし</div>`;
   $("#app").innerHTML = `
     ${filterBar()}
     <div class="stats">
@@ -868,7 +870,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.11.1</div>
+    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.12.0</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
