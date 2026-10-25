@@ -775,10 +775,10 @@ function renderList(){
 /* 出演者・会場が未入力のイベントを表す印(集計の「未入力」と、一覧の絞り込みで使う) */
 const NONE_KEY = "__none__";
 function listRows(){
-  const q = query.trim().toLowerCase();
+  const qs = query.toLowerCase().split(/[\s\u3000]+/).filter(Boolean); /* スペース区切りの全ワードを含むものだけ(AND検索) */
   return filtered()
     .filter(l => !exact || (exact.value === NONE_KEY ? (exact.kind === "venue" ? !l.venue : !artistsOf(l).length) : exact.kind === "venue" ? canon("venue", l.venue) === exact.value : exact.kind === "pref" ? l.pref === exact.value : exact.kind === "tag" ? tagsOf(l).includes(exact.value) : canonArtists(l).includes(exact.value)))
-    .filter(l => !q || ["title","artist","venue","tags"].some(f => String(f === "tags" ? tagsOf(l).join("\n") : f === "artist" ? artistsOf(l).join("\n") : l[f] ?? "").toLowerCase().includes(q)) || aliasHay(l).includes(q))
+    .filter(l => { if(!qs.length) return true; const hay = ["title","artist","venue","tags"].map(f => String(f === "tags" ? tagsOf(l).join("\n") : f === "artist" ? artistsOf(l).join("\n") : l[f] ?? "")).join("\n").toLowerCase() + "\n" + aliasHay(l); return qs.every(w => hay.includes(w)); })
     .sort((a, b) => { const x = a.date || "", y = b.date || ""; if(!x || !y) return (x ? 0 : 1) - (y ? 0 : 1); if(x !== y) return sortAsc ? x.localeCompare(y) : y.localeCompare(x); const s = a.start || a.open || "", t = b.start || b.open || ""; if(s === t) return 0; if(!s || !t) return s ? -1 : 1; return sortAsc ? s.localeCompare(t) : t.localeCompare(s); });
 }
 function fillList(){
@@ -873,7 +873,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.12.3</div>
+    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.12.4</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
