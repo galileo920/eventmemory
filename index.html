@@ -269,7 +269,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.13.3</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.13.4</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -580,8 +580,7 @@ function parseJsonObject(text){
   }
   throw bad();
 }
-async function extractFromImage(dataUrls, signal){
-  const prompt = `この画像はライブ・コンサートなどのイベントの紙のチケット、電子チケット(チケットぴあ・イープラス・ローチケ等のアプリ画面のスクリーンショット)、フライヤー、ポスター、または予約画面です。複数枚ある場合は同じ公演の情報として1件にまとめてください。購入者の名前は含めないでください。複数日にまたがる券の場合、dateは初日にしてください。読み取れる情報を次のJSONだけで返してください(説明文やコードブロックは不要)。読み取れない項目は空文字にしてください。推測で埋めないでください。
+const extractPrompt = () => `この画像はライブ・コンサートなどのイベントの紙のチケット、電子チケット(チケットぴあ・イープラス・ローチケ等のアプリ画面のスクリーンショット)、フライヤー、ポスター、または予約画面です。複数枚ある場合は同じ公演の情報として1件にまとめてください。購入者の名前は含めないでください。複数日にまたがる券の場合、dateは初日にしてください。読み取れる情報を次のJSONだけで返してください(説明文やコードブロックは不要)。読み取れない項目は空文字にしてください。推測で埋めないでください。
 {
  "genre":"ジャンル(音楽・舞台・お笑い・スポーツ・トーク・展示会・その他のいずれか。どれにも当てはまらない場合は「その他」、判断できなければ空文字)",
  "title":"公演名・イベント名・ツアー名",
@@ -595,7 +594,12 @@ async function extractFromImage(dataUrls, signal){
  "seat":"座席・整理番号(例: 11列40番、整理番号C 266番)",
  "price":"チケット代(数字のみ)"
 }`;
-  return parseJsonObject(await geminiText(prompt, Array.isArray(dataUrls) ? dataUrls : [dataUrls], signal));
+async function extractFromImage(dataUrls, signal){
+  return parseJsonObject(await geminiText(extractPrompt(), Array.isArray(dataUrls) ? dataUrls : [dataUrls], signal));
+}
+async function extractFromSite(url, signal){
+  const prompt = extractPrompt().replace(/^[^\n]*\n/, `次のURLのページは、ライブ・コンサートなどのイベントの公式ページ・告知ページ・チケット販売ページです。そのページを開いて読み、載っている情報だけを根拠に、読み取れる情報を次のJSONオブジェクト1つだけで返してください。読み取れない項目は空文字にしてください。推測で埋めないでください。複数日開催の場合、dateは初日にしてください。出演者は、ページに載っている順番のままにしてください。席種・座席・チケット代は、ページから1つに決められるときだけ入れてください。\nURL: ${url}\n`);
+  return parseJsonObject(await geminiText(prompt, [], signal, [{url_context: {}}]));
 }
 
 /* ========== 画面 ========== */
@@ -1054,7 +1058,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.13.3</div>
+    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.13.4</div>
   `;
   const setLv = v => { try { localStorage.setItem("livelog_listview", v); } catch(e){} renderSettings(); };
   $("#lvThumb").onclick = () => setLv("thumb"); $("#lvOld").onclick = () => setLv("old");
@@ -1374,6 +1378,13 @@ function openForm(existing){
       <div class="hint">チケットの写真や電子チケットのスクリーンショットを読み取ります。チケット画面と詳細画面を一緒に選ぶと、1件にまとめて読み取ります。</div>
     </div>
     <div class="card">
+      <h2>サイトから自動入力</h2>
+      <div class="cw"><input id="siteUrl" type="url" inputmode="url" placeholder=" " autocomplete="off"><button type="button" class="cx" data-clr="siteUrl" aria-label="クリア">×</button></div>
+      <button type="button" class="btn" id="siteGo">読み取る</button>
+      <div class="status" id="stSite"></div>
+      <div class="hint">イベントの公式ページや販売ページのURLから、公演名・出演者・日付・会場などを読み取ります。入力済みの項目は変わりません。</div>
+    </div>
+    <div class="card">
       <label>公演名</label><div class="cw"><textarea id="f_title" placeholder=" " style="min-height:110px">${v("title")}</textarea><button type="button" class="cx" data-clr="f_title" aria-label="クリア">×</button></div>
       <label>出演者</label><div id="artists"></div>
       <button type="button" class="btn sec" id="addArtist" style="margin-top:8px">＋ 出演者を追加</button>
@@ -1382,10 +1393,6 @@ function openForm(existing){
       <div id="artFetch">${getSet().apiKey ? `
         <button type="button" class="btn sec" id="artSearch">出演者を検索して候補を出す</button>
         <div class="status" id="stSearch"></div>
-        <div class="lh"><label>URLから探す</label></div>
-        <div class="cw"><input id="artUrl" type="url" inputmode="url" placeholder=" " autocomplete="off"><button type="button" class="cx" data-clr="artUrl" aria-label="クリア">×</button></div>
-        <button type="button" class="btn sec" id="artUrlGo">このURLのページから出演者を探す</button>
-        <div class="status" id="stUrl"></div>
         <label class="btn sec" for="artImg">画像から出演者を読み取る</label>
         <input id="artImg" type="file" accept="image/*" multiple hidden>
         <div class="status" id="stImg"></div>
@@ -1531,19 +1538,6 @@ ${RULES}`;
         return parseJsonObject(await geminiText(prompt, [], null, [{google_search: {}}]));
       });
     };
-    $("#artUrlGo").onclick = e => {
-      const sst = $("#stUrl"); let u;
-      try { u = new URL($("#artUrl").value.trim()); if(!/^https?:$/.test(u.protocol)) throw new Error("x"); } catch(err){ sst.className = "status err"; sst.textContent = "URLを正しく入力してください。"; return; }
-      const c = ctxNow();
-      runFetch(e.currentTarget, sst, "ページを読んでいます…(数十秒かかることがあります)", async () => {
-        const prompt = `${head(c)}
-次のURLのページを開いて読み、そのページに載っている出演者だけを根拠にしてください。
-URL: ${u.href}
-ルール:
-${RULES}`;
-        return parseJsonObject(await geminiText(prompt, [], null, [{url_context: {}}]));
-      });
-    };
     $("#artImg").onchange = async e => {
       const files = [...e.target.files].slice(0, 4), sst = $("#stImg");
       e.target.value = "";
@@ -1609,6 +1603,18 @@ ${RULES}`;
   };
   $("#stop").onclick = () => scanCtl && scanCtl.abort();
   $("#readGo").onclick = handle;
+  $("#siteGo").onclick = async e => {
+    const btn = e.currentTarget, st = $("#stSite"); let u;
+    try { u = new URL($("#siteUrl").value.trim()); if(!/^https?:$/.test(u.protocol)) throw new Error("x"); } catch(err){ st.className = "status err"; st.textContent = "URLを正しく入力してください。"; return; }
+    btn.disabled = true; st.className = "status"; st.textContent = "ページを読んでいます…(数十秒かかることがあります)";
+    try {
+      const j = await extractFromSite(u.href);
+      const obj = Array.isArray(j) ? j[0] : j;
+      if(!obj || typeof obj !== "object" || !["title", "artist", "date", "venue"].some(k => obj[k] && (!Array.isArray(obj[k]) || obj[k].length))){ st.className = "status err"; st.textContent = "イベントの情報を読み取れませんでした。"; }
+      else { applyResult(obj); if(window.__inferPref) window.__inferPref(); st.className = "status ok"; st.textContent = "読み取り完了。内容を確認してください。"; }
+    } catch(err){ st.className = "status err"; st.textContent = (typeof fetchErr === "function" ? fetchErr(err) : err.message); }
+    btn.disabled = false;
+  };
 
 
   { const gs = $("#f_genre"); if(gs && existing) gs.dataset.touched = "1"; }
