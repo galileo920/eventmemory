@@ -112,7 +112,8 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .stub[data-g="その他"]{--g:var(--g-other)}
 .stub.thumb{padding:10px;gap:8px;background:color-mix(in srgb,var(--g) 14%,var(--surface));border-color:color-mix(in srgb,var(--g) 38%,var(--surface))}
 .stub.thumb .body{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px}
-.stub.thumb .pic{position:relative;width:100%;aspect-ratio:4/3;border-radius:12px;overflow:hidden;isolation:isolate;-webkit-mask-image:-webkit-radial-gradient(white,black);background:var(--bg)}
+.stub.thumb .pic{position:relative;width:100%;aspect-ratio:4/3;border-radius:12px;overflow:hidden;background:var(--bg)}
+.stub.thumb .pic[data-pid]{isolation:isolate;-webkit-mask-image:-webkit-radial-gradient(white,black)}
 .stub.thumb .pic img{position:absolute;display:block}
 .stub.thumb .pic .bl{top:0;left:0;width:100%;height:100%;object-fit:fill}
 .stub.thumb .pic .ico{width:50%;aspect-ratio:1/1;left:25%;top:50%;transform:translateY(-50%)}
@@ -878,8 +879,9 @@ function thumbOf(key, src, cb, fail){
   }));
 }
 function fillPics(){
-  const els = [...document.querySelectorAll("#listBody .pic[data-pid]")];
+  const els = [...document.querySelectorAll("#listBody .pic[data-pid], #listBody .pic.noimg")];
   const run = el => {
+    if(el.classList.contains("noimg")) return runIcon(el);
     const l = lives.find(x => x.id === el.dataset.pid), src = l && photoList(l)[0]; if(!src) return;
     const bl = el.querySelector(".bl"), fg = el.querySelector(".fg");
     thumbOf(el.dataset.pid + ":" + src.length, src,
@@ -892,25 +894,32 @@ function fillPics(){
   picObs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ picObs.unobserve(e.target); run(e.target); } }), {rootMargin: "400px 0px"});
   els.forEach(e => picObs.observe(e));
 }
+/* 画像なしカードのアイコン: ジャンルごとに1枚だけ作り、同じ画像を使い回す(1000件あっても、アイコンの展開は数枚で済む) */
+function iconOf(tone){
+  const key = tone.join(",");
+  if(!iconImg.naturalWidth) return Promise.resolve("");
+  if(!iconCache[key]) iconCache[key] = new Promise(res => {
+    try {
+      const cv = document.createElement("canvas"); cv.width = cv.height = 720;
+      const cx = cv.getContext("2d"); cx.imageSmoothingQuality = "high"; cx.drawImage(iconImg, 0, 0, 720, 720);
+      const d = cx.getImageData(0, 0, 720, 720), px = d.data;
+      for(let i = 0; i < px.length; i += 4){ let k = 1 - px[i] / 255; k = k <= .3 ? 0 : k >= .7 ? 1 : (k - .3) / .4, k = k * k * (3 - 2 * k); /* 線の縁をくっきりさせる */ px[i] = tone[0] * (1 - k); px[i + 1] = tone[1] * (1 - k); px[i + 2] = tone[2] * (1 - k); px[i + 3] = 255; }
+      cx.putImageData(d, 0, 0);
+      cv.toBlob(bl => res(bl ? URL.createObjectURL(bl) : ""), "image/png");
+    } catch(e){ res(""); }
+  });
+  return iconCache[key];
+}
 function fillIcons(){
   document.querySelectorAll("#listBody .pic.noimg").forEach(el => {
-    const st = el.closest(".stub"), tone = genreTone(st ? st.dataset.g : ""), key = tone.join(",");
-    el.style.background = `rgb(${key})`;
-    const img = el.querySelector("img");
-    if(!img || !iconImg.naturalWidth) return;
-    if(!iconCache[key]){
-      try {
-        const cv = document.createElement("canvas"); cv.width = cv.height = 720;
-        const cx = cv.getContext("2d"); cx.imageSmoothingQuality = "high"; cx.drawImage(iconImg, 0, 0, 720, 720);
-        const d = cx.getImageData(0, 0, 720, 720), px = d.data;
-        for(let i = 0; i < px.length; i += 4){ let k = 1 - px[i] / 255; k = k <= .3 ? 0 : k >= .7 ? 1 : (k - .3) / .4, k = k * k * (3 - 2 * k); /* 線の縁をくっきりさせる */ px[i] = tone[0] * (1 - k); px[i + 1] = tone[1] * (1 - k); px[i + 2] = tone[2] * (1 - k); px[i + 3] = 255; }
-        cx.putImageData(d, 0, 0); iconCache[key] = cv.toDataURL("image/png");
-      } catch(e){ return; }
-    }
-    img.src = iconCache[key];
+    const st = el.closest(".stub"); el.style.background = `rgb(${genreTone(st ? st.dataset.g : "").join(",")})`;
   });
 }
-iconImg.onload = () => { try { fillIcons(); } catch(e){} };
+function runIcon(el){
+  const st = el.closest(".stub"), img = el.querySelector("img"); if(!img) return;
+  iconOf(genreTone(st ? st.dataset.g : "")).then(u => { if(u && el.isConnected) img.src = u; });
+}
+iconImg.onload = () => { try { fillPics(); } catch(e){} };
 iconImg.src = ICON_SRC;
 function fillList(){
   const rows = listRows();
@@ -1022,7 +1031,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.13.1</div>
+    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.13.2</div>
   `;
   const setLv = v => { try { localStorage.setItem("livelog_listview", v); } catch(e){} renderSettings(); };
   $("#lvThumb").onclick = () => setLv("thumb"); $("#lvOld").onclick = () => setLv("old");
