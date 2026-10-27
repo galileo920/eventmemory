@@ -116,6 +116,8 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .stub.thumb .pic img{position:absolute;display:block}
 .stub.thumb .pic .bl{top:0;left:0;width:100%;height:100%;object-fit:fill}
 .stub.thumb .pic .ico{width:50%;aspect-ratio:1/1;left:25%;top:50%;transform:translateY(-50%)}
+.stub.thumb .pic .bl,.stub.thumb .pic .fg{opacity:0;transition:opacity .2s}
+.stub.thumb .pic.ready .bl,.stub.thumb .pic.ready .fg{opacity:1}
 .stub.thumb .pic .fg{top:0;left:0;width:100%;height:100%;object-fit:contain}
 .stub.thumb .what{display:flex;flex-direction:column;gap:3px;padding:0 4px 2px}
 .stub.thumb .ttl{font-size:14px;color:var(--sub);overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -826,7 +828,6 @@ function genreTone(g){
   return c.map(x => Math.round(x * .55 + 255 * .45)); /* ジャンル色を白で薄めた色 */
 }
 /* 写真の左右の余白用に、写真を小さく縮めてぼかした背景を作る(filterを使わないので、端が白く抜けない) */
-const blurCache = new Map();
 /* 箱型ぼかし(縦横)を3回かけて、なめらかなぼかしにする。ブラウザのfilterに頼らない */
 function boxBlur(px, W, H, r){
   const t = new Uint8ClampedArray(px.length), n = 2 * r + 1;
@@ -841,22 +842,26 @@ function boxBlur(px, W, H, r){
     }
   }
 }
-let blurChain = Promise.resolve();
-function blurOf(src, cb, fail){
-  if(blurCache.has(src)) return cb(blurCache.get(src));
-  /* 1枚ずつ順番に処理する(同時に大きな写真を開くと、iPhoneで描画が空になることがあるため) */
-  blurChain = blurChain.then(() => new Promise(done => {
+/* 一覧の写真は、画面に近づいたものだけ、1枚ずつ小さく作り直して使う(元の大きな写真を一度に開くと、iPhoneで重くなるため) */
+const thumbCache = new Map();
+let picChain = Promise.resolve(), picObs = null;
+function thumbOf(key, src, cb, fail){
+  if(thumbCache.has(key)) return cb(thumbCache.get(key));
+  picChain = picChain.then(() => new Promise(done => {
     const finish = ok => { if(!ok && fail) fail(); done(); };
-    if(blurCache.has(src)){ cb(blurCache.get(src)); return done(); }
+    if(thumbCache.has(key)){ cb(thumbCache.get(key)); return done(); }
     const im = new Image();
     im.onerror = () => finish(false);
     im.onload = async () => {
       try {
         if(im.decode) await im.decode(); /* 読み込み完了だけでなく、デコードの完了まで待つ */
+        const k = Math.min(1, 720 / im.width, 540 / im.height), w = Math.max(1, Math.round(im.width * k)), h = Math.max(1, Math.round(im.height * k));
+        const c1 = document.createElement("canvas"); c1.width = w; c1.height = h;
+        const x1 = c1.getContext("2d"); x1.imageSmoothingQuality = "high"; x1.drawImage(im, 0, 0, w, h);
         const W = 96, H = 72, cv = document.createElement("canvas"); cv.width = W * 4; cv.height = H * 4;
         const cx = cv.getContext("2d"); cx.imageSmoothingQuality = "high";
-        const r = Math.max(cv.width / im.width, cv.height / im.height), w = im.width * r, h = im.height * r;
-        cx.drawImage(im, (cv.width - w) / 2, (cv.height - h) / 2, w, h);
+        const r = Math.max(cv.width / w, cv.height / h), dw = w * r, dh = h * r;
+        cx.drawImage(c1, (cv.width - dw) / 2, (cv.height - dh) / 2, dw, dh);
         const c2 = document.createElement("canvas"); c2.width = W; c2.height = H;
         const c2x = c2.getContext("2d"); c2x.imageSmoothingQuality = "high"; c2x.drawImage(cv, 0, 0, W, H);
         const d = c2x.getImageData(0, 0, W, H);
@@ -865,18 +870,27 @@ function blurOf(src, cb, fail){
         boxBlur(d.data, W, H, 4);
         for(let i = 3; i < d.data.length; i += 4) d.data[i] = 255;
         c2x.putImageData(d, 0, 0);
-        const u = c2.toDataURL("image/png"); blurCache.set(src, u); cb(u); finish(true);
+        const t = {fg: c1.toDataURL(/^data:image\/png/.test(src) ? "image/png" : "image/jpeg", .85), bl: c2.toDataURL("image/png")};
+        thumbCache.set(key, t); cb(t); finish(true);
       } catch(e){ finish(false); }
     };
     im.src = src;
   }));
 }
-function fillBlurs(){
-  document.querySelectorAll("#listBody .pic .bl").forEach(el => {
-    const src = el.dataset.src; if(!src) return;
-    /* 失敗したときは、白く抜けないように、写真そのものを大きく敷く */
-    blurOf(src, u => { el.src = u; }, () => { el.src = src; el.style.objectFit = "cover"; el.style.transform = "scale(1.2)"; });
-  });
+function fillPics(){
+  const els = [...document.querySelectorAll("#listBody .pic[data-pid]")];
+  const run = el => {
+    const l = lives.find(x => x.id === el.dataset.pid), src = l && photoList(l)[0]; if(!src) return;
+    const bl = el.querySelector(".bl"), fg = el.querySelector(".fg");
+    thumbOf(el.dataset.pid + ":" + src.length, src,
+      t => { if(!el.isConnected) return; bl.src = t.bl; fg.src = t.fg; el.classList.add("ready"); },
+      /* 失敗したときは、白く抜けないように、写真そのものを大きく敷く */
+      () => { if(!el.isConnected) return; bl.src = src; bl.style.objectFit = "cover"; bl.style.transform = "scale(1.2)"; fg.src = src; el.classList.add("ready"); });
+  };
+  if(picObs){ picObs.disconnect(); picObs = null; }
+  if(!("IntersectionObserver" in window)) return els.forEach(run);
+  picObs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ picObs.unobserve(e.target); run(e.target); } }), {rootMargin: "400px 0px"});
+  els.forEach(e => picObs.observe(e));
 }
 function fillIcons(){
   document.querySelectorAll("#listBody .pic.noimg").forEach(el => {
@@ -914,12 +928,12 @@ function fillList(){
       <div class="what"><div class="who">${esc(l.title || artistLine(l) || "(未入力)")}</div>${l.title && artistsOf(l).length ? `<div class="ttl">${esc(artistLine(l))}</div>` : ""}<div class="where">${esc(venueLabel(l))}</div></div>${bulk ? `<span class="bchk"><i></i></span>` : ""}
     </div>`;
     return head + `<div class="stub thumb${bulk && bulkSel.has(l.id) ? " sel" : ""}" role="button" tabindex="0" data-g="${esc(genreOf(l))}" data-id="${esc(l.id)}">
-      <div class="body">${ph ? `<div class="pic"><img class="bl" alt="" data-src="${ph}"><img class="fg" alt="" src="${ph}"></div>` : `<div class="pic noimg"><img class="ico" alt=""></div>`}
+      <div class="body">${ph ? `<div class="pic" data-pid="${esc(l.id)}"><img class="bl" alt=""><img class="fg" alt=""></div>` : `<div class="pic noimg"><img class="ico" alt=""></div>`}
       <div class="what"><div class="trow"><div class="when">${p ? `<span class="y">${p.y}</span><b>${p.m}.${p.d}</b><span class="w">${p.w}</span>${l.start ? `<span class="t">${esc(fmtTime(l.start))}</span>` : ""}` : `<b>--</b>`}</div><div class="side"><div class="who sm">${esc(l.title || artistLine(l) || "(未入力)")}</div>${l.title && artistsOf(l).length ? `<div class="ttl">${esc(artistLine(l))}</div>` : ""}<div class="where">${esc(venueLabel(l))}</div></div></div></div></div>${bulk ? `<span class="bchk"><i></i></span>` : ""}
     </div>`;
   }).join("") : `<div class="empty">${lives.length ? "該当するイベントがありません" : "まだイベントがありません。<br>右下の＋から、最初のイベントを追加しましょう"}</div>`;
-  fillIcons();
-  fillBlurs();
+  try { fillIcons(); } catch(e){}
+  try { fillPics(); } catch(e){}
   bulkSync();
   box.querySelectorAll(".stub").forEach(el => { el.onclick = () => { if(bulk) bulkToggle(el); else openDetail(el.dataset.id); }; el.onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); el.click(); } }; });
 }
@@ -1008,7 +1022,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.13.0</div>
+    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.13.1</div>
   `;
   const setLv = v => { try { localStorage.setItem("livelog_listview", v); } catch(e){} renderSettings(); };
   $("#lvThumb").onclick = () => setLv("thumb"); $("#lvOld").onclick = () => setLv("old");
