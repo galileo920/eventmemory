@@ -269,7 +269,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録</h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.13.3</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -286,6 +286,11 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
   <button data-tab="settings">データ</button>
 </div></nav>
 
+<script>
+/* 暫定: 起動時のエラーを画面の上に出す(原因調査用) */
+window.addEventListener("error", e => { try { let b = document.getElementById("errBanner"); if(!b){ b = document.createElement("div"); b.id = "errBanner"; b.style.cssText = "position:fixed;z-index:99;left:0;right:0;top:0;background:#c62828;color:#fff;font-size:11px;padding:6px 10px;word-break:break-all"; document.body.appendChild(b); } b.textContent += (e.message || "error") + " (" + String(e.lineno) + ")  "; } catch(x){} });
+window.addEventListener("unhandledrejection", e => { try { let b = document.getElementById("errBanner"); if(!b){ b = document.createElement("div"); b.id = "errBanner"; b.style.cssText = "position:fixed;z-index:99;left:0;right:0;top:0;background:#c62828;color:#fff;font-size:11px;padding:6px 10px;word-break:break-all"; document.body.appendChild(b); } b.textContent += "P: " + String(e.reason && e.reason.message || e.reason) + "  "; } catch(x){} });
+</script>
 <script>
 "use strict";
 /* ========== IndexedDB ========== */
@@ -602,13 +607,30 @@ try { sortAsc = localStorage.getItem("livelog_sort") === "asc"; } catch(e){}
 let fGenre = "", fYear = "", statTab = "artist", statMetric = "n", statDir = "desc";
 const yearOf = l => (l.date || "").slice(0, 4);
 const filtered = () => lives.filter(l => (!fGenre || genreOf(l) === fGenre) && (!fYear || yearOf(l) === fYear));
+/* 一覧は年ごとに表示する(初期表示は今年。検索や絞り込みのときだけ「すべて」にできる) */
+let yAll = false, yPrev = "";
+const narrowing = () => !!query.trim() || !!exact || yAll;
+const defYear = () => { const ys = [...new Set(lives.map(yearOf).filter(Boolean))].sort().reverse(), cy = String(new Date().getFullYear()); return ys.includes(cy) ? cy : (ys[0] || ""); };
+function ensureYear(){ if(!fYear && !narrowing()) fYear = defYear(); }
+function syncYearSel(){
+  const s = $("#fy"); if(!s) return;
+  const h = document.createElement("div"); h.innerHTML = filterBar(); const n = h.querySelector("#fy"); if(!n) return;
+  s.innerHTML = n.innerHTML; s.value = fYear;
+}
+function onQuery(v){
+  const was = !!query.trim(); query = v; const now = !!query.trim();
+  if(now && !was){ yPrev = fYear; fYear = ""; }
+  else if(!now && was){ if(!fYear && !exact && !yAll) fYear = yPrev || defYear(); yPrev = ""; }
+  if(now !== was) syncYearSel();
+  fillList();
+}
 function filterBar(){
   const ys = [...new Set(lives.map(yearOf).filter(Boolean).concat(fYear ? [fYear] : []))].sort().reverse();
-  return `<div class="filters"><div class="fcol"><label for="fg">ジャンル</label><select id="fg" aria-label="ジャンルで絞り込み"><option value="">すべて</option>${GENRES.map(g => `<option value="${g}"${fGenre === g ? " selected" : ""}>${g}</option>`).join("")}</select></div><div class="fcol"><label for="fy">年</label><select id="fy" aria-label="年で絞り込み"><option value="">すべて</option>${ys.map(y => `<option value="${y}"${fYear === y ? " selected" : ""}>${y}年</option>`).join("")}</select></div></div>`;
+  return `<div class="filters"><div class="fcol"><label for="fg">ジャンル</label><select id="fg" aria-label="ジャンルで絞り込み"><option value="">すべて</option>${GENRES.map(g => `<option value="${g}"${fGenre === g ? " selected" : ""}>${g}</option>`).join("")}</select></div><div class="fcol"><label for="fy">年</label><select id="fy" aria-label="年で絞り込み">${(tab === "stats" || narrowing()) ? `<option value="">すべて</option>` : ""}${ys.map(y => `<option value="${y}"${fYear === y ? " selected" : ""}>${y}年</option>`).join("")}</select></div></div>`;
 }
 function bindFilter(){
   $("#fg").onchange = e => { fGenre = e.target.value; render(); };
-  $("#fy").onchange = e => { fYear = e.target.value; render(); };
+  $("#fy").onchange = e => { fYear = e.target.value; yAll = !fYear && tab === "list"; render(); };
 }
 
 
@@ -782,6 +804,7 @@ function openBulkEdit(){
   bindBulkEdit(ids);
 }
 function renderList(){
+  ensureYear();
   $("#fab").style.display = bulk ? "none" : ""; document.querySelector(".tabbar").hidden = bulk;
   $("#app").innerHTML = `
     <div class="cw sw"><input class="search" id="q" type="search" placeholder="公演名・出演者・会場・タグで検索" value="${esc(query)}"><button type="button" class="cx" data-clr="q" aria-label="クリア">×</button></div>
@@ -792,7 +815,7 @@ function renderList(){
   `;
   bindFilter();
   $("#sortToggle").onclick = e => { sortAsc = !sortAsc; try { localStorage.setItem("livelog_sort", sortAsc ? "asc" : "desc"); } catch(err){} e.currentTarget.textContent = (sortAsc ? "古い順" : "新しい順") + " ⇅"; fillList(); };
-  if(exact) $("#exOff").onclick = () => { exact = null; renderList(); };
+  if(exact) $("#exOff").onclick = () => { exact = null; yAll = false; renderList(); };
   if($("#bulkBtn")) $("#bulkBtn").onclick = () => { bulk = true; bulkSel.clear(); renderList(); };
   if($("#bulkAll")) $("#bulkAll").onclick = () => { const all = bulkVisible.length && bulkVisible.every(i => bulkSel.has(i)); bulkVisible.forEach(i => { if(all) bulkSel.delete(i); else bulkSel.add(i); }); fillList(); };
   if($("#bulkCancel")) $("#bulkCancel").onclick = () => { bulk = false; bulkSel.clear(); renderList(); };
@@ -801,8 +824,8 @@ function renderList(){
   const qi = $("#q");
   let comp = false;
   qi.addEventListener("compositionstart", () => { comp = true; });
-  qi.addEventListener("compositionend", () => { comp = false; query = qi.value; fillList(); });
-  qi.addEventListener("input", () => { if(comp) return; query = qi.value; fillList(); });
+  qi.addEventListener("compositionend", () => { comp = false; onQuery(qi.value); });
+  qi.addEventListener("input", () => { if(comp) return; onQuery(qi.value); });
 }
 /* 検索欄は作り直さず、結果の部分だけ更新する(日本語入力を妨げないため) */
 /* 出演者・会場が未入力のイベントを表す印(集計の「未入力」と、一覧の絞り込みで使う) */
@@ -985,7 +1008,7 @@ function renderStats(){
   $("#sgY").onclick = () => { statTab = "year"; renderStats(); };
   $("#dirToggle").onclick = () => { statDir = statDir === "asc" ? "desc" : "asc"; renderStats(); };
   $("#metricToggle").onclick = () => { statMetric = statMetric === "s" ? "n" : "s"; renderStats(); };
-  document.querySelectorAll("#app .line[data-q]").forEach(b => b.onclick = () => { if(b.dataset.k === "year"){ fYear = b.dataset.q; exact = null; } else if(b.dataset.k === "genre"){ fGenre = b.dataset.q; exact = null; } else exact = {kind: b.dataset.k, value: b.dataset.q}; query = ""; setTab("list", {top: true}); });
+  document.querySelectorAll("#app .line[data-q]").forEach(b => b.onclick = () => { if(b.dataset.k === "year"){ fYear = b.dataset.q; exact = null; } else if(b.dataset.k === "genre"){ fGenre = b.dataset.q; exact = null; } else exact = {kind: b.dataset.k, value: b.dataset.q}; query = ""; yPrev = ""; yAll = !fYear; setTab("list", {top: true}); });
 }
 
 function renderSettings(){
@@ -1031,7 +1054,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.13.2</div>
+    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.13.3</div>
   `;
   const setLv = v => { try { localStorage.setItem("livelog_listview", v); } catch(e){} renderSettings(); };
   $("#lvThumb").onclick = () => setLv("thumb"); $("#lvOld").onclick = () => setLv("old");
@@ -1184,7 +1207,7 @@ function openDetail(id){
   $("#nextEv").onclick = () => { if(nb.next){ openDetail(nb.next); slideIn("l"); } };
   $("#back").onclick = () => setTab("list");
   $("#edit").onclick = () => openForm(l);
-  document.querySelectorAll("#app .lk").forEach(b => b.onclick = () => { fGenre = ""; fYear = ""; exact = {kind: b.dataset.lk, value: b.dataset.lk === "pref" ? b.dataset.q : canon(b.dataset.lk, b.dataset.q)}; query = ""; setTab("list", {top: true}); });
+  document.querySelectorAll("#app .lk").forEach(b => b.onclick = () => { fGenre = ""; fYear = ""; exact = {kind: b.dataset.lk, value: b.dataset.lk === "pref" ? b.dataset.q : canon(b.dataset.lk, b.dataset.q)}; query = ""; yPrev = ""; yAll = !fYear; setTab("list", {top: true}); });
 }
 
 /* 抽出結果(オブジェクト)をフォームに反映 */
