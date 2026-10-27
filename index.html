@@ -269,7 +269,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.13.4</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.13.5</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1058,7 +1058,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.13.4</div>
+    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.13.5</div>
   `;
   const setLv = v => { try { localStorage.setItem("livelog_listview", v); } catch(e){} renderSettings(); };
   $("#lvThumb").onclick = () => setLv("thumb"); $("#lvOld").onclick = () => setLv("old");
@@ -1230,8 +1230,10 @@ function applyResult(r){
     if((k === "open" || k === "start") && genre === "展示会") return;
     if(k === "artist"){
       if(genre === "スポーツ") return;
-      if(readArtists().some(Boolean)) return;
-      artistRows(Array.isArray(val) ? val.map(String) : splitArtists(val));
+      /* すでに入力がある場合も、まだ入っていない名前だけを追加する */
+      const cur = readRows().filter(r => r.name), have = new Set(cur.map(r => r.name));
+      const add = (Array.isArray(val) ? val.map(String) : splitArtists(val)).map(x => x.trim()).filter(x => x && !have.has(x) && have.add(x));
+      if(add.length) artistRows(cur.concat(add.map(name => ({name, role: ""}))));
       return;
     }
     const el = $("#f_" + k);
@@ -1398,7 +1400,7 @@ function openForm(existing){
         <div class="status" id="stImg"></div>
         <div id="artRes"></div>` : `<div class="hint">出演者を検索・取得するには、データタブでGeminiのAPIキーを入力してください。</div>`}</div>
       <div class="lh"><label for="artIn">出演者をまとめて追加</label></div>
-      <div class="cw"><textarea id="artIn" style="min-height:72px" placeholder="名前を「、」「,」や改行で区切って入力"></textarea><button type="button" class="cx" data-clr="artIn" aria-label="クリア">×</button></div>
+      <div class="cw"><textarea id="artIn" style="min-height:72px" placeholder="名前を「、」「,」「/」や改行で区切って入力"></textarea><button type="button" class="cx" data-clr="artIn" aria-label="クリア">×</button></div>
       <button type="button" class="btn sec" id="artApply">入力欄に追加</button>
       <div class="status" id="stApply"></div>
       <div class="lh"><label>会場</label></div><div class="cw"><input id="f_venue" placeholder=" " value="${v("venue")}"><button type="button" class="cx" data-clr="f_venue" aria-label="クリア">×</button></div>
@@ -1446,7 +1448,7 @@ function openForm(existing){
   $("#f_venue").addEventListener("change", inferPref);
   $("#f_tags").addEventListener("input", e => { const el = e.target, v = el.value, i = Math.max(v.lastIndexOf("、"), v.lastIndexOf(","), v.lastIndexOf("，")), head = v.slice(0, i + 1); showSugg(el, tagCands(v.slice(i + 1), splitTags(head)), c => { el.value = head + c.name; }); });
   $("#f_venue").addEventListener("input", e => showSugg(e.target, regCands("venue", e.target.value), c => { e.target.value = c.name; if(c.pref){ const sel = $("#f_pref"); if(sel && !sel.value){ sel.value = c.pref; const sst = $("#stPref"); sst.className = "status ok"; sst.textContent = `登録済みのイベントから「${c.pref}」を入れました。違う場合は選び直してください。`; } } else inferPref(); }));
-  const parseArtists = raw => String(raw || "").split(/[、,，\n]|\s+[\/／]\s+|／/).map(x => x.trim()).filter(Boolean);
+  const parseArtists = raw => String(raw || "").split(/[、,，\n\/／]/).map(x => x.trim()).filter(Boolean);
   $("#artApply").onclick = () => {
     const sa = $("#stApply"); let add;
     add = parseArtists($("#artIn").value);
