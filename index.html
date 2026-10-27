@@ -217,6 +217,13 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .prow .grip{flex:0 0 40px;height:46px;margin-top:4px;border:0;background:none;color:var(--sub);font-size:24px;line-height:1;touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none}
 .prow.drag{opacity:.6}
 .prow .rm{flex:0 0 44px;height:46px;margin-top:4px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--sub);font-size:20px;cursor:pointer}
+#artists .grip,#artists .rm{display:none}
+#artists[data-mode="sort"] .grip{display:block}
+#artists[data-mode="del"] .rm{display:block}
+.btn.sec.on{border-color:var(--accent);background:var(--accent-soft)}
+.btn.sec:disabled{opacity:.45;cursor:default}
+.mrow{display:flex;gap:8px;margin-top:8px}
+.mrow .btn{margin:0;flex:1}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .scan input{display:none}
 .preview{max-width:100%;max-height:180px;border-radius:10px;margin-top:10px;display:block}
@@ -269,7 +276,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.13.5</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.13.6</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1058,7 +1065,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.13.5</div>
+    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.13.6</div>
   `;
   const setLv = v => { try { localStorage.setItem("livelog_listview", v); } catch(e){} renderSettings(); };
   $("#lvThumb").onclick = () => setLv("thumb"); $("#lvOld").onclick = () => setLv("old");
@@ -1312,6 +1319,17 @@ function showSugg(input, cands, onPick){
 const hideSugg = () => document.querySelectorAll(".sugg").forEach(e => e.remove());
 const readArtists = () => [...document.querySelectorAll(".f_artist")].map(i => i.value.trim());
 const readRows = () => [...document.querySelectorAll("#artists .prow")].map(r => ({name: r.querySelector(".f_artist").value.trim(), role: r.dataset.role || ""}));
+/* 出演者の「並び替え」「削除」は、ボタンを押したときだけ各行に出す。出演者が1組のあいだは使えない */
+let artMode = "";
+function syncArt(){
+  const box = $("#artists"); if(!box) return;
+  const ok = box.querySelectorAll(".prow").length >= 2;
+  if(!ok) artMode = "";
+  box.dataset.mode = artMode;
+  [["modeSort", "sort"], ["modeDel", "del"]].forEach(([id, m]) => { const b = $("#" + id); if(b){ b.disabled = !ok; b.classList.toggle("on", artMode === m); } });
+  const s = $("#sortArtist"); if(s) s.disabled = !ok;
+}
+const setArtMode = m => { artMode = artMode === m ? "" : m; syncArt(); };
 function artistRows(list){
   const arr = (list.length ? list : [""]).map(x => typeof x === "string" ? {name: x, role: ""} : x);
   $("#artists").innerHTML = arr.map((a, i) => `<div class="prow" data-role="${esc(a.role || "")}"><div class="cw" style="flex:1;min-width:0"><input class="f_artist" id="f_artist_${i}" aria-label="出演者${i + 1}" value="${esc(a.name)}" placeholder=" "><button type="button" class="cx" data-clr="f_artist_${i}" aria-label="クリア">×</button></div>${arr.length > 1 ? `<button type="button" class="grip" aria-label="出演者${i + 1}を並べ替え(押したまま上下に動かす)">≡</button><button type="button" class="rm" aria-label="出演者${i + 1}を削除">×</button>` : ""}</div>`).join("");
@@ -1320,6 +1338,7 @@ function artistRows(list){
     g.onpointerdown = ev => { if(ev.pointerType === "touch") return; ev.preventDefault(); dragArtist(ev, g, false); };
     g.addEventListener("touchstart", ev => { if(!ev.touches.length) return; ev.preventDefault(); dragArtist(ev.touches[0], g, true); }, {passive: false});
   });
+  syncArt();
 }
 /* ≡ を押したまま上下に動かして並べ替える(指でもマウスでも動く) */
 function dragArtist(ev, grip, isTouch){
@@ -1390,6 +1409,7 @@ function openForm(existing){
       <label>公演名</label><div class="cw"><textarea id="f_title" placeholder=" " style="min-height:110px">${v("title")}</textarea><button type="button" class="cx" data-clr="f_title" aria-label="クリア">×</button></div>
       <label>出演者</label><div id="artists"></div>
       <button type="button" class="btn sec" id="addArtist" style="margin-top:8px">＋ 出演者を追加</button>
+      <div class="mrow"><button type="button" class="btn sec" id="modeSort">並び替え</button><button type="button" class="btn sec" id="modeDel">削除</button></div>
       <button type="button" class="btn sec" id="sortArtist">出演者を読み順に並べ替える</button>
       <div class="status" id="stSort"></div>
       <div id="artFetch">${getSet().apiKey ? `
@@ -1478,6 +1498,7 @@ function openForm(existing){
     btn.disabled = false;
   };
   $("#addArtist").onclick = () => { const cur = readRows(); cur.push({name: "", role: ""}); artistRows(cur); const ins = document.querySelectorAll(".f_artist"); ins[ins.length - 1].focus(); };
+  artMode = ""; $("#modeSort").onclick = () => setArtMode("sort"); $("#modeDel").onclick = () => setArtMode("del"); syncArt();
   if(existing) $("#del").onclick = async () => {
     if(!confirm("このイベントを削除しますか?")) return;
     await dbDel(existing.id); await refresh(); setTab("list");
