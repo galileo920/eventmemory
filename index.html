@@ -276,7 +276,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.13.6</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.13.7</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -439,6 +439,7 @@ function setupPhotos(l){
   const draw = () => {
     box.innerHTML = photos.map((p, i) => `<div class="sthumb"><img alt="イベント画像${i + 1}" src="${p}"><button type="button" data-rm="${i}" aria-label="画像${i + 1}を外す">×</button></div>`).join("");
     box.querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { photos.splice(Number(b.dataset.rm), 1); st.textContent = ""; draw(); });
+    box.querySelectorAll(".sthumb img").forEach(im => { im.style.cursor = "zoom-in"; im.onclick = () => openLightbox(im.src); }); /* タップで拡大 */
     const full = photos.length >= MAXPHOTO;
     ["phCam", "phPick"].forEach(id => { const el = document.getElementById(id); el.disabled = full; el.closest("label").classList.toggle("dis", full); });
   };
@@ -1065,7 +1066,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.13.6</div>
+    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.13.7</div>
   `;
   const setLv = v => { try { localStorage.setItem("livelog_listview", v); } catch(e){} renderSettings(); };
   $("#lvThumb").onclick = () => setLv("thumb"); $("#lvOld").onclick = () => setLv("old");
@@ -1589,6 +1590,7 @@ ${RULES}`;
     box.querySelectorAll("img").forEach(i => { try { URL.revokeObjectURL(i.src); } catch(e){} });
     box.innerHTML = staged.map((f, i) => `<div class="sthumb"><img alt="選んだ画像${i + 1}" src="${URL.createObjectURL(f)}"><button type="button" data-rm="${i}" aria-label="画像${i + 1}を外す">×</button></div>`).join("");
     box.querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { staged.splice(Number(b.dataset.rm), 1); drawThumbs(); });
+    box.querySelectorAll(".sthumb img").forEach(im => { im.style.cursor = "zoom-in"; im.onclick = () => openLightbox(im.src); }); /* タップで拡大 */
     const full = staged.length >= MAXIMG;
     ["cam", "pick"].forEach(id => { const el = $("#" + id); el.disabled = full; const lb = el.closest("label") || document.querySelector(`label[for="${id}"]`); if(lb) lb.classList.toggle("dis", full); });
     $("#readGo").disabled = !staged.length;
