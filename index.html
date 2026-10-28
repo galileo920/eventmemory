@@ -276,7 +276,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.13.8</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.13.9</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1066,7 +1066,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.13.8</div>
+    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.13.9</div>
   `;
   const setLv = v => { try { localStorage.setItem("livelog_listview", v); } catch(e){} renderSettings(); };
   $("#lvThumb").onclick = () => setLv("thumb"); $("#lvOld").onclick = () => setLv("old");
@@ -1816,7 +1816,7 @@ function renderBatch(){
     if(act){
       const id = act.dataset.bid;
       if(act.dataset.bact === "del"){
-        if(act.dataset.armed !== "1"){ act.dataset.armed = "1"; act.textContent = "もう一度押すと削除します"; setTimeout(() => { if(act.isConnected){ act.dataset.armed = ""; act.textContent = "削除"; } }, 4000); return; }
+        if(!confirm("この写真を一覧から削除しますか?")) return;
         if(bMedia[id]){ URL.revokeObjectURL(bMedia[id].url); delete bMedia[id]; }
         bItems = bItems.filter(i => i.id !== id); bPersist(); bRefresh();
       } else if(act.dataset.bact === "retry"){
@@ -1847,14 +1847,14 @@ function renderBatch(){
   $("#bCancel").onclick = () => {
     const btn = $("#bCancel");
     if(!bItems.length){ leave(); return; }
-    if(btn.dataset.armed !== "1"){ btn.dataset.armed = "1"; btn.textContent = "もう一度押すとすべて破棄します"; setTimeout(() => { if(btn.isConnected){ btn.dataset.armed = ""; btn.textContent = "キャンセル"; } }, 4000); return; }
-    btn.dataset.armed = ""; btn.textContent = "キャンセル"; discard();
+    if(!confirm("読み取った内容をすべて破棄して戻ります。よろしいですか?")) return;
+    discard();
   };
   $("#bDone").onclick = () => {
     const btn = $("#bDone"), pending = bItems.some(i => i.status === "ok");
     if(!pending){ discard(); return; }
-    if(btn.dataset.armed !== "1"){ btn.dataset.armed = "1"; btn.textContent = "未登録です。もう一度押すと完了します"; setTimeout(() => { if(btn.isConnected){ btn.dataset.armed = ""; btn.textContent = "完了"; } }, 4000); return; }
-    btn.dataset.armed = ""; btn.textContent = "完了"; discard();
+    if(!confirm("登録していない読み取り結果があります。破棄して完了しますか?")) return;
+    discard();
   };
 }
 async function bReadOne(it){
