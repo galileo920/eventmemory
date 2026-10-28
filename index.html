@@ -276,7 +276,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.13.7</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.13.8</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1066,7 +1066,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.13.7</div>
+    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.13.8</div>
   `;
   const setLv = v => { try { localStorage.setItem("livelog_listview", v); } catch(e){} renderSettings(); };
   $("#lvThumb").onclick = () => setLv("thumb"); $("#lvOld").onclick = () => setLv("old");
@@ -1749,7 +1749,9 @@ function bRefresh(){
   if(!bItems.length){
     list.innerHTML = `<div class="bempty">写真を追加すると、ここに1枚1公演ずつ並びます。<br>読み取りが終わったら内容を確認して、「登録」を押します。</div>`;
   } else {
-    list.innerHTML = bItems.map(it => {
+    const stage = bItems.filter(i => i.status === "wait" && bMedia[i.id]), rows = bItems.filter(i => !(i.status === "wait" && bMedia[i.id]));
+    /* 読み取る前の写真は、サムネイルの一覧で確認できる(タップで拡大、×で外す) */
+    list.innerHTML = (stage.length ? `<div class="thumbs" style="margin:0 0 12px">${stage.map((it, n) => `<div class="sthumb"><img alt="選んだ写真${n + 1}" src="${bMedia[it.id].url}" data-bzoom style="cursor:zoom-in"><button type="button" data-bx="${it.id}" aria-label="写真${n + 1}を外す">×</button></div>`).join("")}</div>` : "") + rows.map(it => {
       const s = bSummary(it), [pl, pc] = B_PILL[it.status] || B_PILL.wait, m = bMedia[it.id];
       return `<div class="bitem">
         <div class="brow"${it.status === "err" ? "" : ` role="button" tabindex="0" data-btoggle="${it.id}" aria-expanded="${it.open}"`}>
@@ -1784,7 +1786,7 @@ function renderBatch(){
     </div>
     <input id="bPick" type="file" accept="image/*" multiple style="display:none">
     <input id="bCam" type="file" accept="image/*" capture="environment" style="display:none">
-    <p class="bhint">写真1枚を1公演として読み取ります。チケットの写真や電子チケットのスクリーンショットを、まとめて選べます。</p>
+    <p class="bhint">写真1枚を1公演として読み取ります。チケットの写真や電子チケットのスクリーンショットを、まとめて選べます。選んだ写真はサムネイルで確認でき、タップで拡大、×で外せます。</p>
     <div id="bList"></div>
     <div class="bend"><button type="button" class="btn" id="bRun" disabled>読み取る</button><button type="button" class="btn" id="bReg" disabled>登録</button></div>
     <p class="bnote" id="bNote" role="status"></p>
@@ -1807,6 +1809,9 @@ function renderBatch(){
   $("#bCam").onchange = e => { addFiles(e.target.files); e.target.value = ""; };
   const list = $("#bList");
   list.addEventListener("click", e => {
+    const zm = e.target.closest("[data-bzoom]"); if(zm){ openLightbox(zm.src); return; }
+    const bx = e.target.closest("[data-bx]");
+    if(bx){ if(bRunning) return; const id = bx.dataset.bx; if(bMedia[id]){ URL.revokeObjectURL(bMedia[id].url); delete bMedia[id]; } bItems = bItems.filter(i => i.id !== id); bPersist(); bRefresh(); return; }
     const act = e.target.closest("[data-bact]");
     if(act){
       const id = act.dataset.bid;
