@@ -182,6 +182,7 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .pdots i{width:7px;height:7px;border-radius:50%;background:var(--line)}
 .pdots i.on{background:var(--ink)}
 .plbx{position:fixed;inset:0;background:rgba(10,12,18,.88);display:grid;place-items:center;z-index:50;padding:16px}
+.plbx{touch-action:none}
 .plbx img{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px}
 .plbx span{position:fixed;top:max(14px,env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px));color:#fff;font-size:13px;background:rgba(255,255,255,.18);padding:6px 12px;border-radius:999px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
@@ -284,7 +285,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.14.4</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.15.0</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -447,7 +448,7 @@ function setupPhotos(l){
   const draw = () => {
     box.innerHTML = photos.map((p, i) => `<div class="sthumb"><img alt="イベント画像${i + 1}" src="${p}"><button type="button" data-rm="${i}" aria-label="画像${i + 1}を外す">×</button></div>`).join("");
     box.querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { photos.splice(Number(b.dataset.rm), 1); st.textContent = ""; draw(); });
-    box.querySelectorAll(".sthumb img").forEach(im => { im.style.cursor = "zoom-in"; im.onclick = () => openLightbox(im.src); }); /* タップで拡大 */
+    { const all = [...box.querySelectorAll(".sthumb img")]; all.forEach((im, k) => { im.style.cursor = "zoom-in"; im.onclick = () => openLightbox(im.src, all.map(x => x.src), k); }); } /* タップで拡大 */
     const full = photos.length >= MAXPHOTO;
     ["phCam", "phPick"].forEach(id => { const el = document.getElementById(id); el.disabled = full; el.closest("label").classList.toggle("dis", full); });
   };
@@ -474,14 +475,28 @@ function photoGalleryHtml(l){
   if(!ps.length) return "";
   return `<div class="pgal${ps.length > 1 ? " multi" : ""}">${ps.map((p, i) => `<div class="pfr"><img src="${p}" alt="イベント画像${i + 1}" data-pi="${i}"></div>`).join("")}</div>${ps.length > 1 ? `<div class="pdots">${ps.map((_, i) => `<i class="${i ? "" : "on"}"></i>`).join("")}</div>` : ""}<div style="height:10px"></div>`;
 }
-function openLightbox(src){
+function openLightbox(src, list, idx){
+  const arr = Array.isArray(list) && list.length ? list : [src];
+  let i = Number.isInteger(idx) ? idx : Math.max(0, arr.indexOf(src));
   const o = document.createElement("div"); o.className = "plbx";
-  o.innerHTML = `<img alt="" src="${src}"><span>タップで閉じる</span>`;
-  o.onclick = () => o.remove(); document.body.appendChild(o);
+  o.innerHTML = `<img alt="" src=""><span class="lbn" style="right:auto;left:max(16px,env(safe-area-inset-left,0px))"></span><span>タップで閉じる</span>`;
+  const im = o.querySelector("img"), n = o.querySelector(".lbn");
+  const show = () => { im.src = arr[i]; n.textContent = `${i + 1} / ${arr.length}`; n.hidden = arr.length < 2; };
+  show();
+  /* 左右にスワイプすると、前後の画像に移る */
+  let x0 = null, y0 = 0, swiped = false;
+  o.addEventListener("touchstart", e => { if(e.touches.length !== 1){ x0 = null; return; } x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; swiped = false; }, {passive: true});
+  o.addEventListener("touchend", e => {
+    if(x0 === null) return;
+    const t = e.changedTouches[0], dx = t.clientX - x0, dy = t.clientY - y0; x0 = null;
+    if(arr.length > 1 && Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5){ swiped = true; setTimeout(() => { swiped = false; }, 400); i = Math.min(arr.length - 1, Math.max(0, i + (dx < 0 ? 1 : -1))); show(); }
+  }, {passive: true});
+  o.onclick = () => { if(swiped){ swiped = false; return; } o.remove(); };
+  document.body.appendChild(o);
 }
 function bindPhotoGallery(l){
   const ps = photoList(l);
-  document.querySelectorAll("#app .pfr img").forEach(im => im.onclick = () => openLightbox(ps[Number(im.dataset.pi)]));
+  document.querySelectorAll("#app .pfr img").forEach(im => im.onclick = () => openLightbox(ps[Number(im.dataset.pi)], ps, Number(im.dataset.pi)));
   const g = document.querySelector("#app .pgal");
   if(g) g.addEventListener("scroll", () => { const i = Math.round(g.scrollLeft / g.clientWidth); document.querySelectorAll("#app .pdots i").forEach((d, x) => d.classList.toggle("on", x === i)); });
 }
@@ -1075,7 +1090,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.14.4</div>
+    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.15.0</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
@@ -1413,6 +1428,7 @@ function openForm(existing){
       <div class="status" id="stSite"></div>
       <div class="hint">イベントの公式ページや販売ページのURLから、公演名・出演者・日付・会場などを読み取ります。入力済みの項目は変わりません。</div>
     </div>
+    ${photoCardHtml()}
     <div class="card">
       <label>公演名</label><div class="cw"><textarea id="f_title" placeholder=" " style="min-height:110px">${v("title")}</textarea><button type="button" class="cx" data-clr="f_title" aria-label="クリア">×</button></div>
       <label>出演者</label><div id="artists"></div>
@@ -1447,7 +1463,6 @@ function openForm(existing){
       <div class="lh"><label for="f_tags">タグ</label></div><div class="cw"><input id="f_tags" placeholder=" " autocomplete="off" value="${esc(tagsOf(l).join("、"))}"><button type="button" class="cx" data-clr="f_tags" aria-label="クリア">×</button></div>
       <div class="hint">ジャンルより細かい属性を、「、」で区切って複数入力できます(例: バンド、アイドル)</div>
     </div>
-    ${photoCardHtml()}
     ${existing ? `<button class="btn danger" id="del">削除</button>` : ""}
     <div class="bbar"><div class="bbar-in"><button class="btn sec" id="cancel">キャンセル</button><button class="btn" id="save">${existing ? "保存" : "登録"}</button></div></div>
   `;
@@ -1597,7 +1612,7 @@ ${RULES}`;
     box.querySelectorAll("img").forEach(i => { try { URL.revokeObjectURL(i.src); } catch(e){} });
     box.innerHTML = staged.map((f, i) => `<div class="sthumb"><img alt="選んだ画像${i + 1}" src="${URL.createObjectURL(f)}"><button type="button" data-rm="${i}" aria-label="画像${i + 1}を外す">×</button></div>`).join("");
     box.querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { staged.splice(Number(b.dataset.rm), 1); drawThumbs(); });
-    box.querySelectorAll(".sthumb img").forEach(im => { im.style.cursor = "zoom-in"; im.onclick = () => openLightbox(im.src); }); /* タップで拡大 */
+    { const all = [...box.querySelectorAll(".sthumb img")]; all.forEach((im, k) => { im.style.cursor = "zoom-in"; im.onclick = () => openLightbox(im.src, all.map(x => x.src), k); }); } /* タップで拡大 */
     const full = staged.length >= MAXIMG;
     ["cam", "pick"].forEach(id => { const el = $("#" + id); el.disabled = full; const lb = el.closest("label") || document.querySelector(`label[for="${id}"]`); if(lb) lb.classList.toggle("dis", full); });
     $("#readGo").disabled = !staged.length;
@@ -1816,7 +1831,7 @@ function renderBatch(){
   $("#bCam").onchange = e => { addFiles(e.target.files); e.target.value = ""; };
   const list = $("#bList");
   list.addEventListener("click", e => {
-    const zm = e.target.closest("[data-bzoom]"); if(zm){ openLightbox(zm.src); return; }
+    const zm = e.target.closest("[data-bzoom]"); if(zm){ const all = [...list.querySelectorAll("[data-bzoom]")]; openLightbox(zm.src, all.map(x => x.src), all.indexOf(zm)); return; }
     const bx = e.target.closest("[data-bx]");
     if(bx){ if(bRunning) return; const id = bx.dataset.bx; if(bMedia[id]){ URL.revokeObjectURL(bMedia[id].url); delete bMedia[id]; } bItems = bItems.filter(i => i.id !== id); bPersist(); bRefresh(); return; }
     const act = e.target.closest("[data-bact]");
