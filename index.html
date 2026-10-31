@@ -183,6 +183,8 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .pdots i.on{background:var(--ink)}
 .plbx{position:fixed;inset:0;background:rgba(10,12,18,.88);display:grid;place-items:center;z-index:50;padding:16px}
 .plbx{touch-action:none}
+.plbx .lba{position:fixed;left:50%;bottom:max(28px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);border:0;border-radius:999px;padding:12px 22px;font-size:15px;font-weight:700;background:#fff;color:#15171f;cursor:pointer;max-width:90vw}
+.plbx .lba:disabled{opacity:.75;cursor:default}
 .plbx img{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px}
 .plbx span{position:fixed;top:max(14px,env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px));color:#fff;font-size:13px;background:rgba(255,255,255,.18);padding:6px 12px;border-radius:999px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
@@ -290,7 +292,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.15.9</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.15.10</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -509,20 +511,35 @@ function setupPhotos(l){
   document.getElementById("phPick").addEventListener("change", add);
   enableThumbSort(box, (from, to) => { const [m] = photos.splice(from, 1); photos.splice(to, 0, m); st.textContent = ""; draw(); });
   draw();
-  return () => photos.slice();
+  /* 画像から自動入力で使った画像を、そのままイベント画像として追加できるようにする */
+  const get = () => photos.slice();
+  get.addFile = async f => { if(photos.length >= MAXPHOTO) return "full"; try { photos.push(await toPhotoData(f)); } catch(e){ return "err"; } st.className = "status"; st.textContent = ""; draw(); return "ok"; };
+  return get;
 }
 function photoGalleryHtml(l){
   const ps = photoList(l);
   if(!ps.length) return "";
   return `<div class="pgal${ps.length > 1 ? " multi" : ""}">${ps.map((p, i) => `<div class="pfr"><img src="${p}" alt="イベント画像${i + 1}" data-pi="${i}"></div>`).join("")}</div>${ps.length > 1 ? `<div class="pdots">${ps.map((_, i) => `<i class="${i ? "" : "on"}"></i>`).join("")}</div>` : ""}<div style="height:10px"></div>`;
 }
-function openLightbox(src, list, idx){
+function openLightbox(src, list, idx, act){
   const arr = Array.isArray(list) && list.length ? list : [src];
   let i = Number.isInteger(idx) ? idx : Math.max(0, arr.indexOf(src));
   const o = document.createElement("div"); o.className = "plbx";
   o.innerHTML = `<img alt="" src=""><span class="lbn" style="right:auto;left:max(16px,env(safe-area-inset-left,0px))"></span><span>タップで閉じる</span>`;
   const im = o.querySelector("img"), n = o.querySelector(".lbn");
-  const show = () => { im.src = arr[i]; n.textContent = `${i + 1} / ${arr.length}`; n.hidden = arr.length < 2; };
+  let ab = null;
+  if(act){
+    ab = document.createElement("button"); ab.type = "button"; ab.className = "lba"; o.appendChild(ab);
+    ab.onclick = async ev => {
+      ev.stopPropagation(); if(ab.disabled) return;
+      ab.disabled = true; ab.textContent = "追加しています…";
+      let r = "err"; try { r = await act.run(i); } catch(e){}
+      if(r === "ok"){ ab.textContent = "追加しました"; return; }
+      ab.textContent = r === "full" ? `イベント画像は${MAXPHOTO}枚までです` : "追加できませんでした";
+      setTimeout(() => { if(o.isConnected) show(); }, 2000);
+    };
+  }
+  const show = () => { im.src = arr[i]; n.textContent = `${i + 1} / ${arr.length}`; n.hidden = arr.length < 2; if(ab){ const d = act.isDone(i); ab.disabled = d; ab.textContent = d ? "追加済み" : act.label; } };
   show();
   /* 左右にスワイプすると、前後の画像に移る */
   let x0 = null, y0 = 0, swiped = false;
@@ -1175,7 +1192,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.15.9</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.15.10</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
@@ -1674,12 +1691,14 @@ ${RULES}`;
   /* 画像は4枚まで選んでおき、「読み取る」を押してから読み取りを始める */
   let staged = [];
   const MAXIMG = 4;
+  const addedScan = new Set();
+  const scanAct = {label: "イベント画像に追加", isDone: i => addedScan.has(staged[i]), run: async i => { const f = staged[i]; if(!f) return "err"; const r = await getPhotos.addFile(f); if(r === "ok") addedScan.add(f); return r; }};
   const drawThumbs = () => {
     const box = $("#thumbs");
     box.querySelectorAll("img").forEach(i => { try { URL.revokeObjectURL(i.src); } catch(e){} });
     box.innerHTML = staged.map((f, i) => `<div class="sthumb"><img alt="選んだ画像${i + 1}" src="${URL.createObjectURL(f)}"><button type="button" data-rm="${i}" aria-label="画像${i + 1}を外す">×</button></div>`).join("");
     box.querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { staged.splice(Number(b.dataset.rm), 1); drawThumbs(); });
-    { const all = [...box.querySelectorAll(".sthumb img")]; all.forEach((im, k) => { im.style.cursor = "zoom-in"; im.onclick = () => openLightbox(im.src, all.map(x => x.src), k); }); } /* タップで拡大 */
+    { const all = [...box.querySelectorAll(".sthumb img")]; all.forEach((im, k) => { im.style.cursor = "zoom-in"; im.onclick = () => openLightbox(im.src, all.map(x => x.src), k, scanAct); }); } /* タップで拡大 */
     const full = staged.length >= MAXIMG;
     ["cam", "pick"].forEach(id => { const el = $("#" + id); el.disabled = full; const lb = el.closest("label") || document.querySelector(`label[for="${id}"]`); if(lb) lb.classList.toggle("dis", full); });
     $("#readGo").disabled = !staged.length;
