@@ -635,7 +635,7 @@ async function extractFromSite(url, signal){
 
 /* ========== 画面 ========== */
 let tab = "list";
-let lives = [];
+let lives = [], loaded = false; /* 起動時に保存データを読み込み終えるまで false */
 let query = "", exact = null;
 let sortAsc = false;
 try { sortAsc = localStorage.getItem("livelog_sort") === "asc"; } catch(e){}
@@ -669,7 +669,7 @@ function bindFilter(){
 }
 
 
-async function refresh(){ lives = (await dbAll()).map(normLive); }
+async function refresh(){ lives = (await dbAll()).map(normLive); loaded = true; }
 
 const TABS = ["list", "stats", "settings"];
 const scrollPos = {};
@@ -1000,7 +1000,7 @@ function fillList(){
   const rows = listRows();
   const box = $("#listBody");
   if(!box) return;
-  const cn = $("#listCnt"); if(cn) cn.textContent = rows.length + "件";
+  const cn = $("#listCnt"); if(cn) cn.textContent = loaded ? rows.length + "件" : "読み込み中…";
   bulkVisible = rows.map(l => l.id);
   if(bulk) [...bulkSel].forEach(i => { if(!bulkVisible.includes(i)) bulkSel.delete(i); }); /* 絞り込みで見えなくなったものは選択から外す */
   let lastY = null; const lv = listView();
@@ -1016,7 +1016,7 @@ function fillList(){
       <div class="body">${ph ? `<div class="pic" data-pid="${esc(l.id)}"><img class="bl" alt=""><img class="fg" alt=""></div>` : `<div class="pic noimg"><img class="ico" alt=""></div>`}
       <div class="what"><div class="trow"><div class="when">${p ? `<span class="y">${p.y}</span><b>${p.m}.${p.d}</b><span class="w">${p.w}</span>${l.start ? `<span class="t">${esc(fmtTime(l.start))}</span>` : ""}` : `<b>--</b>`}</div><div class="side"><div class="who sm">${esc(l.title || artistLine(l) || "(未入力)")}</div>${l.title && artistsOf(l).length ? `<div class="ttl">${esc(artistLine(l))}</div>` : ""}<div class="where">${esc(venueLabel(l))}</div></div></div></div></div>${bulk ? `<span class="bchk"><i></i></span>` : ""}
     </div>`;
-  }).join("") : `<div class="empty">${lives.length ? "該当するイベントがありません" : "まだイベントがありません。<br>右下の＋から、最初のイベントを追加しましょう"}</div>`;
+  }).join("") : `<div class="empty">${!loaded ? "読み込み中…" : lives.length ? "該当するイベントがありません" : "まだイベントがありません。<br>右下の＋から、最初のイベントを追加しましょう"}</div>`;
   box.classList.toggle("grid", listView() === "grid");
   try { fillIcons(); } catch(e){}
   try { fillPics(); } catch(e){}
@@ -1027,6 +1027,7 @@ function fillList(){
 const valTxt = o => statMetric === "s" ? yen(o.s ?? o.spend) : o.n + "回";
 const spLine = o => `<b>${valTxt(o)} ›</b>`;
 function renderStats(){
+  if(!loaded){ $("#app").innerHTML = `<div class="empty">読み込み中…</div>`; return; }
   const fl = filtered();
   const total = fl.length;
   const spend = fl.reduce((s, l) => s + (Number(l.price) || 0), 0);
@@ -1096,7 +1097,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${lives.length} ／ Ver:1.15.1</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.15.2</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
@@ -1943,6 +1944,7 @@ async function bRegister(){
 /* ========== 起動 ========== */
 (async () => {
   try { if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch(e){}
+  $("#app").innerHTML = `<div class="empty">読み込み中…</div>`;
   await refresh();
   /* 保存済みの読み取り画像を一度だけすべて削除する(詳細画面の表示エリアは残してある) */
   try {
