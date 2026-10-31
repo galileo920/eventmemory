@@ -285,7 +285,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.15.2</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.15.3</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -643,10 +643,11 @@ let fGenre = "", fYear = "", statTab = "artist", statMetric = "n", statDir = "de
 const yearOf = l => (l.date || "").slice(0, 4);
 const filtered = () => lives.filter(l => (!fGenre || genreOf(l) === fGenre) && (!fYear || yearOf(l) === fYear));
 /* 一覧は年ごとに表示する(初期表示は今年。検索や絞り込みのときだけ「すべて」にできる) */
+const YEAR_ONLY = false; /* true にすると、一覧は年ごとの表示(初期表示は今年)になる */
 let yAll = false, yPrev = "";
 const narrowing = () => !!query.trim() || !!exact || yAll;
 const defYear = () => { const ys = [...new Set(lives.map(yearOf).filter(Boolean))].sort().reverse(), cy = String(new Date().getFullYear()); return ys.includes(cy) ? cy : (ys[0] || ""); };
-function ensureYear(){ if(!fYear && !narrowing()) fYear = defYear(); }
+function ensureYear(){ if(YEAR_ONLY && !fYear && !narrowing()) fYear = defYear(); }
 function syncYearSel(){
   const s = $("#fy"); if(!s) return;
   const h = document.createElement("div"); h.innerHTML = filterBar(); const n = h.querySelector("#fy"); if(!n) return;
@@ -654,14 +655,15 @@ function syncYearSel(){
 }
 function onQuery(v){
   const was = !!query.trim(); query = v; const now = !!query.trim();
-  if(now && !was){ yPrev = fYear; fYear = ""; }
+  if(!YEAR_ONLY){ /* 年の自動切り替えはしない */ }
+  else if(now && !was){ yPrev = fYear; fYear = ""; }
   else if(!now && was){ if(!fYear && !exact && !yAll) fYear = yPrev || defYear(); yPrev = ""; }
   if(now !== was) syncYearSel();
   fillList();
 }
 function filterBar(){
   const ys = [...new Set(lives.map(yearOf).filter(Boolean).concat(fYear ? [fYear] : []))].sort().reverse();
-  return `<div class="filters"><div class="fcol"><label for="fg">ジャンル</label><select id="fg" aria-label="ジャンルで絞り込み"><option value="">すべて</option>${GENRES.map(g => `<option value="${g}"${fGenre === g ? " selected" : ""}>${g}</option>`).join("")}</select></div><div class="fcol"><label for="fy">年</label><select id="fy" aria-label="年で絞り込み">${(tab === "stats" || narrowing()) ? `<option value="">すべて</option>` : ""}${ys.map(y => `<option value="${y}"${fYear === y ? " selected" : ""}>${y}年</option>`).join("")}</select></div></div>`;
+  return `<div class="filters"><div class="fcol"><label for="fg">ジャンル</label><select id="fg" aria-label="ジャンルで絞り込み"><option value="">すべて</option>${GENRES.map(g => `<option value="${g}"${fGenre === g ? " selected" : ""}>${g}</option>`).join("")}</select></div><div class="fcol"><label for="fy">年</label><select id="fy" aria-label="年で絞り込み">${(!YEAR_ONLY || tab === "stats" || narrowing()) ? `<option value="">すべて</option>` : ""}${ys.map(y => `<option value="${y}"${fYear === y ? " selected" : ""}>${y}年</option>`).join("")}</select></div></div>`;
 }
 function bindFilter(){
   $("#fg").onchange = e => { fGenre = e.target.value; render(); };
@@ -1097,7 +1099,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.15.2</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.15.3</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
