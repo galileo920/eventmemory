@@ -290,7 +290,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.15.8</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.15.9</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -723,7 +723,7 @@ function slideIn(dir){ const a = $("#app"); a.classList.remove("in-l", "in-r"); 
 /* データ(設定)画面の結果メッセージ。再描画しても残し、別の画面へ移ると消す */
 document.addEventListener("pointerdown", e => { if(e.target.closest && e.target.closest(".cx")) e.preventDefault(); });
 document.addEventListener("mousedown", e => { if(e.target.closest && e.target.closest(".cx")) e.preventDefault(); });
-document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-clr]"); if(!b) return; const i = document.getElementById(b.dataset.clr); if(!i) return; i.value = ""; if(i.dataset.bid || i.id === "q") i.dispatchEvent(new Event("input", {bubbles: true})); });
+document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-clr]"); if(!b) return; const i = document.getElementById(b.dataset.clr); if(!i) return; i.value = ""; if(i.dataset.bid || i.id === "q" || i.id === "siteUrl") i.dispatchEvent(new Event("input", {bubbles: true})); });
 let dataMsg = null;
 function setDataMsg(cls, text, id){ id = id || "#dst"; dataMsg = {cls, text, id}; const d = $(id); if(d){ d.className = "status " + cls; d.textContent = text; } }
 function setTab(t, o = {}){
@@ -1175,7 +1175,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.15.8</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.15.9</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
@@ -1524,9 +1524,6 @@ function openForm(existing){
       <div id="artFetch">${getSet().apiKey ? `
         <button type="button" class="btn sec" id="artSearch">出演者を検索して候補を出す</button>
         <div class="status" id="stSearch"></div>
-        <label class="btn sec" for="artImg">画像から出演者を読み取る</label>
-        <input id="artImg" type="file" accept="image/*" multiple hidden>
-        <div class="status" id="stImg"></div>
         <div id="artRes"></div>` : `<div class="hint">出演者を検索・取得するには、データタブでGeminiのAPIキーを入力してください。</div>`}</div>
       <div class="lh"><label for="artIn">出演者をまとめて追加</label></div>
       <div class="cw"><textarea id="artIn" style="min-height:72px" placeholder="名前を「、」「,」「/」や改行で区切って入力"></textarea><button type="button" class="cx" data-clr="artIn" aria-label="クリア">×</button></div>
@@ -1669,21 +1666,6 @@ ${RULES}`;
         return parseJsonObject(await geminiText(prompt, [], null, [{google_search: {}}]));
       });
     };
-    $("#artImg").onchange = async e => {
-      const files = [...e.target.files].slice(0, 4), sst = $("#stImg");
-      e.target.value = "";
-      if(!files.length) return;
-      const c = ctxNow();
-      runFetch($("#artSearch"), sst, "画像を読み取っています…(数十秒かかることがあります)", async () => {
-        const urls = [];
-        for(const f of files) urls.push(await resizeImage(f, 1600, 0.85));
-        const prompt = `${head(c)}
-添付画像(告知・チラシ・SNS投稿のスクリーンショットなど)に写っている出演者だけを根拠にしてください。
-ルール:
-${RULES}`;
-        return parseJsonObject(await geminiText(prompt, urls));
-      });
-    };
   }
   $("#cancel").onclick = () => { if(!confirm("入力中の内容は保存されません。戻りますか?")) return; existing ? openDetail(existing.id) : setTab("list"); };
 
@@ -1735,6 +1717,7 @@ ${RULES}`;
   };
   $("#stop").onclick = () => scanCtl && scanCtl.abort();
   $("#readGo").onclick = handle;
+  { const sg = $("#siteGo"), su = $("#siteUrl"); const sync = () => { if(sg) sg.disabled = !su.value.trim(); }; su.addEventListener("input", sync); sync(); } /* URLが空のあいだは「読み取る」を押せない */
   $("#siteGo").onclick = async e => {
     const btn = e.currentTarget, st = $("#stSite"); let u;
     try { u = new URL($("#siteUrl").value.trim()); if(!/^https?:$/.test(u.protocol)) throw new Error("x"); } catch(err){ st.className = "status err"; st.textContent = "URLを正しく入力してください。"; return; }
