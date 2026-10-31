@@ -197,7 +197,8 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .sthumb{touch-action:pan-y;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .sthumb img{-webkit-user-drag:none}
 .sthumb.drag{z-index:5;opacity:.9;box-shadow:0 6px 18px rgba(0,0,0,.45);transition:none;pointer-events:none}
-.sthumb.over{outline:2px solid var(--accent,#4a90e2);outline-offset:1px}
+.thumbs{position:relative}
+.sortbar{position:absolute;width:3px;border-radius:2px;background:var(--accent,#4a90e2);pointer-events:none;z-index:6}
 .thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
 .thumbs:empty{display:none}
 .sthumb{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:var(--bg)}
@@ -289,7 +290,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.15.5</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.15.6</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -462,14 +463,21 @@ function enableThumbSort(box, move){
     if(!st) return;
     if(!st.on){ if(Math.hypot(e.clientX - st.x, e.clientY - st.y) > 8){ clearTimeout(st.t); st = null; } return; }
     st.el.style.transform = `translate(${e.clientX - st.x}px,${e.clientY - st.y}px) scale(1.06)`;
-    let to = -1;
-    items().forEach((it, k) => { it.classList.remove("over"); if(it === st.el) return; const r = it.getBoundingClientRect(); if(e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom){ to = k; it.classList.add("over"); } });
-    st.to = to;
+    /* 画像の上ではなく、画像と画像の「間」で挿入位置を決める */
+    const others = items().filter(i => i !== st.el), rs = others.map(i => i.getBoundingClientRect());
+    let ri = 0, bd = 1e9; rs.forEach((r, k) => { const d = Math.abs(e.clientY - (r.top + r.bottom) / 2); if(d < bd){ bd = d; ri = k; } });
+    const rowY = (rs[ri].top + rs[ri].bottom) / 2, row = rs.map((r, k) => k).filter(k => Math.abs((rs[k].top + rs[k].bottom) / 2 - rowY) < rs[ri].height / 2);
+    let at = row.find(k => e.clientX < (rs[k].left + rs[k].right) / 2), x, k0;
+    if(at === undefined){ k0 = row[row.length - 1]; at = k0 + 1; x = rs[k0].right + 4; } else x = rs[at].left - 4;
+    const bx = box.getBoundingClientRect(), r0 = rs[at === others.length ? at - 1 : at];
+    if(!st.bar){ st.bar = document.createElement("div"); st.bar.className = "sortbar"; box.appendChild(st.bar); }
+    st.bar.style.cssText = `left:${x - bx.left - 1.5}px;top:${r0.top - bx.top}px;height:${r0.height}px`;
+    st.to = at;
   });
   const end = e => {
     if(!st) return; clearTimeout(st.t); const s = st; st = null; if(!s.on) return;
     swallow = true; setTimeout(() => { swallow = false; }, 400);
-    s.el.classList.remove("drag"); s.el.style.transform = ""; items().forEach(i => i.classList.remove("over"));
+    s.el.classList.remove("drag"); s.el.style.transform = ""; if(s.bar) s.bar.remove();
     if(e.type === "pointerup" && s.to >= 0 && s.to !== s.from) move(s.from, s.to);
   };
   box.addEventListener("pointerup", end); box.addEventListener("pointercancel", end);
@@ -1138,7 +1146,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.15.5</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.15.6</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
