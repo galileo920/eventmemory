@@ -293,7 +293,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.15.11</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.15.12</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -722,8 +722,8 @@ function onQuery(v){
 }
 /* 検索・ジャンル・年を、まとめて初期状態に戻す */
 const filterDefYear = () => YEAR_ONLY ? defYear() : "";
-const filtersActive = () => !!query.trim() || !!fGenre || fYear !== filterDefYear();
-function clearFilters(){ query = ""; fGenre = ""; fYear = filterDefYear(); yAll = false; yPrev = ""; render(); }
+const filtersActive = () => !!query.trim() || !!fGenre || !!exact || fYear !== filterDefYear();
+function clearFilters(){ query = ""; exact = null; fGenre = ""; fYear = filterDefYear(); yAll = false; yPrev = ""; render(); }
 function filterBar(){
   const ys = [...new Set(lives.map(yearOf).filter(Boolean).concat(fYear ? [fYear] : []))].sort().reverse();
   return `<div class="filters"><div class="fcol"><label for="fg">ジャンル</label><select id="fg" aria-label="ジャンルで絞り込み"><option value="">すべて</option>${GENRES.map(g => `<option value="${g}"${fGenre === g ? " selected" : ""}>${g}</option>`).join("")}</select></div><div class="fcol"><label for="fy">年</label><select id="fy" aria-label="年で絞り込み">${(!YEAR_ONLY || tab === "stats" || narrowing()) ? `<option value="">すべて</option>` : ""}${ys.map(y => `<option value="${y}"${fYear === y ? " selected" : ""}>${y}年</option>`).join("")}</select></div></div>`;
@@ -1198,7 +1198,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.15.11</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.15.12</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
