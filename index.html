@@ -293,7 +293,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.15.13</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.15.14</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -511,6 +511,11 @@ function setupPhotos(l){
     { const all = [...box.querySelectorAll(".sthumb img")]; all.forEach((im, k) => { im.style.cursor = "zoom-in"; im.onclick = () => openLightbox(im.src, all.map(x => x.src), k); }); } /* タップで拡大 */
     const full = photos.length >= MAXPHOTO;
     ["phCam", "phPick"].forEach(id => { const el = document.getElementById(id); el.disabled = full; el.closest("label").classList.toggle("dis", full); });
+    /* 4枚を超えているあいだは、保存できない */
+    const over = photos.length - MAXPHOTO, sv = document.getElementById("save");
+    if(sv) sv.disabled = over > 0;
+    if(over > 0){ st.className = "status err"; st.textContent = `イベント画像は${MAXPHOTO}枚までです。あと${over}枚、画像の×で外すと保存できます。`; st.dataset.ov = "1"; }
+    else if(st.dataset.ov){ st.className = "status"; st.textContent = ""; delete st.dataset.ov; }
   };
   const add = async e => {
     const fs = [...e.target.files]; e.target.value = "";
@@ -519,11 +524,9 @@ function setupPhotos(l){
     if(room <= 0){ st.className = "status err"; st.textContent = `画像は${MAXPHOTO}枚までです。入れ替えるときは、画像の×で外してください。`; return; }
     st.className = "status"; st.textContent = "画像を追加しています…";
     let fail = 0;
-    for(const f of fs.slice(0, room)){ try { photos.push(await toPhotoData(f)); } catch(err){ fail++; } }
+    for(const f of fs){ try { photos.push(await toPhotoData(f)); } catch(err){ fail++; } }
+    st.className = fail ? "status err" : "status"; st.textContent = fail ? `${fail}枚は追加できませんでした。` : "";
     draw();
-    if(fail){ st.className = "status err"; st.textContent = `${fail}枚は追加できませんでした。`; }
-    else if(fs.length > room){ st.className = "status err"; st.textContent = `画像は${MAXPHOTO}枚までなので、先頭の${room}枚だけ追加しました。`; }
-    else st.textContent = "";
   };
   document.getElementById("phCam").addEventListener("change", add);
   document.getElementById("phPick").addEventListener("change", add);
@@ -531,6 +534,7 @@ function setupPhotos(l){
   draw();
   /* 画像から自動入力で使った画像を、そのままイベント画像として追加できるようにする */
   const get = () => photos.slice();
+  get.over = () => photos.length - MAXPHOTO;
   get.addFile = async f => { if(photos.length >= MAXPHOTO) return "full"; try { photos.push(await toPhotoData(f)); } catch(e){ return "err"; } st.className = "status"; st.textContent = ""; draw(); return "ok"; };
   return get;
 }
@@ -1215,7 +1219,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.15.13</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.15.14</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
@@ -1724,16 +1728,18 @@ ${RULES}`;
     { const all = [...box.querySelectorAll(".sthumb img")]; all.forEach((im, k) => { im.style.cursor = "zoom-in"; im.onclick = () => openLightbox(im.src, all.map(x => x.src), k, scanAct); }); } /* タップで拡大 */
     const full = staged.length >= MAXIMG;
     ["cam", "pick"].forEach(id => { const el = $("#" + id); el.disabled = full; const lb = el.closest("label") || document.querySelector(`label[for="${id}"]`); if(lb) lb.classList.toggle("dis", full); });
-    $("#readGo").disabled = !staged.length;
+    { const over = staged.length - MAXIMG, st0 = $("#st");
+      $("#readGo").disabled = !staged.length || over > 0;
+      if(over > 0){ st0.className = "status err"; st0.textContent = `画像は${MAXIMG}枚までです。あと${over}枚、画像の×で外すと読み取れます。`; st0.dataset.ov = "1"; }
+      else if(st0.dataset.ov){ st0.className = "status"; st0.textContent = ""; delete st0.dataset.ov; } }
   };
   const addStaged = e => {
     const fs = [...e.target.files]; e.target.value = "";
     if(!fs.length) return;
     const room = MAXIMG - staged.length, st = $("#st");
     if(room <= 0){ st.className = "status err"; st.textContent = `画像は${MAXIMG}枚までです。入れ替えるときは、画像の×で外してください。`; return; }
-    staged.push(...fs.slice(0, room));
-    if(fs.length > room){ st.className = "status err"; st.textContent = `画像は${MAXIMG}枚までなので、先頭の${room}枚だけ追加しました。`; }
-    else { st.className = "status"; st.textContent = ""; }
+    staged.push(...fs); /* 4枚を超えて選んだときは、外して4枚にするまで読み取れない */
+    st.className = "status"; st.textContent = "";
     drawThumbs();
   };
   $("#cam").addEventListener("change", addStaged);
@@ -1778,6 +1784,7 @@ ${RULES}`;
   $("#f_genre").addEventListener("change", e => { e.target.dataset.touched = "1"; });
   const getPhotos = setupPhotos(l);
   $("#save").onclick = async () => {
+    if(getPhotos.over() > 0) return;
     FIELDS.forEach(k => { if(k !== "genre") l[k] = $("#f_" + k).value.trim(); });
     l.tags = splitTags(l.tags);
     l.genre = $("#f_genre").value || "音楽";
