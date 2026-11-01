@@ -293,7 +293,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.15.14</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.15.15</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1219,7 +1219,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.15.14</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.15.15</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
@@ -1894,7 +1894,7 @@ function bRefresh(){
       const s = bSummary(it), [pl, pc] = B_PILL[it.status] || B_PILL.wait, m = bMedia[it.id];
       return `<div class="bitem">
         <div class="brow"${it.status === "err" ? "" : ` role="button" tabindex="0" data-btoggle="${it.id}" aria-expanded="${it.open}"`}>
-          <div class="bthumb"${m ? ` style="background-image:url('${m.url}')"` : ""}>${m ? "" : "写真なし"}</div>
+          <div class="bthumb"${m ? ` data-burl="${m.url}" style="background-image:url('${m.url}');cursor:zoom-in"` : ""}>${m ? "" : "写真なし"}</div>
           <div class="bsum"><div class="t">${esc(s.t)}</div>${s.m ? `<div class="m">${esc(s.m)}</div>` : ""}</div>
           <span class="bpill ${pc}">${pl}</span>
         </div>
@@ -1949,6 +1949,8 @@ function renderBatch(){
   const list = $("#bList");
   list.addEventListener("click", e => {
     const zm = e.target.closest("[data-bzoom]"); if(zm){ const all = [...list.querySelectorAll("[data-bzoom]")]; openLightbox(zm.src, all.map(x => x.src), all.indexOf(zm)); return; }
+    /* 読み取り後の一覧のサムネイルをタップすると、拡大して見られる(開閉はしない) */
+    const bt = e.target.closest(".bthumb[data-burl]"); if(bt){ const all = [...list.querySelectorAll(".bthumb[data-burl]")]; openLightbox(bt.dataset.burl, all.map(x => x.dataset.burl), all.indexOf(bt)); return; }
     const bx = e.target.closest("[data-bx]");
     if(bx){ if(bRunning) return; const id = bx.dataset.bx; if(bMedia[id]){ URL.revokeObjectURL(bMedia[id].url); delete bMedia[id]; } bItems = bItems.filter(i => i.id !== id); bPersist(); bRefresh(); return; }
     const act = e.target.closest("[data-bact]");
