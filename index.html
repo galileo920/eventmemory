@@ -293,7 +293,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.15.12</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.15.13</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -323,19 +323,36 @@ function openDB(){
   return new Promise((res, rej) => {
     const r = indexedDB.open(DB_NAME, 1);
     r.onupgradeneeded = () => r.result.createObjectStore(STORE, {keyPath: "id"});
-    r.onsuccess = () => res(r.result);
-    r.onerror = () => rej(r.error);
+    r.onsuccess = () => {
+      const d = r.result;
+      /* iPhoneは、アプリを裏に回したときなどにDB接続を閉じることがある。閉じられたら、次の操作で開き直す */
+      d.onclose = () => { dbp = null; };
+      d.onversionchange = () => { try { d.close(); } catch(e){} dbp = null; };
+      res(d);
+    };
+    r.onerror = () => { dbp = null; rej(r.error); };
   });
 }
 let dbp = openDB();
+const getDb = () => dbp || (dbp = openDB());
 async function tx(mode, fn){
-  const db = await dbp;
-  return new Promise((res, rej) => {
-    const t = db.transaction(STORE, mode);
-    const out = fn(t.objectStore(STORE));
-    t.oncomplete = () => res(out && out.result !== undefined ? out.result : undefined);
-    t.onerror = () => rej(t.error);
-  });
+  for(let k = 0; ; k++){
+    try {
+      const db = await getDb();
+      return await new Promise((res, rej) => {
+        let t, out;
+        try { t = db.transaction(STORE, mode); out = fn(t.objectStore(STORE)); } catch(e){ rej(e); return; }
+        t.oncomplete = () => res(out && out.result !== undefined ? out.result : undefined);
+        t.onerror = () => rej(t.error);
+        t.onabort = () => rej(t.error || new Error("transaction aborted"));
+      });
+    } catch(e){
+      /* 接続が閉じていたときは、開き直して最大2回までやり直す */
+      const closed = e && (e.name === "InvalidStateError" || /clos(ing|ed)/i.test(e.message || ""));
+      if(!closed || k >= 2) throw e;
+      dbp = null; await new Promise(r => setTimeout(r, 150));
+    }
+  }
 }
 const dbAll = () => tx("readonly", s => s.getAll());
 const dbPut = v => tx("readwrite", s => s.put(v));
@@ -1198,7 +1215,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.15.12</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.15.13</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
