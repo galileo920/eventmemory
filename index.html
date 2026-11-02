@@ -293,7 +293,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.15.17</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.16.0</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -660,7 +660,7 @@ async function geminiText(prompt, dataUrls, signal, tools){
   const cand = j.candidates && j.candidates[0], fr = cand && cand.finishReason;
   const text = ((cand && cand.content && cand.content.parts) || []).map(p => p.text || "").join("");
   if(!text.trim()) throw Object.assign(new Error(fr ? `答えが返りませんでした(${fr})` : "答えが返りませんでした"), {code: /SAFETY|PROHIBITED|BLOCKLIST|SPII|RECITATION/.test(fr || "") ? "blocked" : "empty"});
-  if(fr === "MAX_TOKENS" && !/\}\s*(```)?\s*$/.test(text.trim())) throw Object.assign(new Error("答えが長すぎて途中で切れました"), {code: "too_long"});
+  if(fr === "MAX_TOKENS" && !/[\}\]]\s*(```)?\s*$/.test(text.trim())) throw Object.assign(new Error("答えが長すぎて途中で切れました"), {code: "too_long"});
   return text;
 }
 /* 返事の中からJSONの本体を取り出す: 全体 → ```で囲まれた部分 → 波かっこの対応を数えて最初に読めるもの */
@@ -690,6 +690,17 @@ function parseJsonObject(text){
     }
   }
   throw bad();
+}
+function parseJsonList(text){
+  const t = String(text || ""), fence = /```(?:json)?\s*([\s\S]*?)```/i.exec(t), srcs = fence ? [fence[1], t] : [t];
+  const objs = v => Array.isArray(v) ? v.filter(x => x && typeof x === "object" && !Array.isArray(x)) : [];
+  for(const c of srcs){
+    const s = c.trim();
+    try { const a = objs(JSON.parse(s)); if(a.length) return a; } catch(e){}
+    const i = s.indexOf("["), j = s.lastIndexOf("]");
+    if(i !== -1 && j > i){ try { const a = objs(JSON.parse(s.slice(i, j + 1))); if(a.length) return a; } catch(e){} }
+  }
+  return [parseJsonObject(t)]; /* 配列ではなく、1件だけのオブジェクトで返ってきたとき */
 }
 const extractPrompt = () => `この画像はライブ・コンサートなどのイベントの紙のチケット、電子チケット(チケットぴあ・イープラス・ローチケ等のアプリ画面のスクリーンショット)、フライヤー、ポスター、または予約画面です。複数枚ある場合は同じ公演の情報として1件にまとめてください。購入者の名前は含めないでください。複数日にまたがる券の場合、dateは初日にしてください。読み取れる情報を次のJSONだけで返してください(説明文やコードブロックは不要)。読み取れない項目は空文字にしてください。推測で埋めないでください。
 {
@@ -1219,7 +1230,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.15.17</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.16.0</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
@@ -1811,7 +1822,7 @@ function bLoad(){
   try { const j = JSON.parse(localStorage.getItem(B_KEY) || "[]"); if(Array.isArray(j)) bItems = j.filter(x => x && x.id && x.f && x.status === "ok").map(x => ({...x, open: false})); } catch(e){}
 }
 function bPersist(){ try { localStorage.setItem(B_KEY, JSON.stringify(bItems.map(({id, status, err, f}) => ({id, status, err, f})))); } catch(e){} }
-const BPROMPT = () => `この画像はライブ・コンサートなどのイベントの紙のチケット、電子チケット(チケットぴあ・イープラス・ローチケ等のアプリ画面のスクリーンショット)、または予約画面です。画像1枚が1公演です。読み取れる情報を次のJSONオブジェクト1つだけで返してください。読み取れない項目は空文字にしてください。推測で埋めないでください。購入者の名前は含めないでください。複数日にまたがる券の場合、dateは初日にしてください。
+const BPROMPT = () => `この画像はライブ・コンサートなどのイベントの紙のチケット、電子チケット(チケットぴあ・イープラス・ローチケ等のアプリ画面のスクリーンショット)、または予約画面です。画像に写っているチケット・予約画面は、1枚ごとに1公演として読み取ってください。画像に複数のチケットが並んでいる場合は、写っているすべてのチケットを、上から下・左から右の順に、それぞれ別の要素にしてください(1枚だけなら要素1つ)。同じ公演名でも、日付・開演時刻・券種・座席などが異なるチケットは、別の要素にしてください。読み取れる情報を、次のJSONオブジェクトを要素とする配列だけで返してください。配列以外の文章は付けないでください。読み取れない項目は空文字にしてください。推測で埋めないでください。購入者の名前は含めないでください。複数日にまたがる券の場合、dateは初日にしてください。
 {
  "genre":"ジャンル(音楽・舞台・お笑い・スポーツ・トーク・展示会・その他のいずれか。どれにも当てはまらない場合は「その他」、判断できなければ空文字)",
  "title":"公演名・イベント名・ツアー名",
@@ -1854,7 +1865,7 @@ function bSummary(it){
 }
 function bFailHtml(it){
   return `<div class="bedit">${it.err ? `<div class="bmsg">${esc(it.err)}</div>` : ""}<div class="bacts">
-    ${bMedia[it.id] ? `<button type="button" class="btn sec small" data-bact="retry" data-bid="${it.id}">再読み取り</button>` : ""}
+    ${bMedia[it.id] && !it.src ? `<button type="button" class="btn sec small" data-bact="retry" data-bid="${it.id}">再読み取り</button>` : ""}
     <button type="button" class="btn sec small" data-bact="del" data-bid="${it.id}" style="color:var(--danger)">削除</button>
   </div></div>`;
 }
@@ -1877,7 +1888,7 @@ function bEditHtml(it){
     ${inp("price", "チケット代", 'type="number" inputmode="numeric"')}
     ${it.err ? `<div class="bmsg">${esc(it.err)}</div>` : ""}
     <div class="bacts">
-      ${bMedia[it.id] ? `<button type="button" class="btn sec small" data-bact="retry" data-bid="${it.id}">再読み取り</button>` : ""}
+      ${bMedia[it.id] && !it.src ? `<button type="button" class="btn sec small" data-bact="retry" data-bid="${it.id}">再読み取り</button>` : ""}
       <button type="button" class="btn sec small" data-bact="del" data-bid="${it.id}" style="color:var(--danger)">削除</button>
     </div>
   </div>`;
@@ -1925,7 +1936,7 @@ function renderBatch(){
     </div>
     <input id="bPick" type="file" accept="image/*" multiple style="display:none">
     <input id="bCam" type="file" accept="image/*" capture="environment" style="display:none">
-    <p class="bhint">写真1枚を1公演として読み取ります。チケットの写真や電子チケットのスクリーンショットを、まとめて選べます。選んだ写真はサムネイルで確認でき、タップで拡大、×で外せます。</p>
+    <p class="bhint">写真1枚を1公演として読み取ります。1枚にチケットが複数並んでいるときは、1枚ずつ別の公演として読み取ります。チケットの写真や電子チケットのスクリーンショットを、まとめて選べます。選んだ写真はサムネイルで確認でき、タップで拡大、×で外せます。</p>
     <div id="bList"></div>
     <div class="bend"><button type="button" class="btn" id="bRun" disabled>読み取る</button><button type="button" class="btn" id="bReg" disabled>登録</button></div>
     <p class="bnote" id="bNote" role="status"></p>
@@ -2000,10 +2011,14 @@ function renderBatch(){
 }
 async function bReadOne(it){
   const m = bMedia[it.id];
-  const big = await resizeImage(m.blob, 1600, 0.85);
+  const big = await resizeImage(m.blob, 2400, 0.85); /* 複数のチケットが並ぶ写真でも文字が読めるよう、少し大きめにする */
   const text = await geminiText(BPROMPT(), [big], bCtl.signal);
-  const r = parseJsonObject(text);
-  return bNormalize(r && typeof r === "object" ? r : {});
+  return parseJsonList(text).slice(0, 12).map(r => bNormalize(r && typeof r === "object" ? r : {}));
+}
+/* 1枚の写真から複数のチケットが読み取れたとき、2枚目以降は別の行として追加する(元の写真を共有) */
+function bDropDerived(srcId){
+  bItems.filter(i => i.src === srcId).forEach(i => { const m = bMedia[i.id]; if(m){ try { URL.revokeObjectURL(m.url); } catch(e){} delete bMedia[i.id]; } });
+  bItems = bItems.filter(i => i.src !== srcId);
 }
 async function bRunAll(only){
   if(bRunning || !getSet().apiKey) return;
@@ -2015,9 +2030,13 @@ async function bRunAll(only){
     const it = bItems.find(i => i.id === id); if(!it) continue;
     it.status = "run"; it.err = ""; bRefresh();
     try {
-      const prev = it.f, f = await bReadOne(it);
+      const prev = it.f, list = await bReadOne(it), f = list[0];
       AUTO_FIELDS.forEach(k => { if(prev[k]) f[k] = prev[k]; }); /* 手で直した内容は上書きしない */
+      bDropDerived(it.id); /* 再読み取りのときは、前回追加した分を作り直す */
       it.f = f; it.status = "ok"; n++;
+      const m0 = bMedia[it.id];
+      const extra = list.slice(1).map(g => { const nid = uid(); bMedia[nid] = {blob: m0.blob, url: URL.createObjectURL(m0.blob)}; return {id: nid, status: "ok", err: "", open: false, f: g, src: it.id}; });
+      if(extra.length){ bItems.splice(bItems.indexOf(it) + 1, 0, ...extra); n += extra.length; }
     } catch(e){
       if(bCtl.signal.aborted || (e && e.name === "AbortError")){ it.status = "wait"; break; }
       it.status = "err"; fail++;
