@@ -293,7 +293,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.16.0</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.16.1</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -447,10 +447,8 @@ function toPhotoData(file){
         const sc = Math.min(1, 1024 / Math.max(im.naturalWidth, im.naturalHeight)), w = Math.max(1, Math.round(im.naturalWidth * sc)), h = Math.max(1, Math.round(im.naturalHeight * sc));
         const c = document.createElement("canvas"); c.width = w; c.height = h;
         const x = c.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, w, h); x.drawImage(im, 0, 0, w, h);
-        let q = 0.74, d = c.toDataURL("image/jpeg", q);
-        while(d.length > 150000 && q > 0.45){ q -= 0.08; d = c.toDataURL("image/jpeg", q); }
-        /* 画質を下げても大きいときは、縮小して必ず150KB以内にする */
-        for(let k = 0; d.length > 150000 && k < 6; k++){ c.width = Math.max(1, Math.round(c.width * 0.8)); c.height = Math.max(1, Math.round(c.height * 0.8)); const x2 = c.getContext("2d"); x2.fillStyle = "#fff"; x2.fillRect(0, 0, c.width, c.height); x2.drawImage(im, 0, 0, c.width, c.height); d = c.toDataURL("image/jpeg", 0.6); }
+        /* 長辺は1024pxまで。JPEG品質70%で1回だけ圧縮し、サイズにかかわらずそれ以上の縮小・圧縮はしない */
+        const d = c.toDataURL("image/jpeg", 0.7);
         URL.revokeObjectURL(url); res(d);
       } catch(e){ URL.revokeObjectURL(url); rej(e); }
     };
@@ -1230,7 +1228,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.16.0</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.16.1</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
