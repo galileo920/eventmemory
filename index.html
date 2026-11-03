@@ -61,7 +61,9 @@ main{max-width:560px;margin:0 auto;padding-block:14px 150px;padding-left:var(--g
 .filters{display:flex;gap:8px;margin-bottom:10px}
 .fcol{flex:1;min-width:0}
 .fcol label{margin:0 0 4px}
-.filters input[type=date]{display:block;min-width:0;margin-top:0;width:100%;height:46px;padding:0 12px;font:inherit;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);-webkit-appearance:none;appearance:none;text-align:left}
+.filters input[type=date]{display:block;min-width:0;margin-top:0;width:100%;height:46px;padding:0 12px;font:inherit;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);-webkit-appearance:none;appearance:none;text-align:left;line-height:44px}
+.filters input[type=date]::-webkit-date-and-time-value{text-align:left;min-height:44px;line-height:44px;margin:0}
+.filters input[type=date]::-webkit-datetime-edit{padding:0;line-height:44px}
 .filters select{display:block;min-width:0;margin-top:0;width:100%;height:46px;padding:0 12px}
 input,textarea{width:100%;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);margin-top:4px}
 input[type=date],input[type=time]{-webkit-appearance:none;appearance:none;height:46px;display:block;max-width:100%}
@@ -324,7 +326,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.18.3</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.18.4</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -942,7 +944,13 @@ function filterBar(){
 function bindFilter(){
   $("#fg").onchange = e => { fGenre = e.target.value; render(); };
   $("#fy").onchange = e => { fYear = e.target.value; yAll = !fYear && tab === "list"; render(); };
-  { const a = $("#fFrom"), b = $("#fTo"); if(a) a.onchange = e => { fFrom = e.target.value; if(fTo && fFrom > fTo) fTo = fFrom; render(); }; if(b) b.onchange = e => { fTo = e.target.value; if(fFrom && fTo < fFrom) fFrom = fTo; render(); }; }
+  { /* 日付を選んでいる途中で画面を作り直すと、カレンダーが閉じてしまう。一覧は一覧だけを更新し、集計は入力が終わってから(フォーカスが外れたとき)反映する */
+    const a = $("#fFrom"), b = $("#fTo"); let pend = false;
+    const apply = () => { if(tab === "list") fillList(); else pend = true; };
+    if(a) a.onchange = e => { fFrom = e.target.value; if(fTo && fFrom > fTo){ fTo = fFrom; if(b) b.value = fTo; } apply(); };
+    if(b) b.onchange = e => { fTo = e.target.value; if(fFrom && fTo < fFrom){ fFrom = fTo; if(a) a.value = fFrom; } apply(); };
+    [a, b].forEach(x => { if(x) x.onblur = () => { if(pend){ pend = false; render(); } }; });
+  }
 }
 
 
@@ -1491,7 +1499,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.18.3</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.18.4</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
