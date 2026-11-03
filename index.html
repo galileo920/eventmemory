@@ -208,6 +208,13 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .gxh .gxa{flex:none;color:var(--sub);transition:transform .15s}
 .gxh[aria-expanded="true"] .gxa{transform:rotate(90deg)}
 .gxb{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.gxtop{display:flex;align-items:center;gap:6px}
+.gxe .gxg{display:none;flex:0 0 40px;height:40px;border:0;background:none;color:var(--sub);font-size:24px;line-height:1;touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none;padding:0}
+.gxe.drag{opacity:.6}
+#gList[data-mode="sort"] .gxg{display:block}
+#gList[data-mode="sort"] .gxb{display:none}
+#gList[data-mode="sort"] .gxa{display:none}
+#gList[data-mode="sort"] .gxh{pointer-events:none}
 .alrow{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
 .alk{flex:none;font-size:12px;color:var(--sub);border:1px solid var(--line);border-radius:999px;padding:2px 8px}
 .aln{flex:1;min-width:0;overflow-wrap:anywhere}
@@ -309,7 +316,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.17.0</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.17.1</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -429,7 +436,7 @@ const normPref = v => { const t = String(v || "").trim(); if(!t) return ""; retu
 const venueLabel = l => l.venue ? l.venue + (l.pref ? `(${l.pref})` : "") : (l.pref || "");
 const genreOf = l => { const g = rawGenre(l); return GENRES.includes(g) ? g : GENRES[0]; };
 /* ---------- ジャンル設定(設定タブ) ---------- */
-let gDraft = null, gMsg = null;
+let gDraft = null, gMsg = null, gSort = false;
 function genreCardHtml(){
   if(!gDraft) gDraft = genreList().map(g => ({...g, orig: g.name}));
   const cnt = {}; lives.forEach(l => { const k = rawGenre(l); cnt[k] = (cnt[k] || 0) + 1; });
@@ -438,8 +445,8 @@ function genreCardHtml(){
     if(g.orig === GENRE_FIXED) return ""; /* 「その他」は固定なので、ここには出さない */
     const n = g.orig ? (cnt[g.orig] || 0) : 0;
     const ck = (k, label) => `<label><input type="checkbox" data-gi="${i}" data-gk="${k}"${g[k] ? " checked" : ""}>${label}</label>`;
-    return `<div class="gxe">
-      <button type="button" class="gxh" data-gi="${i}" aria-expanded="${!!g.open}"><i style="background:var(${PAL[g.color].v})"></i><span class="gxt">${esc(g.name || "(名前を入力)")}</span><span class="gxc">${g.orig ? n + "件" : "新規"}</span><span class="gxa" aria-hidden="true">›</span></button>
+    return `<div class="gxe"><div class="gxtop">
+      <button type="button" class="gxh" data-gi="${i}" aria-expanded="${!!g.open}"><i style="background:var(${PAL[g.color].v})"></i><span class="gxt">${esc(g.name || "(名前を入力)")}</span><span class="gxc">${g.orig ? n + "件" : "新規"}</span><span class="gxa" aria-hidden="true">›</span></button><button type="button" class="gxg" data-gi="${i}" aria-label="ドラッグして並び替え">≡</button></div>
       <div class="gxb"${g.open ? "" : " hidden"}>
         <div class="gxr"><input class="gname" data-gi="${i}" value="${esc(g.name)}" maxlength="12" placeholder="ジャンル名" aria-label="ジャンル名"><button type="button" class="gdel" data-gi="${i}"${n ? " disabled" : ""}>削除</button></div>
         <div class="gxp" role="group" aria-label="色">${PAL.map((c, k) => k === OTHER_COLOR ? "" : `<button type="button" class="gxsw${g.color === k ? " on" : ""}" data-gi="${i}" data-gc="${k}" style="background:var(${c.v})" aria-label="${c.n}" aria-pressed="${g.color === k}"></button>`).join("")}</div>
@@ -452,8 +459,8 @@ function genreCardHtml(){
   return `<div class="card">
     <h2>ジャンル設定</h2>
     <div class="hint">ジャンルをタップすると、名前・色・自動入力しない項目・開場/開演の表示名を編集できます(最大${MAXGENRE}個。「${GENRE_FIXED}」は固定で、ここには出ません)。名前を変えると、登録済みのイベントにも反映されます。イベントがあるジャンルは削除できません。</div>
-    ${rows}
-    <button class="btn sec" id="gAdd" type="button" style="margin-top:12px"${editable >= MAXGENRE ? " disabled" : ""}>＋ ジャンルを追加(${editable}/${MAXGENRE})</button>
+    <div id="gList" data-mode="${gSort && editable >= 2 ? "sort" : ""}">${rows}</div>
+    <div class="mrow" style="margin-top:12px"><button class="btn sec${gSort && editable >= 2 ? " on" : ""}" id="gSortBtn" type="button"${editable >= 2 ? "" : " disabled"}>並び替え</button><button class="btn sec" id="gAdd" type="button"${editable >= MAXGENRE ? " disabled" : ""}>＋ ジャンルを追加(${editable}/${MAXGENRE})</button></div>
     <div class="mrow" style="margin-top:8px"><button class="btn sec" id="gReset" type="button">変更を戻す</button><button class="btn" id="gSave" type="button">保存</button></div>
     <div class="status" id="gSt"></div>
   </div>`;
@@ -463,12 +470,17 @@ function bindGenreCard(rerender){
   if(gMsg){ st.className = "status " + gMsg.cls; st.textContent = gMsg.text; }
   const err = m => { st.className = "status err"; st.textContent = m; };
   document.querySelectorAll("#app .gname").forEach(i => i.addEventListener("input", e => { gDraft[Number(i.dataset.gi)].name = e.target.value; const t = i.closest(".gxe").querySelector(".gxt"); if(t) t.textContent = e.target.value.trim() || "(名前を入力)"; }));
-  document.querySelectorAll("#app .gxh").forEach(h => h.onclick = () => { const g = gDraft[Number(h.dataset.gi)]; g.open = !g.open; h.setAttribute("aria-expanded", g.open); h.nextElementSibling.hidden = !g.open; });
+  document.querySelectorAll("#app .gxh").forEach(h => h.onclick = () => { const g = gDraft[Number(h.dataset.gi)]; g.open = !g.open; h.setAttribute("aria-expanded", g.open); h.closest(".gxe").querySelector(".gxb").hidden = !g.open; });
   document.querySelectorAll("#app [data-gk]").forEach(i => i.addEventListener("input", e => { gDraft[Number(i.dataset.gi)][i.dataset.gk] = i.type === "checkbox" ? i.checked : i.value; }));
   document.querySelectorAll("#app .gxsw").forEach(b => b.onclick = () => {
     const i = Number(b.dataset.gi); gDraft[i].color = Number(b.dataset.gc);
     b.parentElement.querySelectorAll(".gxsw").forEach(x => { const on = x === b; x.classList.toggle("on", on); x.setAttribute("aria-pressed", on); });
     const dot = b.closest(".gxe").querySelector(".gxh i"); if(dot) dot.style.background = `var(${PAL[Number(b.dataset.gc)].v})`;
+  });
+  $("#gSortBtn").onclick = () => { gSort = !gSort; rerender(); };
+  document.querySelectorAll("#app .gxg").forEach(g => {
+    g.onpointerdown = ev => { if(ev.pointerType === "touch") return; ev.preventDefault(); dragGenre(ev, g, false, rerender); };
+    g.addEventListener("touchstart", ev => { if(!ev.touches.length) return; ev.preventDefault(); dragGenre(ev.touches[0], g, true, rerender); }, {passive: false});
   });
   document.querySelectorAll("#app .gdel").forEach(b => b.onclick = () => { gDraft.splice(Number(b.dataset.gi), 1); gMsg = null; rerender(); });
   $("#gAdd").onclick = () => {
@@ -497,6 +509,42 @@ function bindGenreCard(rerender){
     gDraft = null; gMsg = {cls: "ok", text: `保存しました${targets.length ? `(${targets.length}件のイベントに反映しました)` : ""}。`};
     rerender();
   };
+}
+/* ≡ を押したまま上下に動かして、ジャンルを並べ替える(離したときにまとめて入れ替える) */
+function dragGenre(ev, grip, isTouch, rerender){
+  const box = $("#gList"), row = grip.closest(".gxe");
+  const rows = [...box.querySelectorAll(".gxe")], from = rows.indexOf(row);
+  let sc = box.parentElement;
+  while(sc && sc !== document.body && !(sc.scrollHeight > sc.clientHeight + 2 && /(auto|scroll)/.test(getComputedStyle(sc).overflowY))) sc = sc.parentElement;
+  const useWin = !sc || sc === document.body;
+  const getS = () => useWin ? (window.scrollY || document.documentElement.scrollTop || 0) : sc.scrollTop;
+  const setS = d => { if(useWin) window.scrollBy(0, d); else sc.scrollTop += d; };
+  const top = useWin ? 0 : sc.getBoundingClientRect().top, bot = useWin ? window.innerHeight : sc.getBoundingClientRect().bottom;
+  const s0 = getS(), y0 = ev.clientY;
+  const mids = rows.map(r => { const b = r.getBoundingClientRect(); return b.top + b.height / 2 + s0; });
+  const h = rows[from].getBoundingClientRect().height + 10;
+  let curY = y0, to = from;
+  row.classList.add("drag"); row.style.position = "relative"; row.style.zIndex = "5"; row.style.transition = "none";
+  rows.forEach(r => { if(r !== row) r.style.transition = "transform .12s"; });
+  if(!isTouch){ try { grip.setPointerCapture(ev.pointerId); } catch(e){} }
+  const update = () => {
+    const dy = curY - y0 + (getS() - s0);
+    row.style.transform = `translateY(${dy}px)`;
+    const c = mids[from] + dy;
+    to = 0; rows.forEach((r, i) => { if(i !== from && mids[i] < c) to++; });
+    rows.forEach((r, i) => { if(i === from) return; r.style.transform = (from < to && i > from && i <= to) ? `translateY(${-h}px)` : (from > to && i < from && i >= to) ? `translateY(${h}px)` : ""; });
+  };
+  const move = e => { if(isTouch){ e.preventDefault(); if(!e.touches.length) return; curY = e.touches[0].clientY; } else curY = e.clientY; update(); };
+  const tick = setInterval(() => { const d = curY < top + 50 ? -12 : curY > bot - 50 ? 12 : 0; if(d){ setS(d); update(); } }, 30);
+  const end = () => {
+    clearInterval(tick);
+    if(isTouch){ grip.removeEventListener("touchmove", move); grip.removeEventListener("touchend", end); grip.removeEventListener("touchcancel", end); }
+    else { grip.removeEventListener("pointermove", move); grip.removeEventListener("pointerup", end); grip.removeEventListener("pointercancel", end); }
+    const [m] = gDraft.splice(from, 1); gDraft.splice(to, 0, m); /* 「その他」は最後に固定で、並び替えの対象に出ていない */
+    gMsg = null; rerender();
+  };
+  if(isTouch){ grip.addEventListener("touchmove", move, {passive: false}); grip.addEventListener("touchend", end); grip.addEventListener("touchcancel", end); }
+  else { grip.addEventListener("pointermove", move); grip.addEventListener("pointerup", end); grip.addEventListener("pointercancel", end); }
 }
 /* ---------- 名寄せ(旧名 → 現在の名前) ---------- */
 const ALIAS_LS = "livelog_alias_v1";
@@ -1348,7 +1396,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.17.0</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.17.1</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
