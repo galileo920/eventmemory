@@ -293,7 +293,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.16.1</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.16.2</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -307,7 +307,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 <nav class="tabbar"><div class="tabbar-in">
   <button data-tab="list" class="on">一覧</button>
   <button data-tab="stats">集計</button>
-  <button data-tab="settings">データ</button>
+  <button data-tab="settings">設定</button>
 </div></nav>
 
 <script>
@@ -635,7 +635,7 @@ function resizeImage(file, max, quality){
 /* Gemini API を呼んでテキストを返す(画像は dataURL の配列) */
 async function geminiText(prompt, dataUrls, signal, tools){
   const {apiKey, model} = getSet();
-  if(!apiKey) throw Object.assign(new Error("データタブでAPIキーを入力してください"), {code: "no_key"});
+  if(!apiKey) throw Object.assign(new Error("設定タブでAPIキーを入力してください"), {code: "no_key"});
   const parts = [{text: prompt}].concat((dataUrls || []).map(u => ({inline_data: {mime_type: "image/jpeg", data: u.split(",")[1]}})));
   const mName = model || DEFAULT_MODEL;
   const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(mName)}:generateContent`, {
@@ -849,7 +849,7 @@ function screenTitle(){
   if(sub && subKind === "batch") return "参加イベント一括登録";
   if(sub && subKind === "bulk") return "一括編集";
   if(sub) return subKind === "detail" ? "参加イベント詳細" : subEdit ? "参加イベント編集" : "参加イベント登録";
-  return tab === "stats" ? "参加イベント集計" : tab === "settings" ? "データ管理" : "参加イベント一覧";
+  return tab === "stats" ? "参加イベント集計" : tab === "settings" ? "設定" : "参加イベント一覧";
 }
 new MutationObserver(() => {
   const a = document.getElementById("app");
@@ -1200,6 +1200,7 @@ function renderStats(){
 function renderSettings(){
   const s = getSet();
   $("#app").innerHTML = `
+    ${aliasCardHtml()}
     <div class="card">
       <h2>Gemini API</h2>
       <label>APIキー</label>
@@ -1222,13 +1223,12 @@ function renderSettings(){
       <button class="btn sec" id="csv">CSVファイルを書き出す</button>
       <div class="status" id="dst"></div>
     </div>
-    ${aliasCardHtml()}
     <div class="card">
       <h2>データ削除</h2>
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.16.1</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.16.2</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
@@ -1577,7 +1577,7 @@ function openForm(existing){
       <div id="artFetch">${getSet().apiKey ? `
         <button type="button" class="btn sec" id="artSearch">出演者を検索して候補を出す</button>
         <div class="status" id="stSearch"></div>
-        <div id="artRes"></div>` : `<div class="hint">出演者を検索・取得するには、データタブでGeminiのAPIキーを入力してください。</div>`}</div>
+        <div id="artRes"></div>` : `<div class="hint">出演者を検索・取得するには、設定タブでGeminiのAPIキーを入力してください。</div>`}</div>
       <div class="lh"><label for="artIn">出演者をまとめて追加</label></div>
       <div class="cw"><textarea id="artIn" style="min-height:72px" placeholder="名前を「、」「,」「/」や改行で区切って入力"></textarea><button type="button" class="cx" data-clr="artIn" aria-label="クリア">×</button></div>
       <button type="button" class="btn sec" id="artApply">入力欄に追加</button>
@@ -1649,7 +1649,7 @@ function openForm(existing){
     try {
       const r = await sortRowsAsync(readRows());
       artistRows(r.rows);
-      if(!hasKey && r.missing){ sst.className = "status err"; sst.textContent = `APIキーが未入力のため、読みが分からない${r.missing}件は、記号→数字→英字→日本語の順で最後にまとめました。データタブでキーを入力すると、五十音順に並べ替えられます。`; }
+      if(!hasKey && r.missing){ sst.className = "status err"; sst.textContent = `APIキーが未入力のため、読みが分からない${r.missing}件は、記号→数字→英字→日本語の順で最後にまとめました。設定タブでキーを入力すると、五十音順に並べ替えられます。`; }
       else if(r.ok && !r.missing){ sst.className = "status ok"; sst.textContent = "読み順に並べ替えました。"; }
       else { sst.className = "status err"; sst.textContent = `読みが分からない${r.missing}件は、記号→数字→英字→日本語の順で最後にまとめました。`; }
     } catch(err){ sst.className = "status err"; sst.textContent = "並べ替えに失敗しました。"; }
@@ -1665,7 +1665,7 @@ function openForm(existing){
   /* ===== 出演者の取得(Gemini) ===== */
   const fetchErr = e => {
     const c = e && e.code;
-    return c === "bad_key" || c === "no_key" ? "APIキーが正しくありません。データタブで確認してください。"
+    return c === "bad_key" || c === "no_key" ? "APIキーが正しくありません。設定タブで確認してください。"
       : c === "rate_limited" ? "利用回数の上限に達しました。少し待ってからお試しください。" + (e.detail ? `\n${e.detail}` : "")
       : c === "invalid_json" ? "結果を解析できませんでした。もう一度お試しください。"
       : c === "blocked" || c === "empty" || c === "too_long" ? `${e.message}。もう一度お試しください。`
@@ -1941,7 +1941,7 @@ function renderBatch(){
     <div class="bbar"><div class="bbar-in"><button type="button" class="btn sec" id="bCancel">キャンセル</button><button type="button" class="btn sec" id="bDone">完了</button></div></div>`;
   bRefresh();
   if(bNoteState) bSetNote(bNoteState.cls, bNoteState.text);
-  if(!getSet().apiKey) bSetNote("err", "画像を読み取るには、データタブでGeminiのAPIキーを入力してください。");
+  if(!getSet().apiKey) bSetNote("err", "画像を読み取るには、設定タブでGeminiのAPIキーを入力してください。");
   const addFiles = files => {
     let skipped = 0;
     [...files].forEach(file => {
@@ -2040,7 +2040,7 @@ async function bRunAll(only){
       it.status = "err"; fail++;
       const c = e && e.code;
       it.err = c === "invalid_json" ? "読み取り結果を解析できませんでした。もう一度試してください。" : c === "rate_limited" ? "利用回数の上限に達しました。" + (e.detail ? `(${e.detail})` : "") : c === "bad_key" ? "APIキーが正しくありません。" : (c === "blocked" || c === "empty" || c === "too_long") ? `${e.message}。` : "読み取りに失敗しました。";
-      if(c === "bad_key" || c === "no_key"){ stopped = "APIキーが正しくないため、読み取りを止めました。データタブで確認してください。"; break; }
+      if(c === "bad_key" || c === "no_key"){ stopped = "APIキーが正しくないため、読み取りを止めました。設定タブで確認してください。"; break; }
       if(c === "rate_limited"){ stopped = "利用回数の上限に達したため止めました。少し待ってから、続きを読み取ってください。"; break; }
     }
     bPersist(); bRefresh();
