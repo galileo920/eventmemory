@@ -2377,12 +2377,12 @@ input[data-dw]{-webkit-appearance:none;appearance:none;height:46px;display:block
 :root[data-theme="dark"] .dw-panel{--dw-bg:#2b2e38;--dw-line:rgba(235,235,245,.28)}
 @keyframes dwUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
 .dw-head{font-size:15px;font-weight:500;color:var(--sub);padding:2px 8px 6px;text-align:center}
-.dw-wheels{position:relative;display:grid;grid-template-columns:1.25fr 1fr 1fr;height:220px;margin:0 4px}
-.dw-wheels.two{grid-template-columns:1fr 1fr}
-.dw-hl{position:absolute;left:-24px;right:-24px;top:88px;height:44px;border-top:1px solid var(--dw-line);border-bottom:1px solid var(--dw-line);pointer-events:none;z-index:2}
-.dw-col{position:relative;z-index:1;height:220px;overflow-y:auto;overflow-x:hidden;touch-action:pan-y;scroll-snap-type:y mandatory;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:88px 0;text-align:center}
+.dw-wheels{position:relative;display:grid;grid-template-columns:1.25fr 1fr 1fr;height:160px;margin:0 4px;padding:0 20%}
+.dw-wheels.two{grid-template-columns:1fr 1fr;padding:0 28%}
+.dw-hl{position:absolute;left:-24px;right:-24px;top:64px;height:32px;border-top:1px solid var(--dw-line);border-bottom:1px solid var(--dw-line);pointer-events:none;z-index:2}
+.dw-col{position:relative;z-index:1;height:160px;overflow-y:auto;overflow-x:hidden;touch-action:pan-y;scroll-snap-type:y mandatory;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:64px 0;text-align:center}
 .dw-col::-webkit-scrollbar{display:none}
-.dw-i{height:44px;line-height:44px;scroll-snap-align:center;font-size:26px;color:var(--sub);opacity:0;will-change:transform,opacity;font-variant-numeric:tabular-nums;cursor:pointer;-webkit-user-select:none;user-select:none}
+.dw-i{height:32px;line-height:32px;scroll-snap-align:center;font-size:19px;color:var(--sub);opacity:0;will-change:transform,opacity;font-variant-numeric:tabular-nums;cursor:pointer;-webkit-user-select:none;user-select:none}
 .dw-i.on{color:var(--ink)}
 .dw-foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
 .dw-reset{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:14px 28px;font:inherit;font-size:16px;font-weight:500;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.12)}
@@ -2393,7 +2393,7 @@ input[data-dw]{-webkit-appearance:none;appearance:none;height:46px;display:block
 /* 日付欄を、年・月・日のホイールで選ぶ形にする。値は今までどおり "YYYY-MM-DD" の文字列で読み書きできる */
 (function(){
   const D = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value"), NG = D.get, NS = D.set;
-  const pad = n => String(n).padStart(2, "0"), H = 44, WD = ["日","月","火","水","木","金","土"];
+  const pad = n => String(n).padStart(2, "0"), H = 32, WD = ["日","月","火","水","木","金","土"];
   const dim = (y, m) => new Date(y, m, 0).getDate();
   const parse = s => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s || "")); if(!m) return null; const y = +m[1], mo = +m[2], d = +m[3]; return d >= 1 && mo >= 1 && mo <= 12 && d <= dim(y, mo) ? {y, m: mo, d} : null; };
   const fmt = s => { const p = parse(s); return p ? `${p.y}/${pad(p.m)}/${pad(p.d)}` : ""; };
@@ -2413,6 +2413,20 @@ input[data-dw]{-webkit-appearance:none;appearance:none;height:46px;display:block
   let sheet = null, tgt = null, cur = null, years = [], timer = 0, prevOverflow = "";
   const effD = () => Math.min(cur.d, dim(cur.y, cur.m));
   function items(n, label, first){ let h = ""; for(let i = 0; i < n; i++) h += `<div class="dw-i" data-i="${i}">${label(first + i)}</div>`; return h; }
+  /* 年以外の列は、同じ並びを何周分もつなげて、最後の次が最初に戻るようにする(止まったとき、真ん中の周に戻す) */
+  const reps = L => { const c = Math.ceil(400 / L); return c % 2 ? c : c + 1; };
+  function setLoop(col, L, first, label){
+    const C = reps(L); let h = "";
+    for(let k = 0; k < C * L; k++) h += `<div class="dw-i" data-i="${k}">${label(first + (k % L))}</div>`;
+    col.innerHTML = h; col._L = L; col._C = C; col._pt = null; col._on = null;
+  }
+  const loopIdx = col => Math.max(0, Math.min(col.children.length - 1, Math.round(col.scrollTop / H)));
+  const midIdx = (col, v) => Math.floor(col._C / 2) * col._L + v;
+  function loopTo(col, v){ col.scrollTop = midIdx(col, v) * H; col._pt = null; }
+  function fix(col){
+    const i = loopIdx(col), L = col._L;
+    if(i < L || i >= (col._C - 1) * L){ loopTo(col, i % L); mark(col, midIdx(col, i % L)); paint(col); }
+  }
   function head(){ const d = effD(), w = WD[new Date(cur.y, cur.m - 1, d).getDay()]; sheet.querySelector(".dw-head").textContent = `${cur.y}年${cur.m}月${d}日(${w})`; }
   function paint(col){
     const n = col.children.length, t = col.scrollTop / H, lo = Math.max(0, Math.floor(t) - 4), hi = Math.min(n - 1, Math.ceil(t) + 4);
@@ -2425,18 +2439,27 @@ input[data-dw]{-webkit-appearance:none;appearance:none;height:46px;display:block
     }
     col._pt = [lo, hi];
   }
-  function mark(col, idx){ col.querySelectorAll(".dw-i").forEach((e, i) => e.classList.toggle("on", i === idx)); }
+  function mark(col, idx){
+    const k = col._on; if(k === idx) return;
+    if(k != null && col.children[k]) col.children[k].classList.remove("on");
+    if(col.children[idx]) col.children[idx].classList.add("on");
+    col._on = idx;
+  }
   function cols(){ return {y: sheet.querySelector('[data-c="y"]'), m: sheet.querySelector('[data-c="m"]'), d: sheet.querySelector('[data-c="d"]')}; }
-  function buildDays(){ const c = cols().d, n = dim(cur.y, cur.m); if(c.children.length !== n) c.innerHTML = items(n, v => v + "日", 1); cur.d = effD(); c.scrollTop = (cur.d - 1) * H; c._pt = null; mark(c, cur.d - 1); paint(c); }
+  function buildDays(){
+    const c = cols().d, n = dim(cur.y, cur.m);
+    if(c._L === n) return;
+    cur.d = effD(); setLoop(c, n, 1, v => v + "日"); loopTo(c, cur.d - 1); mark(c, midIdx(c, cur.d - 1)); paint(c);
+  }
   function idxOf(col, n){ return Math.max(0, Math.min(n - 1, Math.round(col.scrollTop / H))); }
   function onScroll(which){
     const c = cols(), col = c[which]; paint(col);
-    if(which === "y"){ const i = idxOf(col, years.length); cur.y = years[i]; mark(col, i); }
-    else if(which === "m"){ const i = idxOf(col, 12); cur.m = i + 1; mark(col, i); }
-    else { const i = idxOf(col, col.children.length); cur.d = i + 1; mark(col, i); }
-    head();
-    clearTimeout(timer);
-    timer = setTimeout(() => { if(which !== "d") buildDays(); head(); }, 140);
+    let i;
+    if(which === "y"){ i = idxOf(col, years.length); cur.y = years[i]; }
+    else { i = loopIdx(col); if(which === "m") cur.m = i % 12 + 1; else cur.d = i % col._L + 1; }
+    mark(col, i); head();
+    clearTimeout(col._t);
+    col._t = setTimeout(() => { if(!sheet || !sheet.contains(col)) return; if(which !== "y") fix(col); if(which !== "d") buildDays(); head(); }, 140);
   }
   function close(){ if(!sheet) return; clearTimeout(timer); sheet.remove(); sheet = null; document.body.style.overflow = prevOverflow; document.removeEventListener("keydown", onKey, true); if(tgt) tgt.blur(); }
   function onKey(e){ if(e.key === "Escape"){ e.stopPropagation(); close(); } }
@@ -2446,22 +2469,23 @@ input[data-dw]{-webkit-appearance:none;appearance:none;height:46px;display:block
     if(before === iso) return;
     el.dispatchEvent(new Event("input", {bubbles: true})); el.dispatchEvent(new Event("change", {bubbles: true}));
   }
+  const OKSVG = `<svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`;
   function openTime(el){
     if(sheet) return; tgt = el;
-    const m = /^(\d{2}):(\d{2})$/.exec(el.value) || [0, "18", "00"];
+    const m = /^(\d{2}):(\d{2})$/.exec(el.value) || [0, /open$/.test(el.id) ? "17" : "18", "00"]; /* 未入力のとき、開場は17:00・開演は18:00から始める */
     cur = {h: +m[1], n: +m[2]};
     sheet = document.createElement("div"); sheet.className = "dw";
-    sheet.innerHTML = `<div class="dw-scrim"></div><div class="dw-panel" role="dialog" aria-modal="true" aria-label="時刻を選択"><div class="dw-head"></div><div class="dw-wheels two"><div class="dw-hl"></div><div class="dw-col" data-c="h"></div><div class="dw-col" data-c="n"></div></div><div class="dw-foot"><button type="button" class="dw-reset">リセット</button><button type="button" class="dw-ok" aria-label="決定"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></button></div></div>`;
+    sheet.innerHTML = `<div class="dw-scrim"></div><div class="dw-panel" role="dialog" aria-modal="true" aria-label="時刻を選択"><div class="dw-head"></div><div class="dw-wheels two"><div class="dw-hl"></div><div class="dw-col" data-c="h"></div><div class="dw-col" data-c="n"></div></div><div class="dw-foot"><button type="button" class="dw-reset">リセット</button><button type="button" class="dw-ok" aria-label="決定">${OKSVG}</button></div></div>`;
     document.body.appendChild(sheet);
     prevOverflow = document.body.style.overflow; document.body.style.overflow = "hidden";
     document.addEventListener("keydown", onKey, true);
     const c = {h: sheet.querySelector('[data-c="h"]'), n: sheet.querySelector('[data-c="n"]')}, hd = sheet.querySelector(".dw-head");
     const label = () => { hd.textContent = `${pad(cur.h)}:${pad(cur.n)}`; };
-    c.h.innerHTML = items(24, v => pad(v) + "時", 0); c.n.innerHTML = items(60, v => pad(v) + "分", 0);
-    c.h.scrollTop = cur.h * H; c.n.scrollTop = cur.n * H;
-    mark(c.h, cur.h); mark(c.n, cur.n); paint(c.h); paint(c.n); label();
-    [["h", 24], ["n", 60]].forEach(([k, len]) => {
-      c[k].addEventListener("scroll", () => { paint(c[k]); const i = idxOf(c[k], len); cur[k] = i; mark(c[k], i); label(); }, {passive: true});
+    setLoop(c.h, 24, 0, v => pad(v) + "時"); setLoop(c.n, 60, 0, v => pad(v) + "分");
+    loopTo(c.h, cur.h); loopTo(c.n, cur.n);
+    mark(c.h, midIdx(c.h, cur.h)); mark(c.n, midIdx(c.n, cur.n)); paint(c.h); paint(c.n); label();
+    ["h", "n"].forEach(k => {
+      c[k].addEventListener("scroll", () => { paint(c[k]); const i = loopIdx(c[k]); cur[k] = i % c[k]._L; mark(c[k], i); label(); clearTimeout(c[k]._t); c[k]._t = setTimeout(() => { if(sheet && sheet.contains(c[k])) fix(c[k]); }, 140); }, {passive: true});
       c[k].addEventListener("click", e => { const it = e.target.closest(".dw-i"); if(it) c[k].scrollTo({top: Number(it.dataset.i) * H, behavior: "smooth"}); });
     });
     sheet.querySelector(".dw-scrim").onclick = close;
@@ -2474,12 +2498,13 @@ input[data-dw]{-webkit-appearance:none;appearance:none;height:46px;display:block
     cur = {...p}; const lo = Math.min(1980, p.y), hi = Math.max(now.getFullYear() + 5, p.y);
     years = []; for(let y = lo; y <= hi; y++) years.push(y);
     sheet = document.createElement("div"); sheet.className = "dw";
-    sheet.innerHTML = `<div class="dw-scrim"></div><div class="dw-panel" role="dialog" aria-modal="true" aria-label="日付を選択"><div class="dw-head"></div><div class="dw-wheels"><div class="dw-hl"></div><div class="dw-col" data-c="y">${items(years.length, v => v + "年", lo)}</div><div class="dw-col" data-c="m">${items(12, v => v + "月", 1)}</div><div class="dw-col" data-c="d"></div></div><div class="dw-foot"><button type="button" class="dw-reset">リセット</button><button type="button" class="dw-ok" aria-label="決定"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></button></div></div>`;
+    sheet.innerHTML = `<div class="dw-scrim"></div><div class="dw-panel" role="dialog" aria-modal="true" aria-label="日付を選択"><div class="dw-head"></div><div class="dw-wheels"><div class="dw-hl"></div><div class="dw-col" data-c="y">${items(years.length, v => v + "年", lo)}</div><div class="dw-col" data-c="m"></div><div class="dw-col" data-c="d"></div></div><div class="dw-foot"><button type="button" class="dw-reset">リセット</button><button type="button" class="dw-ok" aria-label="決定">${OKSVG}</button></div></div>`;
     document.body.appendChild(sheet);
     prevOverflow = document.body.style.overflow; document.body.style.overflow = "hidden";
     document.addEventListener("keydown", onKey, true);
     const c = cols(); c.y.scrollTop = years.indexOf(cur.y) * H; mark(c.y, years.indexOf(cur.y)); paint(c.y);
-    c.m.scrollTop = (cur.m - 1) * H; mark(c.m, cur.m - 1); paint(c.m); buildDays(); head();
+    setLoop(c.m, 12, 1, v => v + "月"); loopTo(c.m, cur.m - 1); mark(c.m, midIdx(c.m, cur.m - 1)); paint(c.m);
+    buildDays(); head();
     ["y", "m", "d"].forEach(k => {
       c[k].addEventListener("scroll", () => onScroll(k), {passive: true});
       c[k].addEventListener("click", e => { const it = e.target.closest(".dw-i"); if(it) c[k].scrollTo({top: Number(it.dataset.i) * H, behavior: "smooth"}); });
