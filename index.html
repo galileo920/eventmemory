@@ -939,7 +939,7 @@ const filtersActive = () => !!query.trim() || !!fGenre || !!exact || fYear !== f
 function clearFilters(){ query = ""; exact = null; fGenre = ""; fYear = filterDefYear(); fFrom = ""; fTo = ""; yAll = false; yPrev = ""; render(); }
 function filterBar(){
   const ys = [...new Set(lives.map(yearOf).filter(Boolean).concat(fYear && fYear !== RANGE ? [fYear] : []))].sort().reverse();
-  return `<div class="filters"><div class="fcol"><label for="fg">ジャンル</label><select id="fg" aria-label="ジャンルで絞り込み"><option value="">すべて</option>${GENRES.map(g => `<option value="${g}"${fGenre === g ? " selected" : ""}>${g}</option>`).join("")}</select></div><div class="fcol"><label for="fy">年</label><select id="fy" aria-label="年で絞り込み">${(!YEAR_ONLY || tab === "stats" || narrowing()) ? `<option value="">すべて</option><option value="${RANGE}"${fYear === RANGE ? " selected" : ""}>期間指定</option>` : ""}${ys.map(y => `<option value="${y}"${fYear === y ? " selected" : ""}>${y}年</option>`).join("")}</select></div></div>${fYear === RANGE ? `<div class="filters" id="frange"><div class="fcol"><label for="fFrom">開始日</label><input type="date" id="fFrom" aria-label="開始日" value="${esc(fFrom)}"></div><div class="fcol"><label for="fTo">終了日</label><input type="date" id="fTo" aria-label="終了日" value="${esc(fTo)}"></div></div>` : ""}`;
+  return `<div class="filters"><div class="fcol"><label for="fg">ジャンル</label><select id="fg" aria-label="ジャンルで絞り込み"><option value="">すべて</option>${GENRES.map(g => `<option value="${g}"${fGenre === g ? " selected" : ""}>${g}</option>`).join("")}</select></div><div class="fcol"><label for="fy">年</label><select id="fy" aria-label="年で絞り込み">${(!YEAR_ONLY || tab === "stats" || narrowing()) ? `<option value="">すべて</option><option value="${RANGE}"${fYear === RANGE ? " selected" : ""}>期間指定</option>` : ""}${ys.map(y => `<option value="${y}"${fYear === y ? " selected" : ""}>${y}年</option>`).join("")}</select></div></div>${fYear === RANGE ? `<div class="filters" id="frange"><div class="fcol"><label for="fFrom">開始日</label><input type="text" data-dw readonly inputmode="none" id="fFrom" aria-label="開始日" value="${esc(fFrom)}"></div><div class="fcol"><label for="fTo">終了日</label><input type="text" data-dw readonly inputmode="none" id="fTo" aria-label="終了日" value="${esc(fTo)}"></div></div>` : ""}`;
 }
 function bindFilter(){
   $("#fg").onchange = e => { fGenre = e.target.value; render(); };
@@ -1863,9 +1863,9 @@ function openForm(existing){
       <div class="lh"><label>会場(都道府県)</label></div><div class="cw"><select id="f_pref"><option value="">未選択</option>${PREFS.map(x => `<option value="${x}"${l.pref === x ? " selected" : ""}>${x}</option>`).join("")}</select></div>
       <div class="status" id="stPref"></div>
       <div class="row3">
-        <div><div class="lh"><label>日付</label></div><input id="f_date" type="date" value="${v("date")}"></div>
-        <div><div class="lh"><label for="f_open">開場</label></div><input id="f_open" type="time" value="${v("open")}"></div>
-        <div><div class="lh"><label for="f_start">開演</label></div><input id="f_start" type="time" value="${v("start")}"></div>
+        <div><div class="lh"><label>日付</label></div><input id="f_date" type="text" data-dw readonly inputmode="none" value="${v("date")}"></div>
+        <div><div class="lh"><label for="f_open">開場</label></div><input id="f_open" type="text" data-dw="time" readonly inputmode="none" value="${v("open")}"></div>
+        <div><div class="lh"><label for="f_start">開演</label></div><input id="f_start" type="text" data-dw="time" readonly inputmode="none" value="${v("start")}"></div>
       </div>
       <div class="lh"><label>席種・券種</label></div><div class="cw"><input id="f_seatType" placeholder=" " value="${v("seatType")}"><button type="button" class="cx" data-clr="f_seatType" aria-label="クリア">×</button></div>
       <div class="lh"><label>座席・整理番号</label></div><div class="cw"><input id="f_seat" placeholder=" " value="${v("seat")}"><button type="button" class="cx" data-clr="f_seat" aria-label="クリア">×</button></div>
@@ -2155,9 +2155,9 @@ function bEditHtml(it){
     ${inp("venue", "会場")}
     <label for="b${it.id}-pref">会場(都道府県)</label><div class="cw"><select id="b${it.id}-pref" data-bid="${it.id}" data-k="pref"><option value="">未選択</option>${PREFS.map(p => `<option${f.pref === p ? " selected" : ""}>${p}</option>`).join("")}</select></div>
     <div class="bgrid">
-      <div><div class="lh"><label for="b${it.id}-date">日付</label></div><input id="b${it.id}-date" type="date" data-bid="${it.id}" data-k="date" value="${esc(f.date)}"></div>
-      <div><div class="lh"><label for="b${it.id}-open">${esc(gCfg(f.genre).openLabel || "開場")}</label></div><input id="b${it.id}-open" type="time" data-bid="${it.id}" data-k="open" value="${esc(f.open)}"></div>
-      <div><div class="lh"><label for="b${it.id}-start">${esc(gCfg(f.genre).startLabel || "開演")}</label></div><input id="b${it.id}-start" type="time" data-bid="${it.id}" data-k="start" value="${esc(f.start)}"></div>
+      <div><div class="lh"><label for="b${it.id}-date">日付</label></div><input id="b${it.id}-date" type="text" data-dw readonly inputmode="none" data-bid="${it.id}" data-k="date" value="${esc(f.date)}"></div>
+      <div><div class="lh"><label for="b${it.id}-open">${esc(gCfg(f.genre).openLabel || "開場")}</label></div><input id="b${it.id}-open" type="text" data-dw="time" readonly inputmode="none" data-bid="${it.id}" data-k="open" value="${esc(f.open)}"></div>
+      <div><div class="lh"><label for="b${it.id}-start">${esc(gCfg(f.genre).startLabel || "開演")}</label></div><input id="b${it.id}-start" type="text" data-dw="time" readonly inputmode="none" data-bid="${it.id}" data-k="start" value="${esc(f.start)}"></div>
     </div>
     ${inp("seatType", "席種・券種")}
     ${inp("seat", "座席・整理番号")}
@@ -2362,6 +2362,134 @@ async function bRegister(){
     }
   } catch(e){}
   setTab("list");
+})();
+</script>
+<style>
+/* ---------- 日付ホイール(年・月・日) ---------- */
+input[data-dw]{-webkit-appearance:none;appearance:none;height:46px;display:block;max-width:100%;cursor:pointer;caret-color:transparent;text-overflow:ellipsis}
+.filters input[data-dw]{min-width:0;margin-top:0;width:100%;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);text-align:left}
+.row3 input[data-dw]{padding-left:4px;padding-right:4px;text-align:center;font-size:15px}
+.bgrid input[data-dw]{padding:9px 4px;text-align:center}
+.dw{position:fixed;inset:0;z-index:30}
+.dw-scrim{position:absolute;inset:0;background:rgba(15,17,24,.45)}
+.dw-panel{--dw-bg:#d1d4db;--dw-line:rgba(60,60,67,.32);position:absolute;left:max(8px,env(safe-area-inset-left,0px));right:max(8px,env(safe-area-inset-right,0px));bottom:calc(8px + env(safe-area-inset-bottom,0px));max-width:544px;margin:0 auto;background:var(--dw-bg);color:var(--ink);border-radius:28px;box-shadow:0 10px 40px rgba(0,0,0,.35);padding:18px 16px 16px;animation:dwUp .2s ease-out;overflow:hidden}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .dw-panel{--dw-bg:#2b2e38;--dw-line:rgba(235,235,245,.28)}}
+:root[data-theme="dark"] .dw-panel{--dw-bg:#2b2e38;--dw-line:rgba(235,235,245,.28)}
+@keyframes dwUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.dw-head{font-size:15px;font-weight:500;color:var(--sub);padding:2px 8px 6px;text-align:center}
+.dw-wheels{position:relative;display:grid;grid-template-columns:1.25fr 1fr 1fr;height:220px;margin:0 4px}
+.dw-wheels.two{grid-template-columns:1fr 1fr}
+.dw-hl{position:absolute;left:-24px;right:-24px;top:88px;height:44px;border-top:1px solid var(--dw-line);border-bottom:1px solid var(--dw-line);pointer-events:none;z-index:2}
+.dw-col{position:relative;z-index:1;height:220px;overflow-y:auto;overflow-x:hidden;touch-action:pan-y;scroll-snap-type:y mandatory;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:88px 0;text-align:center}
+.dw-col::-webkit-scrollbar{display:none}
+.dw-i{height:44px;line-height:44px;scroll-snap-align:center;font-size:26px;color:var(--sub);opacity:0;will-change:transform,opacity;font-variant-numeric:tabular-nums;cursor:pointer;-webkit-user-select:none;user-select:none}
+.dw-i.on{color:var(--ink)}
+.dw-foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.dw-reset{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:14px 28px;font:inherit;font-size:16px;font-weight:500;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+.dw-ok{width:56px;height:56px;border-radius:50%;border:0;padding:0;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink);cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.28)}
+</style>
+<script>
+"use strict";
+/* 日付欄を、年・月・日のホイールで選ぶ形にする。値は今までどおり "YYYY-MM-DD" の文字列で読み書きできる */
+(function(){
+  const D = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value"), NG = D.get, NS = D.set;
+  const pad = n => String(n).padStart(2, "0"), H = 44, WD = ["日","月","火","水","木","金","土"];
+  const dim = (y, m) => new Date(y, m, 0).getDate();
+  const parse = s => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s || "")); if(!m) return null; const y = +m[1], mo = +m[2], d = +m[3]; return d >= 1 && mo >= 1 && mo <= 12 && d <= dim(y, mo) ? {y, m: mo, d} : null; };
+  const fmt = s => { const p = parse(s); return p ? `${p.y}/${pad(p.m)}/${pad(p.d)}` : ""; };
+  const normT = v => { const m = /^(\d{1,2}):(\d{2})(?::\d{2})?$/.exec(String(v || "")); if(!m) return ""; const h = +m[1], mi = +m[2]; return h < 24 && mi < 60 ? pad(h) + ":" + pad(mi) : ""; };
+  const normD = v => parse(v) ? String(v) : "";
+  function patch(el){
+    if(el._dw) return; el._dw = 1;
+    const norm = el.dataset.dw === "time" ? normT : normD, show = el.dataset.dw === "time" ? (v => v) : fmt;
+    let iso = norm(NG.call(el));
+    Object.defineProperty(el, "value", {configurable: true, get(){ return iso; }, set(v){ iso = norm(v); NS.call(el, show(iso)); }});
+    NS.call(el, show(iso)); if(!el.placeholder) el.placeholder = "未選択";
+  }
+  const scan = root => { if(root.nodeType !== 1) return; if(root.matches("input[data-dw]")) patch(root); root.querySelectorAll("input[data-dw]").forEach(patch); };
+  scan(document.body);
+  new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(scan))).observe(document.body, {childList: true, subtree: true});
+
+  let sheet = null, tgt = null, cur = null, years = [], timer = 0, prevOverflow = "";
+  const effD = () => Math.min(cur.d, dim(cur.y, cur.m));
+  function items(n, label, first){ let h = ""; for(let i = 0; i < n; i++) h += `<div class="dw-i" data-i="${i}">${label(first + i)}</div>`; return h; }
+  function head(){ const d = effD(), w = WD[new Date(cur.y, cur.m - 1, d).getDay()]; sheet.querySelector(".dw-head").textContent = `${cur.y}年${cur.m}月${d}日(${w})`; }
+  function paint(col){
+    const n = col.children.length, t = col.scrollTop / H, lo = Math.max(0, Math.floor(t) - 4), hi = Math.min(n - 1, Math.ceil(t) + 4);
+    const last = col._pt;
+    if(last) for(let i = last[0]; i <= last[1]; i++) if((i < lo || i > hi) && col.children[i]) col.children[i].style.opacity = 0;
+    for(let i = lo; i <= hi; i++){
+      const d = i - t, a = Math.abs(d), el = col.children[i];
+      el.style.opacity = a >= 3.4 ? 0 : (a < 1 ? 1 - a * .45 : Math.max(0, .55 - (a - 1) * .22));
+      el.style.transform = `perspective(420px) rotateX(${(-d * 20).toFixed(1)}deg) scale(${(1.2 - Math.min(a, 1) * .2).toFixed(3)})`;
+    }
+    col._pt = [lo, hi];
+  }
+  function mark(col, idx){ col.querySelectorAll(".dw-i").forEach((e, i) => e.classList.toggle("on", i === idx)); }
+  function cols(){ return {y: sheet.querySelector('[data-c="y"]'), m: sheet.querySelector('[data-c="m"]'), d: sheet.querySelector('[data-c="d"]')}; }
+  function buildDays(){ const c = cols().d, n = dim(cur.y, cur.m); if(c.children.length !== n) c.innerHTML = items(n, v => v + "日", 1); cur.d = effD(); c.scrollTop = (cur.d - 1) * H; c._pt = null; mark(c, cur.d - 1); paint(c); }
+  function idxOf(col, n){ return Math.max(0, Math.min(n - 1, Math.round(col.scrollTop / H))); }
+  function onScroll(which){
+    const c = cols(), col = c[which]; paint(col);
+    if(which === "y"){ const i = idxOf(col, years.length); cur.y = years[i]; mark(col, i); }
+    else if(which === "m"){ const i = idxOf(col, 12); cur.m = i + 1; mark(col, i); }
+    else { const i = idxOf(col, col.children.length); cur.d = i + 1; mark(col, i); }
+    head();
+    clearTimeout(timer);
+    timer = setTimeout(() => { if(which !== "d") buildDays(); head(); }, 140);
+  }
+  function close(){ if(!sheet) return; clearTimeout(timer); sheet.remove(); sheet = null; document.body.style.overflow = prevOverflow; document.removeEventListener("keydown", onKey, true); if(tgt) tgt.blur(); }
+  function onKey(e){ if(e.key === "Escape"){ e.stopPropagation(); close(); } }
+  function commit(iso){
+    const el = tgt; close(); if(!el) return;
+    const before = el.value; el.value = iso;
+    if(before === iso) return;
+    el.dispatchEvent(new Event("input", {bubbles: true})); el.dispatchEvent(new Event("change", {bubbles: true}));
+  }
+  function openTime(el){
+    if(sheet) return; tgt = el;
+    const m = /^(\d{2}):(\d{2})$/.exec(el.value) || [0, "18", "00"];
+    cur = {h: +m[1], n: +m[2]};
+    sheet = document.createElement("div"); sheet.className = "dw";
+    sheet.innerHTML = `<div class="dw-scrim"></div><div class="dw-panel" role="dialog" aria-modal="true" aria-label="時刻を選択"><div class="dw-head"></div><div class="dw-wheels two"><div class="dw-hl"></div><div class="dw-col" data-c="h"></div><div class="dw-col" data-c="n"></div></div><div class="dw-foot"><button type="button" class="dw-reset">リセット</button><button type="button" class="dw-ok" aria-label="決定"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></button></div></div>`;
+    document.body.appendChild(sheet);
+    prevOverflow = document.body.style.overflow; document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", onKey, true);
+    const c = {h: sheet.querySelector('[data-c="h"]'), n: sheet.querySelector('[data-c="n"]')}, hd = sheet.querySelector(".dw-head");
+    const label = () => { hd.textContent = `${pad(cur.h)}:${pad(cur.n)}`; };
+    c.h.innerHTML = items(24, v => pad(v) + "時", 0); c.n.innerHTML = items(60, v => pad(v) + "分", 0);
+    c.h.scrollTop = cur.h * H; c.n.scrollTop = cur.n * H;
+    mark(c.h, cur.h); mark(c.n, cur.n); paint(c.h); paint(c.n); label();
+    [["h", 24], ["n", 60]].forEach(([k, len]) => {
+      c[k].addEventListener("scroll", () => { paint(c[k]); const i = idxOf(c[k], len); cur[k] = i; mark(c[k], i); label(); }, {passive: true});
+      c[k].addEventListener("click", e => { const it = e.target.closest(".dw-i"); if(it) c[k].scrollTo({top: Number(it.dataset.i) * H, behavior: "smooth"}); });
+    });
+    sheet.querySelector(".dw-scrim").onclick = close;
+    sheet.querySelector(".dw-reset").onclick = () => commit("");
+    sheet.querySelector(".dw-ok").onclick = () => commit(`${pad(cur.h)}:${pad(cur.n)}`);
+  }
+  function open(el){
+    if(sheet) return; tgt = el;
+    const now = new Date(), p = parse(el.value) || {y: now.getFullYear(), m: now.getMonth() + 1, d: now.getDate()};
+    cur = {...p}; const lo = Math.min(1980, p.y), hi = Math.max(now.getFullYear() + 5, p.y);
+    years = []; for(let y = lo; y <= hi; y++) years.push(y);
+    sheet = document.createElement("div"); sheet.className = "dw";
+    sheet.innerHTML = `<div class="dw-scrim"></div><div class="dw-panel" role="dialog" aria-modal="true" aria-label="日付を選択"><div class="dw-head"></div><div class="dw-wheels"><div class="dw-hl"></div><div class="dw-col" data-c="y">${items(years.length, v => v + "年", lo)}</div><div class="dw-col" data-c="m">${items(12, v => v + "月", 1)}</div><div class="dw-col" data-c="d"></div></div><div class="dw-foot"><button type="button" class="dw-reset">リセット</button><button type="button" class="dw-ok" aria-label="決定"><svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></button></div></div>`;
+    document.body.appendChild(sheet);
+    prevOverflow = document.body.style.overflow; document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", onKey, true);
+    const c = cols(); c.y.scrollTop = years.indexOf(cur.y) * H; mark(c.y, years.indexOf(cur.y)); paint(c.y);
+    c.m.scrollTop = (cur.m - 1) * H; mark(c.m, cur.m - 1); paint(c.m); buildDays(); head();
+    ["y", "m", "d"].forEach(k => {
+      c[k].addEventListener("scroll", () => onScroll(k), {passive: true});
+      c[k].addEventListener("click", e => { const it = e.target.closest(".dw-i"); if(it) c[k].scrollTo({top: Number(it.dataset.i) * H, behavior: "smooth"}); });
+    });
+    sheet.querySelector(".dw-scrim").onclick = close;
+    sheet.querySelector(".dw-reset").onclick = () => commit("");
+    sheet.querySelector(".dw-ok").onclick = () => commit(`${cur.y}-${pad(cur.m)}-${pad(effD())}`);
+  }
+  document.addEventListener("click", e => { const el = e.target.closest && e.target.closest("input[data-dw]"); if(!el) return; e.preventDefault(); patch(el); if(el.dataset.dw === "time") openTime(el); else open(el); });
+  document.addEventListener("focusin", e => { const el = e.target; if(el && el.matches && el.matches("input[data-dw]")) el.blur(); });
 })();
 </script>
 </body>
