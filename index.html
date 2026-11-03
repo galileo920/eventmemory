@@ -61,6 +61,7 @@ main{max-width:560px;margin:0 auto;padding-block:14px 150px;padding-left:var(--g
 .filters{display:flex;gap:8px;margin-bottom:10px}
 .fcol{flex:1;min-width:0}
 .fcol label{margin:0 0 4px}
+.filters input[type=date]{display:block;min-width:0;margin-top:0;width:100%;height:46px;padding:0 12px;font:inherit;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);-webkit-appearance:none;appearance:none;text-align:left}
 .filters select{display:block;min-width:0;margin-top:0;width:100%;height:46px;padding:0 12px}
 input,textarea{width:100%;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);margin-top:4px}
 input[type=date],input[type=time]{-webkit-appearance:none;appearance:none;height:46px;display:block;max-width:100%}
@@ -323,7 +324,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.18.2</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.18.3</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -905,9 +906,12 @@ let lives = [], loaded = false; /* 起動時に保存データを読み込み終
 let query = "", exact = null;
 let sortAsc = false;
 try { sortAsc = localStorage.getItem("livelog_sort") === "asc"; } catch(e){}
-let fGenre = "", fYear = "", statTab = "artist", statMetric = "n", statDir = "desc";
+let fGenre = "", fYear = "", fFrom = "", fTo = "", statTab = "artist", statMetric = "n", statDir = "desc";
 const yearOf = l => (l.date || "").slice(0, 4);
-const filtered = () => lives.filter(l => (!fGenre || genreOf(l) === fGenre) && (!fYear || yearOf(l) === fYear));
+/* 年の欄で「期間指定」(RANGE)を選ぶと、開始日〜終了日で絞り込む(どちらか片方だけでもよい) */
+const RANGE = "range";
+const inYear = l => !fYear || (fYear === RANGE ? (!fFrom && !fTo) || (!!l.date && (!fFrom || l.date >= fFrom) && (!fTo || l.date <= fTo)) : yearOf(l) === fYear);
+const filtered = () => lives.filter(l => (!fGenre || genreOf(l) === fGenre) && inYear(l));
 /* 一覧は年ごとに表示する(初期表示は今年。検索や絞り込みのときだけ「すべて」にできる) */
 const YEAR_ONLY = false; /* true にすると、一覧は年ごとの表示(初期表示は今年)になる */
 let yAll = false, yPrev = "";
@@ -930,14 +934,15 @@ function onQuery(v){
 /* 検索・ジャンル・年を、まとめて初期状態に戻す */
 const filterDefYear = () => YEAR_ONLY ? defYear() : "";
 const filtersActive = () => !!query.trim() || !!fGenre || !!exact || fYear !== filterDefYear();
-function clearFilters(){ query = ""; exact = null; fGenre = ""; fYear = filterDefYear(); yAll = false; yPrev = ""; render(); }
+function clearFilters(){ query = ""; exact = null; fGenre = ""; fYear = filterDefYear(); fFrom = ""; fTo = ""; yAll = false; yPrev = ""; render(); }
 function filterBar(){
-  const ys = [...new Set(lives.map(yearOf).filter(Boolean).concat(fYear ? [fYear] : []))].sort().reverse();
-  return `<div class="filters"><div class="fcol"><label for="fg">ジャンル</label><select id="fg" aria-label="ジャンルで絞り込み"><option value="">すべて</option>${GENRES.map(g => `<option value="${g}"${fGenre === g ? " selected" : ""}>${g}</option>`).join("")}</select></div><div class="fcol"><label for="fy">年</label><select id="fy" aria-label="年で絞り込み">${(!YEAR_ONLY || tab === "stats" || narrowing()) ? `<option value="">すべて</option>` : ""}${ys.map(y => `<option value="${y}"${fYear === y ? " selected" : ""}>${y}年</option>`).join("")}</select></div></div>`;
+  const ys = [...new Set(lives.map(yearOf).filter(Boolean).concat(fYear && fYear !== RANGE ? [fYear] : []))].sort().reverse();
+  return `<div class="filters"><div class="fcol"><label for="fg">ジャンル</label><select id="fg" aria-label="ジャンルで絞り込み"><option value="">すべて</option>${GENRES.map(g => `<option value="${g}"${fGenre === g ? " selected" : ""}>${g}</option>`).join("")}</select></div><div class="fcol"><label for="fy">年</label><select id="fy" aria-label="年で絞り込み">${(!YEAR_ONLY || tab === "stats" || narrowing()) ? `<option value="">すべて</option><option value="${RANGE}"${fYear === RANGE ? " selected" : ""}>期間指定</option>` : ""}${ys.map(y => `<option value="${y}"${fYear === y ? " selected" : ""}>${y}年</option>`).join("")}</select></div></div>${fYear === RANGE ? `<div class="filters" id="frange"><div class="fcol"><label for="fFrom">開始日</label><input type="date" id="fFrom" aria-label="開始日" value="${esc(fFrom)}"></div><div class="fcol"><label for="fTo">終了日</label><input type="date" id="fTo" aria-label="終了日" value="${esc(fTo)}"></div></div>` : ""}`;
 }
 function bindFilter(){
   $("#fg").onchange = e => { fGenre = e.target.value; render(); };
   $("#fy").onchange = e => { fYear = e.target.value; yAll = !fYear && tab === "list"; render(); };
+  { const a = $("#fFrom"), b = $("#fTo"); if(a) a.onchange = e => { fFrom = e.target.value; if(fTo && fFrom > fTo) fTo = fFrom; render(); }; if(b) b.onchange = e => { fTo = e.target.value; if(fFrom && fTo < fFrom) fFrom = fTo; render(); }; }
 }
 
 
@@ -1383,7 +1388,7 @@ function fillList(){
   const emptyHtml = `<div class="empty">${!loaded ? "読み込み中…" : lives.length ? "該当するイベントがありません" : "まだイベントがありません。<br>右下の＋から、最初のイベントを追加しましょう"}</div>`;
   /* 一覧のカードは、最初に一部だけ作り、スクロールに合わせて続きを足す(1000件でも軽く開ける) */
   const lvNow = listView(), base = lvNow === "grid" ? 90 : lvNow === "thumb" ? 36 : 60;
-  const sig = [tab, query, fGenre, fYear, exact ? exact.kind + exact.value : "", lvNow, sortAsc, rows.length].join("|");
+  const sig = [tab, query, fGenre, fYear, fFrom, fTo, exact ? exact.kind + exact.value : "", lvNow, sortAsc, rows.length].join("|");
   if(sig !== listSig){ listSig = sig; listShown = base; }
   if(!("IntersectionObserver" in window)) listShown = items.length;
   const MORE = '<div id="listMore" style="height:1px;grid-column:1/-1"></div>';
@@ -1422,7 +1427,7 @@ function renderStats(){
   const artists = {}, venues = {}, prefs = {}, years = {};
   const gParts = !fGenre && total ? GENRES.map(g => { const ls = fl.filter(l => genreOf(l) === g); return {g, n: ls.length, s: ls.reduce((s, l) => s + (Number(l.price) || 0), 0)}; }).filter(p => p.n) : null;
   const genres = {};
-  lives.filter(l => !fYear || yearOf(l) === fYear).forEach(l => { const g = genreOf(l); const o = genres[g] || (genres[g] = {n: 0, spend: 0}); o.n++; o.spend += Number(l.price) || 0; });
+  lives.filter(inYear).forEach(l => { const g = genreOf(l); const o = genres[g] || (genres[g] = {n: 0, spend: 0}); o.n++; o.spend += Number(l.price) || 0; });
   lives.filter(l => !fGenre || genreOf(l) === fGenre).forEach(l => { const y = yearOf(l); if(!y) return; const o = years[y] || (years[y] = {n: 0, spend: 0}); o.n++; o.spend += Number(l.price) || 0; });
   fl.forEach(l => {
     const pr = Number(l.price) || 0, add = (o, k) => { const e = o[k] || (o[k] = {n: 0, s: 0}); e.n++; e.s += pr; };
@@ -1486,7 +1491,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.18.2</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.18.3</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
