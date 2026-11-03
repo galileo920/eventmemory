@@ -323,7 +323,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.18.0</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.18.1</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1313,6 +1313,14 @@ function groupItems(rows0){
       if(n >= 12 && n >= Math.min(x.length, y.length) * .6) join(arr[i], arr[k]);
     }
   }
+  { /* 4) 片方の公演名が、もう片方の頭にそのまま含まれるもの(「TOUR」と「TOUR FINAL」など)。180日以内なら会場が違ってもまとめる */
+    const arr = rows.filter(l => keyOf.get(l.id) && dayNum(l.date) != null).sort(byDate);
+    for(let i = 0; i < arr.length; i++) for(let k = i + 1; k < arr.length; k++){
+      if(dayNum(arr[k].date) - dayNum(arr[i].date) > 180) break;
+      const x = keyOf.get(arr[i].id), y = keyOf.get(arr[k].id), sh = x.length <= y.length ? x : y, lo = x.length <= y.length ? y : x;
+      if(sh.length >= 8 && lo.startsWith(sh)) join(arr[i], arr[k]);
+    }
+  }
   const gs = new Map(); rows.forEach(l => { const r = find(l.id); (gs.get(r) || gs.set(r, []).get(r)).push(l); });
   const info = new Map(); /* ルート → {id, mem, title, anchor} */
   gs.forEach((mem, r) => {
@@ -1478,7 +1486,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.18.0</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.18.1</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
