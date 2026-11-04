@@ -326,7 +326,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.7</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.9</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1504,7 +1504,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.7</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.9</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
@@ -1743,9 +1743,9 @@ function regCands(kind, typed, skipNames){
   const m = new Map();
   lives.forEach(l => {
     const names = kind === "venue" ? (l.venue ? [l.venue] : []) : artistsOf(l);
-    names.forEach(n0 => { const n = canon(kind, n0); const o = m.get(n) || {name: n, n: 0, pref: ""}; o.n++; if(kind === "venue" && l.pref) o.pref = l.pref; m.set(n, o); });
+    names.forEach(n0 => { const n = String(n0).trim(); if(!n) return; /* 候補は改名後ではなく、イベントに入力した旧名のまま出す */ const o = m.get(n) || {name: n, n: 0, pref: ""}; o.n++; if(kind === "venue" && l.pref) o.pref = l.pref; m.set(n, o); });
   });
-  return [...m.values()].filter(o => o.name !== typed.trim() && !(skipNames || []).includes(o.name) && aliasNames(kind, o.name).some(x => norm(x).startsWith(t)))
+  return [...m.values()].filter(o => o.name !== typed.trim() && !(skipNames || []).includes(o.name) && norm(o.name).startsWith(t))
     .sort((a, b) => b.n - a.n).slice(0, 6);
 }
 function showSugg(input, cands, onPick){
