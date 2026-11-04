@@ -326,7 +326,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.9</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.11</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1504,7 +1504,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.9</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.11</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
@@ -2537,6 +2537,41 @@ input[data-dw]{-webkit-appearance:none;appearance:none;height:46px;display:block
   }
   fix(document.body);
   new MutationObserver(ms => ms.forEach(m => { if(m.type === "characterData") fix(m.target); else m.addedNodes.forEach(fix); })).observe(document.body, {childList: true, subtree: true, characterData: true});
+})();
+</script>
+<style>
+/* Λ(ラムダ)と〜(波ダッシュ)は、日本語フォントだと全角・太字で目立つ。表示だけ、Λは半角の欧文フォントに、〜は字形をそろえ、太さは使われている箇所の文字に合わせる */
+.xc-lam{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif}
+.xc-wv{font-weight:inherit}
+</style>
+<script>
+"use strict";
+/* 表示だけの置き換え(保存データ・入力欄の中身・検索は変わらない)。∧・Ʌ・Λ → Λ(欧文フォント)、～・〜 → 〜(標準の太さ) */
+(function(){
+  const RE = /[～〜∧ΛɅ]/, SKIP = /^(TEXTAREA|INPUT|SCRIPT|STYLE|TITLE|OPTION|SELECT)$/;
+  const mk = (cls, txt) => { const s = document.createElement("span"); s.className = cls; s.textContent = txt; return s; };
+  function wrap(t){
+    const s = t.nodeValue, p = t.parentNode;
+    if(!p || !RE.test(s) || SKIP.test(p.nodeName) || (p.classList && (p.classList.contains("xc-lam") || p.classList.contains("xc-wv")))) return;
+    const frag = document.createDocumentFragment(); let buf = "";
+    const flush = () => { if(buf){ frag.appendChild(document.createTextNode(buf)); buf = ""; } };
+    for(const ch of s){
+      if(ch === "～" || ch === "〜"){ flush(); frag.appendChild(mk("xc-wv", "〜")); }
+      else if(ch === "∧" || ch === "Λ" || ch === "Ʌ"){ flush(); frag.appendChild(mk("xc-lam", "Λ")); }
+      else buf += ch;
+    }
+    flush();
+    p.replaceChild(frag, t);
+  }
+  function fix(n){
+    if(n.nodeType === 3){ wrap(n); return; }
+    if(n.nodeType !== 1 || SKIP.test(n.nodeName)) return;
+    const w = document.createTreeWalker(n, NodeFilter.SHOW_TEXT, {acceptNode: t => SKIP.test(t.parentNode.nodeName) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT});
+    const list = []; while(w.nextNode()) list.push(w.currentNode);
+    list.forEach(wrap);
+  }
+  fix(document.body);
+  new MutationObserver(ms => ms.forEach(m => { if(m.type === "characterData") wrap(m.target); else m.addedNodes.forEach(fix); })).observe(document.body, {childList: true, subtree: true, characterData: true});
 })();
 </script>
 </body>
