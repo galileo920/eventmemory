@@ -2517,5 +2517,22 @@ input[data-dw]{-webkit-appearance:none;appearance:none;height:46px;display:block
   document.addEventListener("focusin", e => { const el = e.target; if(el && el.matches && el.matches("input[data-dw]")) el.blur(); });
 })();
 </script>
+<script>
+"use strict";
+/* ローマ数字(Ⅰ・Ⅱなど)は、日本語フォントだと全角で左右に余白が広く、浮いて見える。表示だけ、半角の英字(I・IIなど)にそろえる(保存データ・入力欄の中身・検索は変わらない) */
+(function(){
+  const U = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII","L","C","D","M"], RE = /[Ⅰ-Ⅿⅰ-ⅻ]/g, SKIP = /^(TEXTAREA|INPUT|SCRIPT|STYLE|TITLE)$/;
+  const conv = ch => { const c = ch.charCodeAt(0); return c >= 0x2170 ? U[c - 0x2170].toLowerCase() : U[c - 0x2160]; };
+  function fix(n){
+    if(n.nodeType === 3){ if(n.parentNode && !SKIP.test(n.parentNode.nodeName) && RE.test(n.nodeValue)){ RE.lastIndex = 0; n.nodeValue = n.nodeValue.replace(RE, conv); } RE.lastIndex = 0; return; }
+    if(n.nodeType !== 1 || SKIP.test(n.nodeName)) return;
+    const w = document.createTreeWalker(n, NodeFilter.SHOW_TEXT, {acceptNode: t => SKIP.test(t.parentNode.nodeName) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT});
+    const list = []; while(w.nextNode()) list.push(w.currentNode);
+    list.forEach(fix);
+  }
+  fix(document.body);
+  new MutationObserver(ms => ms.forEach(m => { if(m.type === "characterData") fix(m.target); else m.addedNodes.forEach(fix); })).observe(document.body, {childList: true, subtree: true, characterData: true});
+})();
+</script>
 </body>
 </html>
