@@ -326,7 +326,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.6</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.7</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1295,6 +1295,8 @@ iconImg.src = ICON_SRC;
 const grpOpen = new Set();
 const PART_RE = /[\(（\[【〔]?\s*(?:第\s*)?[0-9一二三四]\s*(?:部|回目?公演|公演目|日目|stage|st)\s*[\)）\]】〕]?|[\(（\[【〔]?\s*(?:昼|夜|午前|午後|朝)\s*の?\s*(?:部|公演)\s*[\)）\]】〕]?|マチネ|ソワレ|matinee|soir[eé]e|[\(（\[【〔]?\s*day\s*[0-9一二三四]\s*[\)）\]】〕]?|[\(（\[【〔]?\s*(?:part|vol\.?)\s*[0-9]\s*[\)）\]】〕]?/gi;
 const grpBase = t => String(t || "").normalize("NFKC").replace(PART_RE, " ").replace(/\s+/g, " ").replace(/^[\s\-–—/・:：|｜~〜,，、]+|[\s\-–—/・:：|｜~〜,，、]+$/g, "");
+/* 表示用のツアー名を作るための版。末尾の「〜」「-」などは削らず残す(閉じの記号が消えるのを防ぐ) */
+const grpBaseKeep = t => String(t || "").normalize("NFKC").replace(/~/g, "〜").replace(PART_RE, " ").replace(/\s+/g, " ").replace(/^[\s\-–—/・:：|｜,，、]+/, "").replace(/[\s/・:：|｜,，、]+$/, "");
 const grpKey = t => grpBase(t).toLowerCase().replace(/[\s\-–—/・:：|｜~〜,，、.!！?？'’"“”]+/g, "");
 const dayNum = d => { const p = dateParts(d); return p ? Date.UTC(+p.y, +p.m - 1, +p.d) / 864e5 : null; };
 function groupItems(rows0){
@@ -1339,8 +1341,11 @@ function groupItems(rows0){
   gs.forEach((mem, r) => {
     if(mem.length < 2) return;
     const old = mem.slice().sort(byDate)[0]; /* 日付がいちばん古いもの。まとめたカードは、この位置に出す */
-    const bases = mem.map(l => grpBase(l.title)); let p = bases[0]; bases.forEach(b => { let n = 0; while(n < p.length && n < b.length && p[n] === b[n]) n++; p = p.slice(0, n); });
-    p = p.replace(/[(（][^)）]*$/, "").replace(/[\s「『（(\[【〈《～~\-–—:：・|｜/,，、]+$/g, "");
+    const bases = mem.map(l => grpBaseKeep(l.title)); let p = bases[0]; bases.forEach(b => { let n = 0; while(n < p.length && n < b.length && p[n] === b[n]) n++; p = p.slice(0, n); });
+    const SEP = /[\s「『（(\[【〈《/:：・|｜,，、]+$/g, MK = "[~〜～\\-–—―]";
+    p = p.replace(/[(（][^)）]*$/, "").replace(SEP, "");
+    /* 末尾の記号(〜 - – — など)は、「空白+記号」で始まる開きが前にあり、直前が文字(空白でない)のときだけ残す。それ以外は削る */
+    if(new RegExp(MK + "$").test(p)){ const body = p.replace(new RegExp(MK + "+$"), ""); if(!(body && !/\s$/.test(body) && new RegExp("(^|\\s)" + MK + "+\\S").test(body))) p = body.replace(SEP, ""); }
     info.set(r, {id: "g:" + old.id, mem, anchor: old, title: p.length >= 4 ? p : (bases.find(Boolean) || mem[0].title)});
   });
   const items = [];
@@ -1499,7 +1504,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.6</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.7</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
