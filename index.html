@@ -326,7 +326,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.12</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.14</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -564,8 +564,11 @@ let aliases = {venue: {}, artist: {}};
 const cleanAliasMap = m => { const o = {}; if(m && typeof m === "object" && !Array.isArray(m)) Object.keys(m).forEach(k => { const v = m[k], a = String(k).trim(); if(typeof v === "string" && a && v.trim() && a !== v.trim()) o[a] = v.trim(); }); return o; };
 const setAliases = a => { aliases = {venue: cleanAliasMap(a && a.venue), artist: cleanAliasMap(a && a.artist)}; };
 try { setAliases(JSON.parse(localStorage.getItem(ALIAS_LS) || "{}")); } catch(e){}
-const canon = (kind, name) => { const m = aliases[kind] || {}; let n = String(name || "").trim(), i = 0; while(Object.prototype.hasOwnProperty.call(m, n) && i++ < 20) n = m[n]; return n; };
-const aliasNames = (kind, name) => { const c = canon(kind, name); return [c].concat(Object.keys(aliases[kind] || {}).filter(k => canon(kind, k) === c)); };
+/* 紐付けを使うかどうか(設定画面で切り替え。この端末に覚える。初期はオン) */
+const ALIAS_ON_LS = "livelog_alias_on";
+const aliasOn = () => { try { return localStorage.getItem(ALIAS_ON_LS) !== "0"; } catch(e){ return true; } };
+const canon = (kind, name) => { const m = aliases[kind] || {}; let n = String(name || "").trim(), i = 0; if(!aliasOn()) return n; while(Object.prototype.hasOwnProperty.call(m, n) && i++ < 20) n = m[n]; return n; };
+const aliasNames = (kind, name) => { if(!aliasOn()) return [String(name || "").trim()]; const c = canon(kind, name); return [c].concat(Object.keys(aliases[kind] || {}).filter(k => canon(kind, k) === c)); };
 const splitNames = s => String(s || "").split(/[、,，]|\s+[\/／]\s+|／/).map(x => x.trim()).filter(Boolean);
 /* 出演者は配列(artists)だけで持つ。古いデータ(artistが文字列・配列)は、読み込むときに artists にそろえる */
 const artistsOf = l => { if(!l) return []; const src = Array.isArray(l.artists) && l.artists.length ? l.artists : Array.isArray(l.artist) ? l.artist : splitNames(l.artist); return src.map(x => String(x).trim()).filter(Boolean); };
@@ -583,7 +586,9 @@ function aliasCardHtml(){
   const rows = aliasShow ? Object.keys(aliases[aliasShow]).map(o => ({k: aliasShow, o, n: aliases[aliasShow][o]})) : [];
   return `<div class="card">
     <h2>改名・旧名の紐付け</h2>
-    <div class="hint">会場や出演者の名前が変わったときに、旧名を現在の名前にまとめます。集計と絞り込み(集計から押して絞り込む場合)で同じものとして扱います。一覧の検索欄に入力した場合は、イベントに入力した名前だけを対象にします。イベントに入力した名前は変わりません。</div>
+    <div class="hint">会場や出演者の名前が変わったときに、旧名を現在の名前にまとめます。集計・検索・絞り込み(集計や詳細から押して絞り込む場合も)で同じものとして扱います。イベントに入力した名前は変わりません。</div>
+    <label style="display:flex;align-items:center;gap:8px;margin:10px 0 2px;font-size:15px;color:var(--ink)"><input type="checkbox" id="alOn" style="width:22px;height:22px;flex:none;margin:0"${aliasOn() ? " checked" : ""}><span>紐付けを適用する</span></label>
+    <div class="hint" style="margin:0 0 4px">オフにすると、登録は残したまま、一覧の検索・集計・絞り込みのすべてで、旧名と現在の名前を別々に扱います。</div>
     <label for="alKind">種類</label><select id="alKind"><option value="artist">出演者</option><option value="venue">会場</option></select>
     <label for="alOld">旧名</label><input id="alOld" autocomplete="off">
     <label for="alNew">現在の名前</label><input id="alNew" autocomplete="off">
@@ -595,6 +600,7 @@ function aliasCardHtml(){
   </div>`;
 }
 function bindAliasCard(rerender){
+  $("#alOn").onchange = e => { try { localStorage.setItem(ALIAS_ON_LS, e.target.checked ? "1" : "0"); } catch(err){} rerender(); };
   const norm = x => kata2hira(String(x)).toLowerCase().replace(/\s+/g, "");
   const cands = (field, typed) => {
     const k = $("#alKind").value, t = norm(typed);
@@ -1155,7 +1161,7 @@ function listRows(){
   const qs = query.toLowerCase().split(/[\s\u3000]+/).filter(Boolean); /* スペース区切りの全ワードを含むものだけ(AND検索) */
   return filtered()
     .filter(l => !exact || (exact.value === NONE_KEY ? (exact.kind === "venue" ? !l.venue : !artistsOf(l).length) : exact.kind === "venue" ? canon("venue", l.venue) === exact.value : exact.kind === "pref" ? l.pref === exact.value : exact.kind === "tag" ? tagsOf(l).includes(exact.value) : canonArtists(l).includes(exact.value)))
-    .filter(l => { if(!qs.length) return true; const hay = ["title","artist","venue","tags"].map(f => String(f === "tags" ? tagsOf(l).join("\n") : f === "artist" ? artistsOf(l).join("\n") : l[f] ?? "")).join("\n").toLowerCase(); /* 検索は入力した名前だけを対象にし、改名・旧名の紐付けは見ない */ return qs.every(w => hay.includes(w)); })
+    .filter(l => { if(!qs.length) return true; const hay = ["title","artist","venue","tags"].map(f => String(f === "tags" ? tagsOf(l).join("\n") : f === "artist" ? artistsOf(l).join("\n") : l[f] ?? "")).join("\n").toLowerCase() + (aliasOn() ? "\n" + aliasHay(l) : ""); /* 紐付けを適用するときだけ、旧名・現在の名前でもヒットする */ return qs.every(w => hay.includes(w)); })
     .sort((a, b) => { const x = a.date || "", y = b.date || ""; if(!x || !y) return (x ? 0 : 1) - (y ? 0 : 1); if(x !== y) return sortAsc ? x.localeCompare(y) : y.localeCompare(x); const s = a.start || a.open || "", t = b.start || b.open || ""; if(s === t) return 0; if(!s || !t) return s ? -1 : 1; return sortAsc ? s.localeCompare(t) : t.localeCompare(s); });
 }
 /* 一覧の見た目(サムネイル/従来)。この端末の表示設定として覚えておく */
@@ -1504,7 +1510,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.12</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.14</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
