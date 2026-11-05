@@ -326,7 +326,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.17</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.18</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -572,7 +572,6 @@ function waveFix(l){
   });
   return l;
 }
-const hasWave = l => { try { return JSON.stringify(l, (k, v) => k === "photos" ? undefined : v).indexOf("～") >= 0; } catch(e){ return false; } };
 /* ---------- 名寄せ(旧名 → 現在の名前) ---------- */
 const ALIAS_LS = "livelog_alias_v1";
 let aliases = {venue: {}, artist: {}};
@@ -1495,44 +1494,12 @@ function renderStats(){
   document.querySelectorAll("#app .line[data-q]").forEach(b => b.onclick = () => { if(b.dataset.k === "year"){ fYear = b.dataset.q; exact = null; } else if(b.dataset.k === "genre"){ fGenre = b.dataset.q; exact = null; } else exact = {kind: b.dataset.k, value: b.dataset.q}; query = ""; yPrev = ""; yAll = !fYear; setTab("list", {top: true}); });
 }
 
-/* ---------- 波ダッシュの統一(設定画面) ---------- */
-let wvMsg = null;
-function waveCardHtml(){
-  const n = lives.filter(hasWave).length;
-  return `<div class="card">
-    <h2>波ダッシュの統一</h2>
-    <div class="hint">画像から自動入力すると「～」(全角チルダ)、手入力すると「〜」(波ダッシュ)になるなど、文字が違うことがあります。これからの保存では、「～」を「〜」に自動で置き換えます。保存済みのイベントも置き換えるときは、下のボタンを押してください(念のため、先にバックアップを書き出しておくと安心です)。</div>
-    <button class="btn sec" id="wvBtn" type="button"${n ? "" : " disabled"}>${n ? `「～」を「〜」に置き換える(${n}件)` : "置き換えるイベントはありません"}</button>
-    <div class="status" id="wvSt"></div>
-  </div>`;
-}
-function bindWaveCard(rerender){
-  const st = $("#wvSt"), btn = $("#wvBtn");
-  if(wvMsg){ st.className = "status " + wvMsg.cls; st.textContent = wvMsg.text; }
-  btn.onclick = async () => {
-    const targets = lives.filter(hasWave);
-    if(!targets.length) return;
-    if(btn.dataset.armed !== "1"){ /* 誤操作防止で2回押す */
-      btn.dataset.armed = "1"; const t0 = btn.textContent; btn.textContent = `もう一度押すと${targets.length}件を置き換え`;
-      setTimeout(() => { if(btn.isConnected){ btn.dataset.armed = ""; btn.textContent = t0; } }, 4000); return;
-    }
-    btn.disabled = true; wvMsg = null;
-    for(let k = 0; k < targets.length; k++){
-      st.className = "status"; st.textContent = `置き換えています… ${k + 1}/${targets.length}`;
-      try { waveFix(targets[k]); targets[k].updatedAt = Date.now(); await dbPut(targets[k]); }
-      catch(e){ btn.disabled = false; st.className = "status err"; st.textContent = `${k}件で止まりました。もう一度押してください(置き換え済みのイベントはそのままです)。`; return; }
-    }
-    wvMsg = {cls: "ok", text: `${targets.length}件を置き換えました。`};
-    rerender();
-  };
-}
 
 function renderSettings(){
   const s = getSet();
   $("#app").innerHTML = `
     ${genreCardHtml()}
     ${aliasCardHtml()}
-    ${waveCardHtml()}
     <div class="card">
       <h2>Gemini API</h2>
       <label>APIキー</label>
@@ -1560,7 +1527,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.17</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.18</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
@@ -1578,7 +1545,6 @@ function renderSettings(){
   if(dataMsg){ const d = $(dataMsg.id || "#dst"); d.className = "status " + dataMsg.cls; d.textContent = dataMsg.text; }
   bindAliasCard(renderSettings);
   bindGenreCard(renderSettings);
-  bindWaveCard(renderSettings);
   $("#exPhotos").onchange = e => { try { localStorage.setItem("livelog_exphotos", e.target.checked ? "1" : "0"); } catch(err){} };
   $("#export").onclick = exportJSON;
   $("#csv").onclick = exportCSV;
