@@ -326,7 +326,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.14</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.17</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -388,7 +388,7 @@ async function tx(mode, fn){
   }
 }
 const dbAll = () => tx("readonly", s => s.getAll());
-const dbPut = v => tx("readwrite", s => s.put(v));
+const dbPut = v => tx("readwrite", s => s.put(waveFix(v))); /* 保存するとき、「～」を「〜」に置き換える */
 const dbDel = id => tx("readwrite", s => s.delete(id));
 const dbClear = () => tx("readwrite", s => s.clear());
 
@@ -558,10 +558,25 @@ function dragGenre(ev, grip, isTouch, rerender){
   if(isTouch){ grip.addEventListener("touchmove", move, {passive: false}); grip.addEventListener("touchend", end); grip.addEventListener("touchcancel", end); }
   else { grip.addEventListener("pointermove", move); grip.addEventListener("pointerup", end); grip.addEventListener("pointercancel", end); }
 }
+/* ---------- 波ダッシュの統一(～ 全角チルダ → 〜 波ダッシュ) ---------- */
+/* 画像からの自動入力は「～」(U+FF5E)、手入力は「〜」(U+301C)になることがある。保存するときに「〜」にそろえる(画像データは対象外) */
+const wfix = s => typeof s === "string" ? s.replace(/～/g, "〜") : s;
+function waveFix(l){
+  if(!l || typeof l !== "object") return l;
+  Object.keys(l).forEach(k => {
+    if(k === "photos") return;
+    const v = l[k];
+    if(typeof v === "string") l[k] = wfix(v);
+    else if(Array.isArray(v)) l[k] = v.map(x => typeof x === "string" ? wfix(x) : x);
+    else if(k === "artistRoles" && v && typeof v === "object"){ const o = {}; Object.keys(v).forEach(n => { o[wfix(n)] = wfix(v[n]); }); l[k] = o; }
+  });
+  return l;
+}
+const hasWave = l => { try { return JSON.stringify(l, (k, v) => k === "photos" ? undefined : v).indexOf("～") >= 0; } catch(e){ return false; } };
 /* ---------- 名寄せ(旧名 → 現在の名前) ---------- */
 const ALIAS_LS = "livelog_alias_v1";
 let aliases = {venue: {}, artist: {}};
-const cleanAliasMap = m => { const o = {}; if(m && typeof m === "object" && !Array.isArray(m)) Object.keys(m).forEach(k => { const v = m[k], a = String(k).trim(); if(typeof v === "string" && a && v.trim() && a !== v.trim()) o[a] = v.trim(); }); return o; };
+const cleanAliasMap = m => { const o = {}; if(m && typeof m === "object" && !Array.isArray(m)) Object.keys(m).forEach(k => { const v = wfix(m[k]), a = wfix(String(k).trim()); if(typeof v === "string" && a && v.trim() && a !== v.trim()) o[a] = v.trim(); }); return o; };
 const setAliases = a => { aliases = {venue: cleanAliasMap(a && a.venue), artist: cleanAliasMap(a && a.artist)}; };
 try { setAliases(JSON.parse(localStorage.getItem(ALIAS_LS) || "{}")); } catch(e){}
 /* 紐付けを使うかどうか(設定画面で切り替え。この端末に覚える。初期はオン) */
@@ -601,7 +616,7 @@ function aliasCardHtml(){
 }
 function bindAliasCard(rerender){
   $("#alOn").onchange = e => { try { localStorage.setItem(ALIAS_ON_LS, e.target.checked ? "1" : "0"); } catch(err){} rerender(); };
-  const norm = x => kata2hira(String(x)).toLowerCase().replace(/\s+/g, "");
+  const norm = x => wfold(kata2hira(String(x))).toLowerCase().replace(/\s+/g, "");
   const cands = (field, typed) => {
     const k = $("#alKind").value, t = norm(typed);
     if(!t) return [];
@@ -770,7 +785,7 @@ function bindPhotoGallery(l){
 const tagsOf = l => Array.isArray(l && l.tags) ? [...new Set(l.tags.map(x => String(x).trim()).filter(Boolean))] : splitTags(l && l.tags);
 const splitTags = s => [...new Set(String(s || "").split(/[、,，]/).map(x => x.trim()).filter(Boolean))];
 function tagCands(typed, skip){
-  const norm = x => kata2hira(String(x)).toLowerCase().replace(/\s+/g, "");
+  const norm = x => wfold(kata2hira(String(x))).toLowerCase().replace(/\s+/g, "");
   const t = norm(typed); if(!t) return [];
   const m = new Map();
   lives.forEach(l => tagsOf(l).forEach(n => { if(!(skip || []).includes(n) && norm(n).includes(t)) m.set(n, (m.get(n) || 0) + 1); }));
@@ -1157,11 +1172,13 @@ function renderList(){
 /* 検索欄は作り直さず、結果の部分だけ更新する(日本語入力を妨げないため) */
 /* 出演者・会場が未入力のイベントを表す印(集計の「未入力」と、一覧の絞り込みで使う) */
 const NONE_KEY = "__none__";
+/* 波ダッシュは、手入力(〜)・自動入力(～や~)で文字が違うことがある。検索では、どれも同じ「〜」として扱う(保存データは変えない) */
+const wfold = s => String(s == null ? "" : s).replace(/[~～〜∼˜〰]/g, "〜");
 function listRows(){
-  const qs = query.toLowerCase().split(/[\s\u3000]+/).filter(Boolean); /* スペース区切りの全ワードを含むものだけ(AND検索) */
+  const qs = wfold(query).toLowerCase().split(/[\s\u3000]+/).filter(Boolean); /* スペース区切りの全ワードを含むものだけ(AND検索) */
   return filtered()
     .filter(l => !exact || (exact.value === NONE_KEY ? (exact.kind === "venue" ? !l.venue : !artistsOf(l).length) : exact.kind === "venue" ? canon("venue", l.venue) === exact.value : exact.kind === "pref" ? l.pref === exact.value : exact.kind === "tag" ? tagsOf(l).includes(exact.value) : canonArtists(l).includes(exact.value)))
-    .filter(l => { if(!qs.length) return true; const hay = ["title","artist","venue","tags"].map(f => String(f === "tags" ? tagsOf(l).join("\n") : f === "artist" ? artistsOf(l).join("\n") : l[f] ?? "")).join("\n").toLowerCase() + (aliasOn() ? "\n" + aliasHay(l) : ""); /* 紐付けを適用するときだけ、旧名・現在の名前でもヒットする */ return qs.every(w => hay.includes(w)); })
+    .filter(l => { if(!qs.length) return true; const hay = wfold(["title","artist","venue","tags"].map(f => String(f === "tags" ? tagsOf(l).join("\n") : f === "artist" ? artistsOf(l).join("\n") : l[f] ?? "")).join("\n").toLowerCase() + (aliasOn() ? "\n" + aliasHay(l) : "")); /* 紐付けを適用するときだけ、旧名・現在の名前でもヒットする */ return qs.every(w => hay.includes(w)); })
     .sort((a, b) => { const x = a.date || "", y = b.date || ""; if(!x || !y) return (x ? 0 : 1) - (y ? 0 : 1); if(x !== y) return sortAsc ? x.localeCompare(y) : y.localeCompare(x); const s = a.start || a.open || "", t = b.start || b.open || ""; if(s === t) return 0; if(!s || !t) return s ? -1 : 1; return sortAsc ? s.localeCompare(t) : t.localeCompare(s); });
 }
 /* 一覧の見た目(サムネイル/従来)。この端末の表示設定として覚えておく */
@@ -1478,11 +1495,44 @@ function renderStats(){
   document.querySelectorAll("#app .line[data-q]").forEach(b => b.onclick = () => { if(b.dataset.k === "year"){ fYear = b.dataset.q; exact = null; } else if(b.dataset.k === "genre"){ fGenre = b.dataset.q; exact = null; } else exact = {kind: b.dataset.k, value: b.dataset.q}; query = ""; yPrev = ""; yAll = !fYear; setTab("list", {top: true}); });
 }
 
+/* ---------- 波ダッシュの統一(設定画面) ---------- */
+let wvMsg = null;
+function waveCardHtml(){
+  const n = lives.filter(hasWave).length;
+  return `<div class="card">
+    <h2>波ダッシュの統一</h2>
+    <div class="hint">画像から自動入力すると「～」(全角チルダ)、手入力すると「〜」(波ダッシュ)になるなど、文字が違うことがあります。これからの保存では、「～」を「〜」に自動で置き換えます。保存済みのイベントも置き換えるときは、下のボタンを押してください(念のため、先にバックアップを書き出しておくと安心です)。</div>
+    <button class="btn sec" id="wvBtn" type="button"${n ? "" : " disabled"}>${n ? `「～」を「〜」に置き換える(${n}件)` : "置き換えるイベントはありません"}</button>
+    <div class="status" id="wvSt"></div>
+  </div>`;
+}
+function bindWaveCard(rerender){
+  const st = $("#wvSt"), btn = $("#wvBtn");
+  if(wvMsg){ st.className = "status " + wvMsg.cls; st.textContent = wvMsg.text; }
+  btn.onclick = async () => {
+    const targets = lives.filter(hasWave);
+    if(!targets.length) return;
+    if(btn.dataset.armed !== "1"){ /* 誤操作防止で2回押す */
+      btn.dataset.armed = "1"; const t0 = btn.textContent; btn.textContent = `もう一度押すと${targets.length}件を置き換え`;
+      setTimeout(() => { if(btn.isConnected){ btn.dataset.armed = ""; btn.textContent = t0; } }, 4000); return;
+    }
+    btn.disabled = true; wvMsg = null;
+    for(let k = 0; k < targets.length; k++){
+      st.className = "status"; st.textContent = `置き換えています… ${k + 1}/${targets.length}`;
+      try { waveFix(targets[k]); targets[k].updatedAt = Date.now(); await dbPut(targets[k]); }
+      catch(e){ btn.disabled = false; st.className = "status err"; st.textContent = `${k}件で止まりました。もう一度押してください(置き換え済みのイベントはそのままです)。`; return; }
+    }
+    wvMsg = {cls: "ok", text: `${targets.length}件を置き換えました。`};
+    rerender();
+  };
+}
+
 function renderSettings(){
   const s = getSet();
   $("#app").innerHTML = `
     ${genreCardHtml()}
     ${aliasCardHtml()}
+    ${waveCardHtml()}
     <div class="card">
       <h2>Gemini API</h2>
       <label>APIキー</label>
@@ -1510,7 +1560,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.14</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.17</div>
   `;
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
@@ -1528,6 +1578,7 @@ function renderSettings(){
   if(dataMsg){ const d = $(dataMsg.id || "#dst"); d.className = "status " + dataMsg.cls; d.textContent = dataMsg.text; }
   bindAliasCard(renderSettings);
   bindGenreCard(renderSettings);
+  bindWaveCard(renderSettings);
   $("#exPhotos").onchange = e => { try { localStorage.setItem("livelog_exphotos", e.target.checked ? "1" : "0"); } catch(err){} };
   $("#export").onclick = exportJSON;
   $("#csv").onclick = exportCSV;
@@ -1743,7 +1794,7 @@ const sortRows = rows => sortCands(rows.filter(r => r.name).map(r => ({...r, rea
 const sortRowsAsync = async rows => { const rs = rows.filter(r => r.name); const ok = await fillReadings(rs.map(r => r.name)); return {rows: sortRows(rs), ok, missing: rs.filter(r => !readingOf[r.name]).length}; };
 /* 登録済みの出演者名・会場名から、入力途中の文字(前方一致)に合う候補を出す */
 function regCands(kind, typed, skipNames){
-  const norm = x => kata2hira(String(x)).toLowerCase().replace(/\s+/g, "");
+  const norm = x => wfold(kata2hira(String(x))).toLowerCase().replace(/\s+/g, "");
   const t = norm(typed);
   if(!t) return [];
   const m = new Map();
@@ -2546,24 +2597,22 @@ input[data-dw]{-webkit-appearance:none;appearance:none;height:46px;display:block
 })();
 </script>
 <style>
-/* Λ(ラムダ)と〜(波ダッシュ)は、日本語フォントだと全角・太字で目立つ。表示だけ、Λは半角の欧文フォントに、〜は字形をそろえ、太さは使われている箇所の文字に合わせる */
+/* Λ(ラムダ)は、日本語フォントだと全角・太字で目立つ。表示だけ、半角の欧文フォントにする(波ダッシュは、文字の違いが見えるよう、そのまま表示する) */
 .xc-lam{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif}
-.xc-wv{font-weight:inherit}
 </style>
 <script>
 "use strict";
-/* 表示だけの置き換え(保存データ・入力欄の中身・検索は変わらない)。∧・Ʌ・Λ → Λ(欧文フォント)、～・〜 → 〜(標準の太さ) */
+/* 表示だけの置き換え(保存データ・入力欄の中身・検索は変わらない)。∧・Ʌ・Λ → Λ(欧文フォント) */
 (function(){
-  const RE = /[～〜∧ΛɅ]/, SKIP = /^(TEXTAREA|INPUT|SCRIPT|STYLE|TITLE|OPTION|SELECT)$/;
+  const RE = /[∧ΛɅ]/, SKIP = /^(TEXTAREA|INPUT|SCRIPT|STYLE|TITLE|OPTION|SELECT)$/;
   const mk = (cls, txt) => { const s = document.createElement("span"); s.className = cls; s.textContent = txt; return s; };
   function wrap(t){
     const s = t.nodeValue, p = t.parentNode;
-    if(!p || !RE.test(s) || SKIP.test(p.nodeName) || (p.classList && (p.classList.contains("xc-lam") || p.classList.contains("xc-wv")))) return;
+    if(!p || !RE.test(s) || SKIP.test(p.nodeName) || (p.classList && p.classList.contains("xc-lam"))) return;
     const frag = document.createDocumentFragment(); let buf = "";
     const flush = () => { if(buf){ frag.appendChild(document.createTextNode(buf)); buf = ""; } };
     for(const ch of s){
-      if(ch === "～" || ch === "〜"){ flush(); frag.appendChild(mk("xc-wv", "〜")); }
-      else if(ch === "∧" || ch === "Λ" || ch === "Ʌ"){ flush(); frag.appendChild(mk("xc-lam", "Λ")); }
+      if(ch === "∧" || ch === "Λ" || ch === "Ʌ"){ flush(); frag.appendChild(mk("xc-lam", "Λ")); }
       else buf += ch;
     }
     flush();
