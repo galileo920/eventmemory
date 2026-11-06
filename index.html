@@ -164,8 +164,8 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .empty{text-align:center;color:var(--sub);padding:44px 12px}
 .ticket{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
 .ticket .a{font-size:20px;font-weight:700;overflow-wrap:anywhere}
-.ticket[data-g]{--g:var(--g-music);position:relative;overflow:hidden;padding-left:22px}
-.ticket[data-g]::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--g)}
+.ticket[data-g]{position:relative;overflow:hidden;padding-left:22px}
+.ticket[data-g]::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--g,var(--g-music))}
 .ticket .t{color:var(--sub);overflow-wrap:anywhere;margin-top:2px}
 .ticket .m{font-family:var(--font-mono);font-size:14px;margin-top:10px}
 .field{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:8px}
@@ -335,7 +335,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.25</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.26</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1563,7 +1563,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.25</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.26</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
