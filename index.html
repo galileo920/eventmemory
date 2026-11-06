@@ -11,7 +11,6 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=2">
 <link rel="icon" type="image/png" href="apple-touch-icon.png?v=2">
 <title>イベント参加記録</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
 <style>
 
 :root{
@@ -19,7 +18,7 @@
   --bg:#edeff4; --surface:#ffffff; --ink:#15171f; --sub:#5e6372; --line:#d9dce6;
   --accent:#1f2330; --accent-ink:#ffffff; --accent-soft:#e4e6ee; --ok:#15803d; --danger:#c62828;
   --g-owarai:#d9730d; --g-butai:#7c4dcc; --g-talk:#0f8a8a; --g-sports:#3f8f1f; --g-exhibit:#2f6fd0; --g-other:#6b7280; --g-yellow:#b8860b; --g-red:#d0382c; --g-indigo:#3f4fc4; --g-brown:#8a5a2b; --g-music:#d93a6b;
-  --font-body:"Zen Kaku Gothic New","Hiragino Sans","Hiragino Kaku Gothic ProN",system-ui,sans-serif;
+  --font-body:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN",system-ui,sans-serif;
   --font-mono:var(--font-body);
   --gutter-l:max(16px,env(safe-area-inset-left,0px)); --gutter-r:max(16px,env(safe-area-inset-right,0px));
 }
@@ -335,7 +334,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.26</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.27</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1563,7 +1562,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.26</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.27</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
