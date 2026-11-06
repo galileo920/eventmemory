@@ -133,8 +133,8 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .stub.thumb .who.sm{font-size:14px;line-height:1.35}
 .stub.thumb .side .ttl{font-size:12px}
 .stub.thumb .side .where{font-size:12px;color:var(--ink)}
-.stub.thumb.tile{padding:0;gap:0;margin:0;background:none;border:0;border-radius:10px;position:relative}
-.stub.thumb.tile .pic{border-radius:10px}
+.stub.thumb.tile{padding:2px;gap:0;margin:0;background:var(--g);border:0;border-radius:11px;position:relative}
+.stub.thumb.tile .pic{border-radius:9px}
 .stub.tile.sel{outline:3px solid var(--accent);outline-offset:-3px}
 .stub.tile .bchk{position:absolute;top:6px;right:6px;padding:0}
 #listBody.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
@@ -163,6 +163,8 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .empty{text-align:center;color:var(--sub);padding:44px 12px}
 .ticket{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
 .ticket .a{font-size:20px;font-weight:700;overflow-wrap:anywhere}
+.ticket[data-g]{--g:var(--g-music);position:relative;overflow:hidden;padding-left:22px}
+.ticket[data-g]::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--g)}
 .ticket .t{color:var(--sub);overflow-wrap:anywhere;margin-top:2px}
 .ticket .m{font-family:var(--font-mono);font-size:14px;margin-top:10px}
 .field{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:8px}
@@ -332,7 +334,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.19</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.22</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -422,7 +424,7 @@ const cleanGName = v => String(v == null ? "" : v).replace(/["\\<>\r\n]/g, "").t
 function applyGenreStyle(){
   let st = document.getElementById("gstyle");
   if(!st){ st = document.createElement("style"); st.id = "gstyle"; document.head.appendChild(st); }
-  st.textContent = GENRES.map(g => `.stub[data-g="${g}"]{--g:var(${PAL[genreCfg[g].color].v})}`).join("\n");
+  st.textContent = GENRES.map(g => `.stub[data-g="${g}"],.ticket[data-g="${g}"]{--g:var(${PAL[genreCfg[g].color].v})}`).join("\n");
 }
 function setGenres(list){
   const src = Array.isArray(list) ? list.filter(g => g && typeof g === "object") : [], seen = new Set(), arr = [];
@@ -1560,7 +1562,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.19</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.22</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -1698,7 +1700,7 @@ function openDetail(id){
   const nb = (() => { const r = listRows(), i = r.findIndex(x => x.id === l.id); return {prev: i > 0 ? r[i - 1].id : "", next: i >= 0 && i < r.length - 1 ? r[i + 1].id : ""}; })(); /* いまの一覧(絞り込み・並び順)での前後のイベント */
   const row = (k, v) => v ? `<div class="field"><small>${k}</small><div>${esc(v)}</div></div>` : "";
   $("#app").innerHTML = `
-    <div class="ticket">
+    <div class="ticket" data-g="${esc(genreOf(l))}">
       ${photoGalleryHtml(l)}<div class="a">${esc(l.title || artistLine(l) || "(未入力)")}</div>
       <div class="m">${fmtDate(l.date)}${venueLabel(l) ? "<br>" + venueLinks(l) : ""}</div>
     </div>
