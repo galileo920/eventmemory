@@ -91,15 +91,20 @@ label{display:block;margin-top:14px;font-size:13px;color:var(--sub);font-weight:
 .msb i{flex:none;color:var(--sub);font-style:normal;font-size:10px}
 .mpanel{position:absolute;z-index:20;top:calc(100% + 4px);left:0;min-width:100%;width:max-content;max-width:min(78vw,300px);max-height:min(60vh,380px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.28)}
 .filters .fcol:nth-child(2) .mpanel{left:auto;right:0}
-.msel .mopt{display:flex;align-items:center;gap:10px;margin:0;padding:11px 14px;font-size:15px;color:var(--ink);font-weight:400;cursor:pointer}
+.fq{gap:6px}
+.fq .fcol>label{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fq .msb{height:44px;padding:0 6px 0 8px;gap:3px;font-size:12px}
+.fq .msb i{font-size:8px}
+.fq .fcol:nth-child(n+3) .mpanel{left:auto;right:0}
+.msel .mopt{display:flex;align-items:center;gap:10px;margin:0;padding:11px 14px;font-size:12px;color:var(--ink);font-weight:400;cursor:pointer}
 .msel .mopt input{width:22px;height:22px;flex:none;margin:0;padding:0}
 .msel .mopt span{min-width:0;overflow-wrap:anywhere}
 .mfoot{position:sticky;bottom:0;display:flex;justify-content:space-between;gap:8px;padding:8px 10px;background:var(--surface);border-top:1px solid var(--line)}
-.mfoot button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:500;cursor:pointer}
+.mfoot button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:500;cursor:pointer}
 .clrrow{display:flex;justify-content:flex-end;margin:-2px 0 8px}
-.clrrow button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:500;cursor:pointer}
-.sortrow .cnt{font-size:13px;color:var(--sub)}
-.sortrow button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:500;cursor:pointer}
+.clrrow button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:500;cursor:pointer}
+.sortrow .cnt{font-size:12px;color:var(--sub)}
+.sortrow button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:500;cursor:pointer}
 .sugg{border:1px solid var(--line);border-radius:10px;background:var(--surface);margin-top:4px;overflow:hidden}
 .sugg button{display:block;width:100%;text-align:left;border:0;border-top:1px solid var(--line);background:none;padding:10px 12px;font:inherit;cursor:pointer}
 .sugg button:first-child{border-top:0}
@@ -171,7 +176,7 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .lvopt .lvname span{font-size:12px;font-weight:400;color:var(--sub)}
 .lvopt.on .lvname::before{content:"✓";display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:12px;align-self:center}
 .lvph{position:absolute;inset:0;background:linear-gradient(160deg,color-mix(in srgb,var(--g) 40%,var(--surface)),var(--g))}
-.yhead{font-size:13px;font-weight:700;color:var(--sub);letter-spacing:.04em;margin:14px 2px 8px}
+.yhead{font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.04em;margin:14px 2px 8px}
 .yhead:first-child{margin-top:2px}
 .empty{text-align:center;color:var(--sub);padding:44px 12px}
 .ticket{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
@@ -266,7 +271,7 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .scan .btn{margin-top:0}
 .stats{display:flex;gap:10px;margin-bottom:12px}
 .stats .sc{flex:1;min-width:0;display:flex;flex-direction:column}
-.stats .sc label{margin:0 0 4px}
+.stats .sc label{margin:0 0 4px;font-size:12px}
 .stats .card{flex:1;margin:0;text-align:center;display:flex;flex-direction:column;justify-content:center}
 .stats b{display:block;font-family:var(--font-mono);font-size:22px;font-weight:500;color:var(--accent)}
 .stats small{color:var(--sub)}
@@ -279,7 +284,7 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .seg button{flex:1;padding:10px 0;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:14px;cursor:pointer}
 .seg button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
 .h2{font-size:13px;color:var(--sub);font-weight:500;margin:18px 0 6px}
-.line{display:flex;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:6px}
+.line{font-size:12px;display:flex;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:6px}
 .line span{overflow-wrap:anywhere;min-width:0}
 .line b{font-family:var(--font-mono);font-weight:500;white-space:nowrap}
 .prow{display:flex;gap:8px;align-items:center}
@@ -347,7 +352,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.37</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.39</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -982,21 +987,22 @@ const filtersActive = () => !!query.trim() || !!fGenre.length || !!fArea.length 
 function clearFilters(){ query = ""; exact = null; fGenre = []; fArea = []; fPref = []; fYear = filterDefYear() ? [filterDefYear()] : []; fFrom = ""; fTo = ""; yAll = false; yPrev = ""; render(); }
 /* チェックボックスで複数選べるプルダウン(ボタンを押すと一覧が開く。選ぶたびに絞り込みへ反映) */
 let msOpen = "", msOpenTab = "";
-function msel(id, label, aria, opts, sel){
+function msel(id, label, aria, opts, sel, single){
   const on = new Set(sel), chosen = opts.filter(o => on.has(o.v)), open = msOpen === id && msOpenTab === tab;
-  const sum = chosen.length ? chosen[0].t + (chosen.length > 1 ? ` ほか${chosen.length - 1}件` : "") : "すべて";
-  return `<div class="fcol"><label for="${id}">${label}</label><div class="msel"><button type="button" class="msb" id="${id}" aria-label="${aria}" aria-haspopup="true" aria-expanded="${open}"><span>${esc(sum)}</span><i aria-hidden="true">▼</i></button><div class="mpanel" id="${id}P" role="group" aria-label="${aria}"${open ? "" : " hidden"}>${opts.map(o => `<label class="mopt"><input type="checkbox" data-ms="${id}" value="${esc(o.v)}"${on.has(o.v) ? " checked" : ""}><span>${esc(o.t)}</span></label>`).join("")}<div class="mfoot"><button type="button" data-mclr="${id}">選択を解除</button><button type="button" data-mclose="${id}">閉じる</button></div></div></div></div>`;
+  const sum = !chosen.length ? "すべて" : chosen.length > 1 ? (chosen[0].s || chosen[0].t) + ` +${chosen.length - 1}` : chosen[0].t; /* 複数選んだときは、短い表記(2025・東京など)で件数を見せる */
+  return `<div class="fcol"><label for="${id}">${label}</label><div class="msel"><button type="button" class="msb" id="${id}" aria-label="${aria}" aria-haspopup="true" aria-expanded="${open}"><span>${esc(sum)}</span><i aria-hidden="true">▼</i></button><div class="mpanel" id="${id}P" role="group" aria-label="${aria}"${open ? "" : " hidden"}>${opts.map(o => `<label class="mopt"><input type="${single ? "radio" : "checkbox"}" name="${id}" data-ms="${id}" value="${esc(o.v)}"${on.has(o.v) ? " checked" : ""}><span>${esc(o.t)}</span></label>`).join("")}<div class="mfoot"${single ? ' style="justify-content:flex-end"' : ""}>${single ? "" : `<button type="button" data-mclr="${id}">選択を解除</button>`}<button type="button" data-mclose="${id}">閉じる</button></div></div></div></div>`;
 }
-function locBar(){
+function locCols(){
   const inA = l => !fArea.length || fArea.includes(areaOf(l.pref));
   const as = AREAS.filter(a => lives.some(l => areaOf(l.pref) === a) || fArea.includes(a));
   const ps = PREFS.filter(x => lives.some(l => l.pref === x && inA(l)) || fPref.includes(x));
-  return `<div class="filters" id="floc">${msel("far", "エリア", "エリアで絞り込み", as.map(a => ({v: a, t: a})), fArea)}${msel("fpr", "都道府県", "都道府県で絞り込み", ps.map(x => ({v: x, t: x})), fPref)}</div><div class="clrrow"><button type="button" id="clrFilter" aria-label="検索・ジャンル・年・エリア・都道府県の絞り込みをまとめてクリア"${filtersActive() ? "" : " hidden"}>クリア</button></div>`;
+  return msel("far", "エリア", "エリアで絞り込み", as.map(a => ({v: a, t: a})), fArea) + msel("fpr", "都道府県", "都道府県で絞り込み", ps.map(x => ({v: x, t: x, s: x === "北海道" ? x : x.replace(/[都府県]$/, "")})), fPref);
 }
+const clrRow = () => `<div class="clrrow"><button type="button" id="clrFilter" aria-label="検索・ジャンル・年・エリア・都道府県の絞り込みをまとめてクリア"${filtersActive() ? "" : " hidden"}>クリア</button></div>`;
 function filterBar(){
   const ys = [...new Set(lives.map(yearOf).filter(Boolean).concat(fYear.filter(x => x !== RANGE)))].sort().reverse();
-  const yo = [{v: RANGE, t: "期間指定"}].concat(ys.map(y => ({v: y, t: y + "年"})));
-  return `<div class="filters">${msel("fg", "ジャンル", "ジャンルで絞り込み", GENRES.map(g => ({v: g, t: g})), fGenre)}${msel("fy", "年", "年で絞り込み", yo, fYear)}</div>${fYear.includes(RANGE) ? `<div class="filters" id="frange"><div class="fcol"><label for="fFrom">開始日</label><input type="text" data-dw readonly inputmode="none" id="fFrom" aria-label="開始日" value="${esc(fFrom)}"></div><div class="fcol"><label for="fTo">終了日</label><input type="text" data-dw readonly inputmode="none" id="fTo" aria-label="終了日" value="${esc(fTo)}"></div></div>` : ""}${locBar()}`;
+  const yo = [{v: RANGE, t: "期間指定"}].concat(ys.map(y => ({v: y, t: y + "年", s: y})));
+  return `<div class="filters fq">${msel("fg", "ジャンル", "ジャンルで絞り込み", GENRES.map(g => ({v: g, t: g})), fGenre)}${msel("fy", "年", "年で絞り込み", yo, fYear)}${locCols()}</div>${fYear.includes(RANGE) ? `<div class="filters" id="frange"><div class="fcol"><label for="fFrom">開始日</label><input type="text" data-dw readonly inputmode="none" id="fFrom" aria-label="開始日" value="${esc(fFrom)}"></div><div class="fcol"><label for="fTo">終了日</label><input type="text" data-dw readonly inputmode="none" id="fTo" aria-label="終了日" value="${esc(fTo)}"></div></div>` : ""}${clrRow()}`;
 }
 function msApply(id, vals, changed){
   if(id === "fg") fGenre = vals;
@@ -1017,6 +1023,7 @@ function bindMs(){
   const redo = id => { const pn = $("#" + id + "P"), pt = pn ? pn.scrollTop : 0; msOpen = id; msOpenTab = tab; render(); const np = $("#" + id + "P"); if(np) np.scrollTop = pt; };
   document.querySelectorAll("#app input[data-ms]").forEach(i => i.onchange = () => {
     const id = i.dataset.ms, vals = [...$("#" + id + "P").querySelectorAll("input:checked")].map(x => x.value);
+    if(id === "fst"){ statTab = vals[0]; msOpen = ""; render(); return; } /* 集計項目は1つだけ選ぶ。選んだらパネルを閉じる */
     msApply(id, vals, i); redo(id);
   });
   document.querySelectorAll("#app [data-mclr]").forEach(b => b.onclick = () => { const id = b.dataset.mclr; msApply(id, [], null); if(id === "fy") fYear = []; redo(id); });
@@ -1546,11 +1553,10 @@ function renderStats(){
       <div class="sc"><label>チケット代</label><div class="card">${gParts && spend ? donut(gParts.map(p => ({g: p.g, v: p.s})), "ジャンル別のチケット代の内訳") : ""}<b>${spend ? yen(spend) : "-"}</b></div></div>
     </div>
     ${gParts ? `<div class="gleg">${gParts.map(p => `<span><i style="--c:${gColor(p.g)}"></i>${esc(p.g)}</span>`).join("")}</div>` : ""}
-    <div class="filters"><div class="fcol"><label for="fst">集計項目</label><select id="fst" aria-label="集計する項目を選ぶ"><option value="artist"${statTab === "artist" ? " selected" : ""}>出演者</option><option value="venue"${statTab === "venue" ? " selected" : ""}>会場</option><option value="area"${statTab === "area" ? " selected" : ""}>エリア</option><option value="pref"${statTab === "pref" ? " selected" : ""}>都道府県</option><option value="genre"${statTab === "genre" ? " selected" : ""}>ジャンル</option><option value="year"${statTab === "year" ? " selected" : ""}>年</option><option value="tag"${statTab === "tag" ? " selected" : ""}>タグ</option></select></div></div>
+    <div class="filters fq">${msel("fst", "集計項目", "集計する項目を選ぶ", [{v: "artist", t: "出演者"},{v: "venue", t: "会場"},{v: "area", t: "エリア"},{v: "pref", t: "都道府県"},{v: "genre", t: "ジャンル"},{v: "year", t: "年"},{v: "tag", t: "タグ"}], [statTab], true)}</div>
     <div class="sortrow" style="justify-content:flex-end;gap:8px"><button type="button" id="metricToggle" aria-label="表示する項目を切り替え">${statMetric === "s" ? "チケット代" : "参加数"} ⇅</button><button type="button" id="dirToggle" aria-label="並び順を切り替え">${statDir === "asc" ? "少ない順" : "多い順"} ⇅</button></div>
     ${statTab === "tag" ? list(sorted(tags), "tag") : statTab === "venue" ? list(sorted(venues), "venue") : statTab === "genre" ? (GENRES.some(g => genres[g]) ? GENRES.filter(g => genres[g]).sort((a, b) => (mv(genres[b]) - mv(genres[a])) * dr || GENRES.indexOf(a) - GENRES.indexOf(b)).map(g => `<button type="button" class="line" data-k="genre" data-q="${g}"><span>${g}</span>${spLine(genres[g])}</button>`).join("") : `<div class="hint">データなし</div>`) : statTab === "year" ? (Object.keys(years).length ? Object.keys(years).sort((a, b) => (mv(years[b]) - mv(years[a])) * dr || b.localeCompare(a)).map(y => `<button type="button" class="line" data-k="year" data-q="${y}"><span>${y}年</span>${spLine(years[y])}</button>`).join("") : `<div class="hint">データなし</div>`) : statTab === "area" ? list(Object.entries(areas).sort((a, b) => (mv(b[1]) - mv(a[1])) * dr || b[1].n - a[1].n || AREAS.indexOf(a[0]) - AREAS.indexOf(b[0])), "area") : statTab === "pref" ? list(Object.entries(prefs).sort((a, b) => (mv(b[1]) - mv(a[1])) * dr || b[1].n - a[1].n || PREFS.indexOf(a[0]) - PREFS.indexOf(b[0])), "pref") : list(sorted(artists), "artist")}`;
   bindFilter();
-  $("#fst").onchange = e => { statTab = e.target.value; renderStats(); };
   $("#dirToggle").onclick = () => { statDir = statDir === "asc" ? "desc" : "asc"; renderStats(); };
   $("#metricToggle").onclick = () => { statMetric = statMetric === "s" ? "n" : "s"; renderStats(); };
   document.querySelectorAll("#app .line[data-q]").forEach(b => b.onclick = () => { const k = b.dataset.k, q = b.dataset.q; exact = null; query = ""; if(k === "year") fYear = [q]; else if(k === "genre") fGenre = [q]; else if(q === NONE_KEY) exact = {kind: k, value: q}; else if(k === "area"){ fArea = [q]; fPref = []; } else if(k === "pref") fPref = [q]; else if(k === "venue" || k === "artist" || k === "tag") exact = {kind: k, value: q}; else query = q; yPrev = ""; yAll = !fYear.length; setTab("list", {top: true}); });
@@ -1614,7 +1620,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.37</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.39</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -2487,8 +2493,8 @@ input[data-dw]{-webkit-appearance:none;appearance:none;height:46px;display:block
 .filters input[data-dw]{min-width:0;margin-top:0;width:100%;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);text-align:left}
 /* 期間指定の開始日・終了日は、ジャンル・年のプルダウンより小さくする */
 #frange{gap:6px;margin-top:-2px}
-#frange label{font-size:11px;margin:0 0 2px}
-#frange input[data-dw]{height:34px;padding:0 10px;font-size:13px;border-radius:8px}
+#frange label{font-size:12px;margin:0 0 2px}
+#frange input[data-dw]{height:34px;padding:0 10px;font-size:12px;border-radius:8px}
 .row3 input[data-dw]{padding-left:4px;padding-right:4px;text-align:center;font-size:15px}
 .bgrid input[data-dw]{padding:9px 4px;text-align:center}
 .dw{position:fixed;inset:0;z-index:30}
