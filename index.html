@@ -85,6 +85,17 @@ label{display:block;margin-top:14px;font-size:13px;color:var(--sub);font-weight:
 .stub.sel{border-color:var(--accent);background:var(--accent-soft)}
 .stub.sel .bchk i{background:var(--accent);border-color:var(--accent)}
 .stub.sel .bchk i::after{content:"✓"}
+.msel{position:relative}
+.msb{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;height:46px;padding:0 12px;font:inherit;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer;text-align:left}
+.msb span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.msb i{flex:none;color:var(--sub);font-style:normal;font-size:10px}
+.mpanel{position:absolute;z-index:20;top:calc(100% + 4px);left:0;min-width:100%;width:max-content;max-width:min(78vw,300px);max-height:min(60vh,380px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.28)}
+.filters .fcol:nth-child(2) .mpanel{left:auto;right:0}
+.msel .mopt{display:flex;align-items:center;gap:10px;margin:0;padding:11px 14px;font-size:15px;color:var(--ink);font-weight:400;cursor:pointer}
+.msel .mopt input{width:22px;height:22px;flex:none;margin:0;padding:0}
+.msel .mopt span{min-width:0;overflow-wrap:anywhere}
+.mfoot{position:sticky;bottom:0;display:flex;justify-content:space-between;gap:8px;padding:8px 10px;background:var(--surface);border-top:1px solid var(--line)}
+.mfoot button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:500;cursor:pointer}
 .clrrow{display:flex;justify-content:flex-end;margin:-2px 0 8px}
 .clrrow button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:500;cursor:pointer}
 .sortrow .cnt{font-size:13px;color:var(--sub)}
@@ -336,7 +347,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.33</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.37</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -942,52 +953,79 @@ let lives = [], loaded = false; /* 起動時に保存データを読み込み終
 let query = "", exact = null;
 let sortAsc = false;
 try { sortAsc = localStorage.getItem("livelog_sort") === "asc"; } catch(e){}
-let fArea = "", fPref = "", fGenre = "", fYear = "", fFrom = "", fTo = "", statTab = "artist", statMetric = "n", statDir = "desc";
+let fArea = [], fPref = [], fGenre = [], fYear = [], fFrom = "", fTo = "", statTab = "artist", statMetric = "n", statDir = "desc";
 const yearOf = l => (l.date || "").slice(0, 4);
 /* 年の欄で「期間指定」(RANGE)を選ぶと、開始日〜終了日で絞り込む(どちらか片方だけでもよい) */
 const RANGE = "range";
-const inYear = l => !fYear || (fYear === RANGE ? (!fFrom && !fTo) || (!!l.date && (!fFrom || l.date >= fFrom) && (!fTo || l.date <= fTo)) : yearOf(l) === fYear);
-const locOk = (l, skipArea, skipPref) => (skipArea || !fArea || areaOf(l.pref) === fArea) && (skipPref || !fPref || l.pref === fPref);
-const filtered = () => lives.filter(l => (!fGenre || genreOf(l) === fGenre) && inYear(l) && locOk(l));
+const inYear = l => !fYear.length || (fYear.includes(RANGE) ? (!fFrom && !fTo) || (!!l.date && (!fFrom || l.date >= fFrom) && (!fTo || l.date <= fTo)) : fYear.includes(yearOf(l)));
+const genreOk = l => !fGenre.length || fGenre.includes(genreOf(l));
+const locOk = (l, skipArea, skipPref) => (skipArea || !fArea.length || fArea.includes(areaOf(l.pref))) && (skipPref || !fPref.length || fPref.includes(l.pref));
+const filtered = () => lives.filter(l => genreOk(l) && inYear(l) && locOk(l));
 /* 一覧は年ごとに表示する(初期表示は今年。検索や絞り込みのときだけ「すべて」にできる) */
 const YEAR_ONLY = false; /* true にすると、一覧は年ごとの表示(初期表示は今年)になる */
 let yAll = false, yPrev = "";
 const narrowing = () => !!query.trim() || !!exact || yAll;
 const defYear = () => { const ys = [...new Set(lives.map(yearOf).filter(Boolean))].sort().reverse(), cy = String(new Date().getFullYear()); return ys.includes(cy) ? cy : (ys[0] || ""); };
-function ensureYear(){ if(YEAR_ONLY && !fYear && !narrowing()) fYear = defYear(); }
-function syncYearSel(){
-  const s = $("#fy"); if(!s) return;
-  const h = document.createElement("div"); h.innerHTML = filterBar(); const n = h.querySelector("#fy"); if(!n) return;
-  s.innerHTML = n.innerHTML; s.value = fYear;
-}
+function ensureYear(){ if(YEAR_ONLY && !fYear.length && !narrowing()) fYear = defYear() ? [defYear()] : []; }
+function syncYearSel(){} /* 年の候補は検索で変わらないので、何もしない */
 function onQuery(v){
   const was = !!query.trim(); query = v; const now = !!query.trim();
   if(!YEAR_ONLY){ /* 年の自動切り替えはしない */ }
-  else if(now && !was){ yPrev = fYear; fYear = ""; }
-  else if(!now && was){ if(!fYear && !exact && !yAll) fYear = yPrev || defYear(); yPrev = ""; }
+  else if(now && !was){ yPrev = fYear; fYear = []; }
+  else if(!now && was){ if(!fYear.length && !exact && !yAll) fYear = yPrev.length ? yPrev : (defYear() ? [defYear()] : []); yPrev = ""; }
   if(now !== was) syncYearSel();
   fillList();
 }
 /* 検索・ジャンル・年を、まとめて初期状態に戻す */
 const filterDefYear = () => YEAR_ONLY ? defYear() : "";
-const filtersActive = () => !!query.trim() || !!fGenre || !!fArea || !!fPref || !!exact || fYear !== filterDefYear();
-function clearFilters(){ query = ""; exact = null; fGenre = ""; fArea = ""; fPref = ""; fYear = filterDefYear(); fFrom = ""; fTo = ""; yAll = false; yPrev = ""; render(); }
+const filtersActive = () => !!query.trim() || !!fGenre.length || !!fArea.length || !!fPref.length || !!exact || fYear.join("|") !== filterDefYear();
+function clearFilters(){ query = ""; exact = null; fGenre = []; fArea = []; fPref = []; fYear = filterDefYear() ? [filterDefYear()] : []; fFrom = ""; fTo = ""; yAll = false; yPrev = ""; render(); }
+/* チェックボックスで複数選べるプルダウン(ボタンを押すと一覧が開く。選ぶたびに絞り込みへ反映) */
+let msOpen = "", msOpenTab = "";
+function msel(id, label, aria, opts, sel){
+  const on = new Set(sel), chosen = opts.filter(o => on.has(o.v)), open = msOpen === id && msOpenTab === tab;
+  const sum = chosen.length ? chosen[0].t + (chosen.length > 1 ? ` ほか${chosen.length - 1}件` : "") : "すべて";
+  return `<div class="fcol"><label for="${id}">${label}</label><div class="msel"><button type="button" class="msb" id="${id}" aria-label="${aria}" aria-haspopup="true" aria-expanded="${open}"><span>${esc(sum)}</span><i aria-hidden="true">▼</i></button><div class="mpanel" id="${id}P" role="group" aria-label="${aria}"${open ? "" : " hidden"}>${opts.map(o => `<label class="mopt"><input type="checkbox" data-ms="${id}" value="${esc(o.v)}"${on.has(o.v) ? " checked" : ""}><span>${esc(o.t)}</span></label>`).join("")}<div class="mfoot"><button type="button" data-mclr="${id}">選択を解除</button><button type="button" data-mclose="${id}">閉じる</button></div></div></div></div>`;
+}
 function locBar(){
-  const inA = l => !fArea || areaOf(l.pref) === fArea;
-  const as = AREAS.filter(a => lives.some(l => areaOf(l.pref) === a) || a === fArea);
-  const ps = PREFS.filter(x => lives.some(l => l.pref === x && inA(l)) || x === fPref);
-  return `<div class="filters" id="floc"><div class="fcol"><label for="far">エリア</label><select id="far" aria-label="エリアで絞り込み"><option value="">すべて</option>${as.map(a => `<option value="${a}"${fArea === a ? " selected" : ""}>${a}</option>`).join("")}</select></div><div class="fcol"><label for="fpr">都道府県</label><select id="fpr" aria-label="都道府県で絞り込み"><option value="">すべて</option>${ps.map(x => `<option value="${x}"${fPref === x ? " selected" : ""}>${x}</option>`).join("")}</select></div></div><div class="clrrow"><button type="button" id="clrFilter" aria-label="検索・ジャンル・年・エリア・都道府県の絞り込みをまとめてクリア"${filtersActive() ? "" : " hidden"}>クリア</button></div>`;
+  const inA = l => !fArea.length || fArea.includes(areaOf(l.pref));
+  const as = AREAS.filter(a => lives.some(l => areaOf(l.pref) === a) || fArea.includes(a));
+  const ps = PREFS.filter(x => lives.some(l => l.pref === x && inA(l)) || fPref.includes(x));
+  return `<div class="filters" id="floc">${msel("far", "エリア", "エリアで絞り込み", as.map(a => ({v: a, t: a})), fArea)}${msel("fpr", "都道府県", "都道府県で絞り込み", ps.map(x => ({v: x, t: x})), fPref)}</div><div class="clrrow"><button type="button" id="clrFilter" aria-label="検索・ジャンル・年・エリア・都道府県の絞り込みをまとめてクリア"${filtersActive() ? "" : " hidden"}>クリア</button></div>`;
 }
 function filterBar(){
-  const ys = [...new Set(lives.map(yearOf).filter(Boolean).concat(fYear && fYear !== RANGE ? [fYear] : []))].sort().reverse();
-  return `<div class="filters"><div class="fcol"><label for="fg">ジャンル</label><select id="fg" aria-label="ジャンルで絞り込み"><option value="">すべて</option>${GENRES.map(g => `<option value="${g}"${fGenre === g ? " selected" : ""}>${g}</option>`).join("")}</select></div><div class="fcol"><label for="fy">年</label><select id="fy" aria-label="年で絞り込み">${(!YEAR_ONLY || tab === "stats" || narrowing()) ? `<option value="">すべて</option><option value="${RANGE}"${fYear === RANGE ? " selected" : ""}>期間指定</option>` : ""}${ys.map(y => `<option value="${y}"${fYear === y ? " selected" : ""}>${y}年</option>`).join("")}</select></div></div>${fYear === RANGE ? `<div class="filters" id="frange"><div class="fcol"><label for="fFrom">開始日</label><input type="text" data-dw readonly inputmode="none" id="fFrom" aria-label="開始日" value="${esc(fFrom)}"></div><div class="fcol"><label for="fTo">終了日</label><input type="text" data-dw readonly inputmode="none" id="fTo" aria-label="終了日" value="${esc(fTo)}"></div></div>` : ""}${locBar()}`;
+  const ys = [...new Set(lives.map(yearOf).filter(Boolean).concat(fYear.filter(x => x !== RANGE)))].sort().reverse();
+  const yo = [{v: RANGE, t: "期間指定"}].concat(ys.map(y => ({v: y, t: y + "年"})));
+  return `<div class="filters">${msel("fg", "ジャンル", "ジャンルで絞り込み", GENRES.map(g => ({v: g, t: g})), fGenre)}${msel("fy", "年", "年で絞り込み", yo, fYear)}</div>${fYear.includes(RANGE) ? `<div class="filters" id="frange"><div class="fcol"><label for="fFrom">開始日</label><input type="text" data-dw readonly inputmode="none" id="fFrom" aria-label="開始日" value="${esc(fFrom)}"></div><div class="fcol"><label for="fTo">終了日</label><input type="text" data-dw readonly inputmode="none" id="fTo" aria-label="終了日" value="${esc(fTo)}"></div></div>` : ""}${locBar()}`;
 }
+function msApply(id, vals, changed){
+  if(id === "fg") fGenre = vals;
+  else if(id === "far"){ fArea = vals; fPref = fPref.filter(x => !fArea.length || fArea.includes(areaOf(x))); }
+  else if(id === "fpr") fPref = vals;
+  else if(id === "fy"){
+    if(changed && changed.value === RANGE && changed.checked) fYear = [RANGE]; /* 期間指定は、年とは同時に選べない */
+    else fYear = fYear.includes(RANGE) || vals.includes(RANGE) ? vals.filter(v => v !== RANGE) : vals;
+    yAll = !fYear.length && tab === "list";
+  }
+}
+function bindMs(){
+  const closeAll = () => { msOpen = ""; document.querySelectorAll("#app .mpanel").forEach(p => { p.hidden = true; }); document.querySelectorAll("#app .msb").forEach(b => b.setAttribute("aria-expanded", "false")); };
+  document.querySelectorAll("#app .msb").forEach(b => b.onclick = () => {
+    const wasOpen = msOpen === b.id && msOpenTab === tab; closeAll();
+    if(!wasOpen){ msOpen = b.id; msOpenTab = tab; const pn = $("#" + b.id + "P"); pn.hidden = false; b.setAttribute("aria-expanded", "true"); }
+  });
+  const redo = id => { const pn = $("#" + id + "P"), pt = pn ? pn.scrollTop : 0; msOpen = id; msOpenTab = tab; render(); const np = $("#" + id + "P"); if(np) np.scrollTop = pt; };
+  document.querySelectorAll("#app input[data-ms]").forEach(i => i.onchange = () => {
+    const id = i.dataset.ms, vals = [...$("#" + id + "P").querySelectorAll("input:checked")].map(x => x.value);
+    msApply(id, vals, i); redo(id);
+  });
+  document.querySelectorAll("#app [data-mclr]").forEach(b => b.onclick = () => { const id = b.dataset.mclr; msApply(id, [], null); if(id === "fy") fYear = []; redo(id); });
+  document.querySelectorAll("#app [data-mclose]").forEach(b => b.onclick = () => closeAll());
+}
+document.addEventListener("click", e => { if(!msOpen || !document.contains(e.target) || e.target.closest(".msel")) return; msOpen = ""; document.querySelectorAll(".mpanel").forEach(p => { p.hidden = true; }); document.querySelectorAll(".msb").forEach(b => b.setAttribute("aria-expanded", "false")); });
 function bindFilter(){
   { const cf = $("#clrFilter"); if(cf) cf.onclick = clearFilters; }
-  $("#fg").onchange = e => { fGenre = e.target.value; render(); };
-  $("#far").onchange = e => { fArea = e.target.value; if(fArea && fPref && areaOf(fPref) !== fArea) fPref = ""; render(); };
-  $("#fpr").onchange = e => { fPref = e.target.value; render(); };
-  $("#fy").onchange = e => { fYear = e.target.value; yAll = !fYear && tab === "list"; render(); };
+  bindMs();
   { /* 日付を選んでいる途中で画面を作り直すと、カレンダーが閉じてしまう。一覧は一覧だけを更新し、集計は入力が終わってから(フォーカスが外れたとき)反映する */
     const a = $("#fFrom"), b = $("#fTo"); let pend = false;
     const apply = () => { if(tab === "list") fillList(); else pend = true; };
@@ -1176,7 +1214,7 @@ function renderList(){
     <div class="cw sw"><input class="search" id="q" type="search" placeholder="公演名・出演者・会場・タグで検索" value="${esc(query)}"><button type="button" class="cx" data-clr="q" aria-label="クリア">×</button></div>
     ${filterBar()}
     <div class="sortrow"><span class="cl"><span class="cnt" id="listCnt"></span></span><span class="grp">${bulk ? `<button type="button" id="bulkAll">全選択</button>` : `<button type="button" id="bulkBtn">一括編集</button>`}<button type="button" id="viewToggle" aria-label="${lvAria()}">${lvIcon()}</button><button type="button" id="sortToggle" aria-label="並び順を切り替え">${sortAsc ? "古い順" : "新しい順"} ⇅</button></span></div>
-    ${exact ? `<div class="exact"><span>${exact.kind === "venue" ? "会場" : "出演者"}が未入力のイベント</span><button type="button" id="exOff">解除</button></div>` : ""}
+    ${exact ? `<div class="exact"><span>${exact.kind === "venue" ? "会場" : exact.kind === "tag" ? "タグ" : "出演者"}${exact.value === NONE_KEY ? "が未入力のイベント" : `「${esc(exact.value)}」と完全一致`}${exact.value !== NONE_KEY && exact.kind !== "tag" && aliasNames(exact.kind, exact.value).length > 1 ? "(旧名を含む)" : ""}</span><button type="button" id="exOff">解除</button></div>` : ""}
     <div id="listBody"></div>${bulk ? `<div class="bbar"><div class="bbar-in"><button type="button" class="btn sec" id="bulkCancel">キャンセル</button><button type="button" class="btn" id="bulkGo">編集</button></div></div>` : ""}
   `;
   bindFilter();
@@ -1202,7 +1240,7 @@ const wfold = s => String(s == null ? "" : s).replace(/[~～〜∼˜〰]/g, "〜
 function listRows(){
   const qs = wfold(query).toLowerCase().split(/[\s\u3000]+/).filter(Boolean); /* スペース区切りの全ワードを含むものだけ(AND検索) */
   return filtered()
-    .filter(l => !exact || (exact.kind === "venue" ? !l.venue : !artistsOf(l).length))
+    .filter(l => !exact || (exact.value === NONE_KEY ? (exact.kind === "venue" ? !l.venue : exact.kind === "tag" ? !tagsOf(l).length : !artistsOf(l).length) : exact.kind === "venue" ? canon("venue", l.venue) === exact.value : exact.kind === "tag" ? tagsOf(l).includes(exact.value) : canonArtists(l).includes(exact.value)))
     .filter(l => { if(!qs.length) return true; const hay = wfold(["title","artist","venue","tags"].map(f => String(f === "tags" ? tagsOf(l).join("\n") : f === "artist" ? artistsOf(l).join("\n") : l[f] ?? "")).join("\n").toLowerCase() + (aliasOn() ? "\n" + aliasHay(l) : "")); /* 紐付けを適用するときだけ、旧名・現在の名前でもヒットする */ return qs.every(w => hay.includes(w)); })
     .sort((a, b) => { const x = a.date || "", y = b.date || ""; if(!x || !y) return (x ? 0 : 1) - (y ? 0 : 1); if(x !== y) return sortAsc ? x.localeCompare(y) : y.localeCompare(x); const s = a.start || a.open || "", t = b.start || b.open || ""; if(s === t) return 0; if(!s || !t) return s ? -1 : 1; return sortAsc ? s.localeCompare(t) : t.localeCompare(s); });
 }
@@ -1485,18 +1523,19 @@ function renderStats(){
   const fl = filtered();
   const total = fl.length;
   const spend = fl.reduce((s, l) => s + (Number(l.price) || 0), 0);
-  const artists = {}, venues = {}, prefs = {}, areas = {}, years = {};
-  const gParts = !fGenre && total ? GENRES.map(g => { const ls = fl.filter(l => genreOf(l) === g); return {g, n: ls.length, s: ls.reduce((s, l) => s + (Number(l.price) || 0), 0)}; }).filter(p => p.n) : null;
+  const artists = {}, venues = {}, prefs = {}, areas = {}, years = {}, tags = {};
+  const gParts = total ? GENRES.filter(g => !fGenre.length || fGenre.includes(g)).map(g => { const ls = fl.filter(l => genreOf(l) === g); return {g, n: ls.length, s: ls.reduce((s, l) => s + (Number(l.price) || 0), 0)}; }).filter(p => p.n) : null;
   const genres = {};
-  lives.filter(l => inYear(l) && locOk(l)).forEach(l => { const g = genreOf(l); const o = genres[g] || (genres[g] = {n: 0, spend: 0}); o.n++; o.spend += Number(l.price) || 0; });
-  lives.filter(l => (!fGenre || genreOf(l) === fGenre) && locOk(l)).forEach(l => { const y = yearOf(l); if(!y) return; const o = years[y] || (years[y] = {n: 0, spend: 0}); o.n++; o.spend += Number(l.price) || 0; });
+  fl.forEach(l => { const g = genreOf(l); const o = genres[g] || (genres[g] = {n: 0, spend: 0}); o.n++; o.spend += Number(l.price) || 0; });
+  fl.forEach(l => { const y = yearOf(l); if(!y) return; const o = years[y] || (years[y] = {n: 0, spend: 0}); o.n++; o.spend += Number(l.price) || 0; });
   fl.forEach(l => {
     const pr = Number(l.price) || 0, add = (o, k) => { const e = o[k] || (o[k] = {n: 0, s: 0}); e.n++; e.s += pr; };
     const ca = canonArtists(l); if(ca.length) ca.forEach(a => add(artists, a)); else add(artists, NONE_KEY); /* 未入力も数える */
     add(venues, l.venue ? canon("venue", l.venue) : NONE_KEY);
+    { const tg = tagsOf(l); if(tg.length) tg.forEach(t => add(tags, t)); else add(tags, NONE_KEY); } /* タグなしも数える */
   });
-  lives.filter(l => (!fGenre || genreOf(l) === fGenre) && inYear(l) && locOk(l, false, true)).forEach(l => { if(!l.pref) return; const e = prefs[l.pref] || (prefs[l.pref] = {n: 0, s: 0}); e.n++; e.s += Number(l.price) || 0; });
-  lives.filter(l => (!fGenre || genreOf(l) === fGenre) && inYear(l)).forEach(l => { const a = areaOf(l.pref); if(!a) return; const e = areas[a] || (areas[a] = {n: 0, s: 0}); e.n++; e.s += Number(l.price) || 0; });
+  fl.forEach(l => { if(!l.pref) return; const e = prefs[l.pref] || (prefs[l.pref] = {n: 0, s: 0}); e.n++; e.s += Number(l.price) || 0; });
+  fl.forEach(l => { const a = areaOf(l.pref); if(!a) return; const e = areas[a] || (areas[a] = {n: 0, s: 0}); e.n++; e.s += Number(l.price) || 0; });
   const mv = e => statMetric === "s" ? (e.s ?? e.spend) : e.n, dr = statDir === "asc" ? -1 : 1;
   const sorted = o => Object.entries(o).sort((a, b) => (mv(b[1]) - mv(a[1])) * dr || b[1].n - a[1].n || a[0].localeCompare(b[0], "ja"));
   const list = (arr, kind) => arr.length ? arr.map(([k, v]) => `<button type="button" class="line" data-k="${kind}" data-q="${esc(k)}"><span>${k === NONE_KEY ? "未入力" : esc(k)}</span>${spLine(v)}</button>`).join("") : `<div class="hint">データなし</div>`;
@@ -1507,14 +1546,14 @@ function renderStats(){
       <div class="sc"><label>チケット代</label><div class="card">${gParts && spend ? donut(gParts.map(p => ({g: p.g, v: p.s})), "ジャンル別のチケット代の内訳") : ""}<b>${spend ? yen(spend) : "-"}</b></div></div>
     </div>
     ${gParts ? `<div class="gleg">${gParts.map(p => `<span><i style="--c:${gColor(p.g)}"></i>${esc(p.g)}</span>`).join("")}</div>` : ""}
-    <div class="filters"><div class="fcol"><label for="fst">集計項目</label><select id="fst" aria-label="集計する項目を選ぶ"><option value="artist"${statTab === "artist" ? " selected" : ""}>出演者</option><option value="venue"${statTab === "venue" ? " selected" : ""}>会場</option><option value="area"${statTab === "area" ? " selected" : ""}>エリア</option><option value="pref"${statTab === "pref" ? " selected" : ""}>都道府県</option><option value="genre"${statTab === "genre" ? " selected" : ""}>ジャンル</option><option value="year"${statTab === "year" ? " selected" : ""}>年</option></select></div></div>
+    <div class="filters"><div class="fcol"><label for="fst">集計項目</label><select id="fst" aria-label="集計する項目を選ぶ"><option value="artist"${statTab === "artist" ? " selected" : ""}>出演者</option><option value="venue"${statTab === "venue" ? " selected" : ""}>会場</option><option value="area"${statTab === "area" ? " selected" : ""}>エリア</option><option value="pref"${statTab === "pref" ? " selected" : ""}>都道府県</option><option value="genre"${statTab === "genre" ? " selected" : ""}>ジャンル</option><option value="year"${statTab === "year" ? " selected" : ""}>年</option><option value="tag"${statTab === "tag" ? " selected" : ""}>タグ</option></select></div></div>
     <div class="sortrow" style="justify-content:flex-end;gap:8px"><button type="button" id="metricToggle" aria-label="表示する項目を切り替え">${statMetric === "s" ? "チケット代" : "参加数"} ⇅</button><button type="button" id="dirToggle" aria-label="並び順を切り替え">${statDir === "asc" ? "少ない順" : "多い順"} ⇅</button></div>
-    ${statTab === "venue" ? list(sorted(venues), "venue") : statTab === "genre" ? (GENRES.some(g => genres[g]) ? GENRES.filter(g => genres[g]).sort((a, b) => (mv(genres[b]) - mv(genres[a])) * dr || GENRES.indexOf(a) - GENRES.indexOf(b)).map(g => `<button type="button" class="line" data-k="genre" data-q="${g}"><span>${g}</span>${spLine(genres[g])}</button>`).join("") : `<div class="hint">データなし</div>`) : statTab === "year" ? (Object.keys(years).length ? Object.keys(years).sort((a, b) => (mv(years[b]) - mv(years[a])) * dr || b.localeCompare(a)).map(y => `<button type="button" class="line" data-k="year" data-q="${y}"><span>${y}年</span>${spLine(years[y])}</button>`).join("") : `<div class="hint">データなし</div>`) : statTab === "area" ? list(Object.entries(areas).sort((a, b) => (mv(b[1]) - mv(a[1])) * dr || b[1].n - a[1].n || AREAS.indexOf(a[0]) - AREAS.indexOf(b[0])), "area") : statTab === "pref" ? list(Object.entries(prefs).sort((a, b) => (mv(b[1]) - mv(a[1])) * dr || b[1].n - a[1].n || PREFS.indexOf(a[0]) - PREFS.indexOf(b[0])), "pref") : list(sorted(artists), "artist")}`;
+    ${statTab === "tag" ? list(sorted(tags), "tag") : statTab === "venue" ? list(sorted(venues), "venue") : statTab === "genre" ? (GENRES.some(g => genres[g]) ? GENRES.filter(g => genres[g]).sort((a, b) => (mv(genres[b]) - mv(genres[a])) * dr || GENRES.indexOf(a) - GENRES.indexOf(b)).map(g => `<button type="button" class="line" data-k="genre" data-q="${g}"><span>${g}</span>${spLine(genres[g])}</button>`).join("") : `<div class="hint">データなし</div>`) : statTab === "year" ? (Object.keys(years).length ? Object.keys(years).sort((a, b) => (mv(years[b]) - mv(years[a])) * dr || b.localeCompare(a)).map(y => `<button type="button" class="line" data-k="year" data-q="${y}"><span>${y}年</span>${spLine(years[y])}</button>`).join("") : `<div class="hint">データなし</div>`) : statTab === "area" ? list(Object.entries(areas).sort((a, b) => (mv(b[1]) - mv(a[1])) * dr || b[1].n - a[1].n || AREAS.indexOf(a[0]) - AREAS.indexOf(b[0])), "area") : statTab === "pref" ? list(Object.entries(prefs).sort((a, b) => (mv(b[1]) - mv(a[1])) * dr || b[1].n - a[1].n || PREFS.indexOf(a[0]) - PREFS.indexOf(b[0])), "pref") : list(sorted(artists), "artist")}`;
   bindFilter();
   $("#fst").onchange = e => { statTab = e.target.value; renderStats(); };
   $("#dirToggle").onclick = () => { statDir = statDir === "asc" ? "desc" : "asc"; renderStats(); };
   $("#metricToggle").onclick = () => { statMetric = statMetric === "s" ? "n" : "s"; renderStats(); };
-  document.querySelectorAll("#app .line[data-q]").forEach(b => b.onclick = () => { const k = b.dataset.k, q = b.dataset.q; exact = null; query = ""; if(k === "year") fYear = q; else if(k === "genre") fGenre = q; else if(q === NONE_KEY) exact = {kind: k, value: q}; else if(k === "area"){ fArea = q; fPref = ""; } else if(k === "pref") fPref = q; else query = q; yPrev = ""; yAll = !fYear; setTab("list", {top: true}); });
+  document.querySelectorAll("#app .line[data-q]").forEach(b => b.onclick = () => { const k = b.dataset.k, q = b.dataset.q; exact = null; query = ""; if(k === "year") fYear = [q]; else if(k === "genre") fGenre = [q]; else if(q === NONE_KEY) exact = {kind: k, value: q}; else if(k === "area"){ fArea = [q]; fPref = []; } else if(k === "pref") fPref = [q]; else if(k === "venue" || k === "artist" || k === "tag") exact = {kind: k, value: q}; else query = q; yPrev = ""; yAll = !fYear.length; setTab("list", {top: true}); });
 }
 
 
@@ -1575,7 +1614,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.33</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.37</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -1733,7 +1772,7 @@ function openDetail(id){
   $("#nextEv").onclick = () => { if(nb.next){ openDetail(nb.next); slideIn("l"); } };
   $("#back").onclick = () => setTab("list");
   $("#edit").onclick = () => openForm(l);
-  document.querySelectorAll("#app .lk").forEach(b => b.onclick = () => { const k = b.dataset.lk, q = b.dataset.q; fGenre = k === "genre" ? q : ""; fYear = ""; fArea = k === "area" ? q : ""; fPref = k === "pref" ? q : ""; fFrom = ""; fTo = ""; exact = null; query = k === "area" || k === "pref" || k === "genre" ? "" : q; yPrev = ""; yAll = true; setTab("list", {top: true}); });
+  document.querySelectorAll("#app .lk").forEach(b => b.onclick = () => { const k = b.dataset.lk, q = b.dataset.q; fGenre = k === "genre" ? [q] : []; fYear = []; fArea = k === "area" ? [q] : []; fPref = k === "pref" ? [q] : []; fFrom = ""; fTo = ""; exact = k === "venue" || k === "artist" ? {kind: k, value: canon(k, q)} : k === "tag" ? {kind: k, value: q} : null; query = ""; yPrev = ""; yAll = true; setTab("list", {top: true}); });
 }
 
 /* 抽出結果(オブジェクト)をフォームに反映 */
