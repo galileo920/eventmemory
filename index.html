@@ -85,6 +85,8 @@ label{display:block;margin-top:14px;font-size:13px;color:var(--sub);font-weight:
 .stub.sel{border-color:var(--accent);background:var(--accent-soft)}
 .stub.sel .bchk i{background:var(--accent);border-color:var(--accent)}
 .stub.sel .bchk i::after{content:"✓"}
+.clrrow{display:flex;justify-content:flex-end;margin:-2px 0 8px}
+.clrrow button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:500;cursor:pointer}
 .sortrow .cnt{font-size:13px;color:var(--sub)}
 .sortrow button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:500;cursor:pointer}
 .sugg{border:1px solid var(--line);border-radius:10px;background:var(--surface);margin-top:4px;overflow:hidden}
@@ -334,7 +336,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.31</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.33</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -974,13 +976,14 @@ function locBar(){
   const inA = l => !fArea || areaOf(l.pref) === fArea;
   const as = AREAS.filter(a => lives.some(l => areaOf(l.pref) === a) || a === fArea);
   const ps = PREFS.filter(x => lives.some(l => l.pref === x && inA(l)) || x === fPref);
-  return `<div class="filters" id="floc"><div class="fcol"><label for="far">エリア</label><select id="far" aria-label="エリアで絞り込み"><option value="">すべて</option>${as.map(a => `<option value="${a}"${fArea === a ? " selected" : ""}>${a}</option>`).join("")}</select></div><div class="fcol"><label for="fpr">都道府県</label><select id="fpr" aria-label="都道府県で絞り込み"><option value="">すべて</option>${ps.map(x => `<option value="${x}"${fPref === x ? " selected" : ""}>${x}</option>`).join("")}</select></div></div>`;
+  return `<div class="filters" id="floc"><div class="fcol"><label for="far">エリア</label><select id="far" aria-label="エリアで絞り込み"><option value="">すべて</option>${as.map(a => `<option value="${a}"${fArea === a ? " selected" : ""}>${a}</option>`).join("")}</select></div><div class="fcol"><label for="fpr">都道府県</label><select id="fpr" aria-label="都道府県で絞り込み"><option value="">すべて</option>${ps.map(x => `<option value="${x}"${fPref === x ? " selected" : ""}>${x}</option>`).join("")}</select></div></div><div class="clrrow"><button type="button" id="clrFilter" aria-label="検索・ジャンル・年・エリア・都道府県の絞り込みをまとめてクリア"${filtersActive() ? "" : " hidden"}>クリア</button></div>`;
 }
 function filterBar(){
   const ys = [...new Set(lives.map(yearOf).filter(Boolean).concat(fYear && fYear !== RANGE ? [fYear] : []))].sort().reverse();
   return `<div class="filters"><div class="fcol"><label for="fg">ジャンル</label><select id="fg" aria-label="ジャンルで絞り込み"><option value="">すべて</option>${GENRES.map(g => `<option value="${g}"${fGenre === g ? " selected" : ""}>${g}</option>`).join("")}</select></div><div class="fcol"><label for="fy">年</label><select id="fy" aria-label="年で絞り込み">${(!YEAR_ONLY || tab === "stats" || narrowing()) ? `<option value="">すべて</option><option value="${RANGE}"${fYear === RANGE ? " selected" : ""}>期間指定</option>` : ""}${ys.map(y => `<option value="${y}"${fYear === y ? " selected" : ""}>${y}年</option>`).join("")}</select></div></div>${fYear === RANGE ? `<div class="filters" id="frange"><div class="fcol"><label for="fFrom">開始日</label><input type="text" data-dw readonly inputmode="none" id="fFrom" aria-label="開始日" value="${esc(fFrom)}"></div><div class="fcol"><label for="fTo">終了日</label><input type="text" data-dw readonly inputmode="none" id="fTo" aria-label="終了日" value="${esc(fTo)}"></div></div>` : ""}${locBar()}`;
 }
 function bindFilter(){
+  { const cf = $("#clrFilter"); if(cf) cf.onclick = clearFilters; }
   $("#fg").onchange = e => { fGenre = e.target.value; render(); };
   $("#far").onchange = e => { fArea = e.target.value; if(fArea && fPref && areaOf(fPref) !== fArea) fPref = ""; render(); };
   $("#fpr").onchange = e => { fPref = e.target.value; render(); };
@@ -1172,7 +1175,7 @@ function renderList(){
   $("#app").innerHTML = `
     <div class="cw sw"><input class="search" id="q" type="search" placeholder="公演名・出演者・会場・タグで検索" value="${esc(query)}"><button type="button" class="cx" data-clr="q" aria-label="クリア">×</button></div>
     ${filterBar()}
-    <div class="sortrow"><span class="cl"><span class="cnt" id="listCnt"></span><button type="button" id="clrFilter" aria-label="検索・ジャンル・年の絞り込みをまとめてクリア" hidden>クリア</button></span><span class="grp">${bulk ? `<button type="button" id="bulkAll">全選択</button>` : `<button type="button" id="bulkBtn">一括編集</button>`}<button type="button" id="viewToggle" aria-label="${lvAria()}">${lvIcon()}</button><button type="button" id="sortToggle" aria-label="並び順を切り替え">${sortAsc ? "古い順" : "新しい順"} ⇅</button></span></div>
+    <div class="sortrow"><span class="cl"><span class="cnt" id="listCnt"></span></span><span class="grp">${bulk ? `<button type="button" id="bulkAll">全選択</button>` : `<button type="button" id="bulkBtn">一括編集</button>`}<button type="button" id="viewToggle" aria-label="${lvAria()}">${lvIcon()}</button><button type="button" id="sortToggle" aria-label="並び順を切り替え">${sortAsc ? "古い順" : "新しい順"} ⇅</button></span></div>
     ${exact ? `<div class="exact"><span>${exact.kind === "venue" ? "会場" : "出演者"}が未入力のイベント</span><button type="button" id="exOff">解除</button></div>` : ""}
     <div id="listBody"></div>${bulk ? `<div class="bbar"><div class="bbar-in"><button type="button" class="btn sec" id="bulkCancel">キャンセル</button><button type="button" class="btn" id="bulkGo">編集</button></div></div>` : ""}
   `;
@@ -1572,7 +1575,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.31</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.33</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -2443,6 +2446,10 @@ async function bRegister(){
 /* ---------- 日付ホイール(年・月・日) ---------- */
 input[data-dw]{-webkit-appearance:none;appearance:none;height:46px;display:block;max-width:100%;cursor:pointer;caret-color:transparent;text-overflow:ellipsis}
 .filters input[data-dw]{min-width:0;margin-top:0;width:100%;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);text-align:left}
+/* 期間指定の開始日・終了日は、ジャンル・年のプルダウンより小さくする */
+#frange{gap:6px;margin-top:-2px}
+#frange label{font-size:11px;margin:0 0 2px}
+#frange input[data-dw]{height:34px;padding:0 10px;font-size:13px;border-radius:8px}
 .row3 input[data-dw]{padding-left:4px;padding-right:4px;text-align:center;font-size:15px}
 .bgrid input[data-dw]{padding:9px 4px;text-align:center}
 .dw{position:fixed;inset:0;z-index:30}
