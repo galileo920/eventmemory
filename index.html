@@ -51,8 +51,8 @@ main{max-width:560px;margin:0 auto;padding-block:14px 150px;padding-left:var(--g
 .in-r{animation:inFromLeft .22s ease-out}
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:var(--gutter-l);padding-right:var(--gutter-r)}
 .tabbar-in{max-width:560px;margin:0 auto;display:flex}
-.tabbar button{flex:1;border:0;background:none;color:var(--sub);padding:12px 4px;font-size:13px;font-weight:500;cursor:pointer;border-top:2px solid transparent}
-.tabbar button.on{color:var(--accent);border-top-color:var(--accent)}
+.tabbar button{flex:1;border:0;background:none;color:var(--sub);padding:12px 4px;font-size:14px;font-weight:500;cursor:pointer;border-top:3px solid transparent}
+.tabbar button.on{color:var(--accent);font-weight:700;border-top-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
 .fab{position:fixed;z-index:7;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(64px + env(safe-area-inset-bottom,0px));width:56px;height:56px;border-radius:50%;border:0;padding:0;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink);cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.28)}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .search{margin-bottom:12px}
@@ -76,7 +76,7 @@ textarea{resize:vertical;min-height:84px}
 .cw.sw{margin-bottom:12px}
 .cw>.search{margin-bottom:0}
 input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
-label{display:block;margin-top:14px;font-size:13px;color:var(--sub);font-weight:500}
+label{display:block;margin-top:14px;font-size:12px;color:var(--sub);font-weight:500}
 .sortrow{display:flex;justify-content:space-between;align-items:center;margin:-2px 0 4px}
 .sortrow .grp{display:flex;gap:8px}
 .sortrow .cl{display:flex;align-items:center;gap:8px}
@@ -146,7 +146,7 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .stub.thumb .side{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:4px 4px 4px 12px}
 .stub .who{font-weight:700;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .stub .ttl{font-size:14px;color:var(--sub);overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.stub.thumb .where{font-size:13px;color:var(--ink)}
+.stub.thumb .where{font-size:12px;color:var(--ink)}
 .stub.thumb .who.sm{font-size:14px;line-height:1.35}
 .stub.thumb .side .ttl{font-size:12px}
 .stub.thumb .side .where{font-size:12px;color:var(--ink)}
@@ -223,7 +223,7 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .gxp{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;justify-items:center;margin:12px 0 4px}
 .gxsw{width:32px;height:32px;border-radius:50%;border:2px solid transparent;box-shadow:inset 0 0 0 1px rgba(0,0,0,.18);cursor:pointer;padding:0}
 .gxsw.on{border-color:var(--ink);box-shadow:0 0 0 2px var(--surface) inset}
-.gxk{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:14px;margin-top:10px}
+.gxk{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:12px;margin-top:10px}
 .gxk label{display:flex;align-items:center;gap:5px;margin:0}
 .gxk input[type=checkbox]{width:20px;height:20px;flex:none;margin:0;padding:0}
 .gxk label,.gxk span{white-space:nowrap}
@@ -318,7 +318,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 .badd{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .badd .btn{margin:0}
 .badd input[type=file]{display:none}
-.bhint{font-size:13px;color:var(--sub);margin:8px 0 0}
+.bhint{font-size:12px;color:var(--sub);margin:8px 0 0}
 #bList{display:flex;flex-direction:column;gap:10px;margin-top:16px}
 .bempty{border:1px dashed var(--line);border-radius:14px;padding:26px 18px;text-align:center;color:var(--sub);font-size:14px}
 .bitem{border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden}
@@ -332,7 +332,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 .bpill.ok{color:var(--ok);border-color:var(--ok)}
 .bpill.err{color:var(--danger);border-color:var(--danger)}
 .bedit{border-top:1px solid var(--line);padding:4px 12px 14px}
-.bedit label{display:block;margin-top:12px;font-size:13px;color:var(--sub);font-weight:500}
+.bedit label{display:block;margin-top:12px;font-size:12px;color:var(--sub);font-weight:500}
 .bedit input,.bedit select,.bedit textarea{width:100%;min-width:0;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;margin-top:4px}
 .bedit textarea{min-height:64px;resize:vertical}
 .bgrid{display:grid;grid-template-columns:1.45fr 1fr 1fr;gap:8px}
@@ -352,7 +352,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.39</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.42</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1620,7 +1620,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.39</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.42</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
