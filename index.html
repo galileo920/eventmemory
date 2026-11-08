@@ -352,7 +352,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.3</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.4</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1098,8 +1098,8 @@ document.querySelectorAll(".tabbar button").forEach(b => b.onclick = () => {
 });
 let toastTimer = 0;
 function showToast(msg){ const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 3200); }
-/* スワイプ: 履歴↔集計↔設定、詳細→履歴、登録→戻る(入力中の誤操作を防ぐため2回続けて) */
-let formBackAt = 0, subKind = "", subBack = null;
+/* スワイプ: 履歴↔集計↔設定、詳細→履歴、登録→戻る(入力中の誤操作を防ぐため確認ダイアログ) */
+let subKind = "", subBack = null;
 function onSwipe(dx){
   if(!sub){
     if(bulk) return;
@@ -1111,13 +1111,11 @@ function onSwipe(dx){
   if(dx < 0) return;
   if(subKind === "detail"){ setTab("list", {dir: "r"}); return; }
   if(subKind === "batch"){
-    if(Date.now() - formBackAt < 4000){ formBackAt = 0; bCtl && bCtl.abort(); bNoteState = null; setTab("list", {dir: "r", top: true}); }
-    else { formBackAt = Date.now(); showToast("もう一度右にスワイプすると戻ります"); }
+    if(confirm("読み取った内容をすべて破棄して戻ります。よろしいですか?")){ bCtl && bCtl.abort(); bNoteState = null; setTab("list", {dir: "r", top: true}); }
     return;
   }
   if(subKind === "form"){
-    if(Date.now() - formBackAt < 4000){ formBackAt = 0; subBack(); slideIn("r"); }
-    else { formBackAt = Date.now(); showToast("もう一度右にスワイプすると戻ります(入力中の内容は保存されません)"); }
+    if(confirm("入力中の内容は保存されません。戻りますか?")){ subBack(); slideIn("r"); }
   }
 }
 (() => {
@@ -1641,7 +1639,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.3</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.4</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
