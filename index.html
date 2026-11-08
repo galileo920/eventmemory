@@ -352,7 +352,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.43</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.19.47</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -837,7 +837,7 @@ function donut(parts, label){
   const sum = parts.reduce((s, p) => s + p.v, 0);
   if(!sum) return "";
   let acc = 0;
-  const arcs = parts.filter(p => p.v > 0).map(p => { const len = p.v / sum * 100, gap = parts.filter(x => x.v > 0).length > 1 ? 0.8 : 0; const c = `<circle cx="21" cy="21" r="15.9155" stroke="${gColor(p.g)}" stroke-dasharray="${Math.max(len - gap, 0.01)} ${100 - Math.max(len - gap, 0.01)}" stroke-dashoffset="${25 - acc}"></circle>`; acc += len; return c; }).join("");
+  const arcs = parts.filter(p => p.v > 0).map(p => { const len = p.v / sum * 100, lap = parts.filter(x => x.v > 0).length > 1 ? 0.3 : 0, dl = Math.min(len + lap, 100); /* 境目の白線は無し。弧を少し重ね、各弧を自分の始点から描く(円の描き始めをまたぐ弧に、横線が出るのを防ぐ) */ const c = `<circle cx="21" cy="21" r="15.9155" stroke="${gColor(p.g)}" stroke-dasharray="${dl} ${100 - dl}" transform="rotate(${(-90 + acc * 3.6).toFixed(3)} 21 21)"></circle>`; acc += len; return c; }).join("");
   return `<svg class="donut" viewBox="0 0 42 42" role="img" aria-label="${esc(label)}">${arcs}</svg>`;
 }
 function yen(n){ return n || n === 0 ? "¥" + Number(n).toLocaleString() : ""; }
@@ -974,6 +974,7 @@ const defYear = () => { const ys = [...new Set(lives.map(yearOf).filter(Boolean)
 function ensureYear(){ if(YEAR_ONLY && !fYear.length && !narrowing()) fYear = defYear() ? [defYear()] : []; }
 function syncYearSel(){} /* 年の候補は検索で変わらないので、何もしない */
 function onQuery(v){
+  fromLink = false;
   const was = !!query.trim(); query = v; const now = !!query.trim();
   if(!YEAR_ONLY){ /* 年の自動切り替えはしない */ }
   else if(now && !was){ yPrev = fYear; fYear = []; }
@@ -984,7 +985,14 @@ function onQuery(v){
 /* 検索・ジャンル・年を、まとめて初期状態に戻す */
 const filterDefYear = () => YEAR_ONLY ? defYear() : "";
 const filtersActive = () => !!query.trim() || !!fGenre.length || !!fArea.length || !!fPref.length || !!exact || fYear.join("|") !== filterDefYear();
-function clearFilters(){ query = ""; exact = null; fGenre = []; fArea = []; fPref = []; fYear = filterDefYear() ? [filterDefYear()] : []; fFrom = ""; fTo = ""; yAll = false; yPrev = ""; render(); }
+/* クリアボタンを出す条件: リンクからの絞り込み中は出さない(一覧・集計とも)。集計では、検索ボックスだけの入力のときも出さない */
+let fromLink = false;
+const clrShow = () => {
+  if(fromLink || !filtersActive()) return false;
+  if(tab === "list") return true;
+  return !!fGenre.length || !!fArea.length || !!fPref.length || !!exact || fYear.join("|") !== filterDefYear();
+};
+function clearFilters(){ fromLink = false; query = ""; exact = null; fGenre = []; fArea = []; fPref = []; fYear = filterDefYear() ? [filterDefYear()] : []; fFrom = ""; fTo = ""; yAll = false; yPrev = ""; render(); }
 /* チェックボックスで複数選べるプルダウン(ボタンを押すと一覧が開く。選ぶたびに絞り込みへ反映) */
 let msOpen = "", msOpenTab = "";
 function msel(id, label, aria, opts, sel, single){
@@ -998,13 +1006,14 @@ function locCols(){
   const ps = PREFS.filter(x => lives.some(l => l.pref === x && inA(l)) || fPref.includes(x));
   return msel("far", "エリア", "エリアで絞り込み", as.map(a => ({v: a, t: a})), fArea) + msel("fpr", "都道府県", "都道府県で絞り込み", ps.map(x => ({v: x, t: x, s: x === "北海道" ? x : x.replace(/[都府県]$/, "")})), fPref);
 }
-const clrRow = () => `<div class="clrrow"><button type="button" id="clrFilter" aria-label="検索・ジャンル・年・エリア・都道府県の絞り込みをまとめてクリア"${filtersActive() ? "" : " hidden"}>クリア</button></div>`;
+const clrRow = () => `<div class="clrrow"><button type="button" id="clrFilter" aria-label="検索・ジャンル・年・エリア・都道府県の絞り込みをまとめてクリア"${clrShow() ? "" : " hidden"}>クリア</button></div>`;
 function filterBar(){
   const ys = [...new Set(lives.map(yearOf).filter(Boolean).concat(fYear.filter(x => x !== RANGE)))].sort().reverse();
   const yo = [{v: RANGE, t: "期間指定"}].concat(ys.map(y => ({v: y, t: y + "年", s: y})));
   return `<div class="filters fq">${msel("fg", "ジャンル", "ジャンルで絞り込み", GENRES.map(g => ({v: g, t: g})), fGenre)}${msel("fy", "年", "年で絞り込み", yo, fYear)}${locCols()}</div>${fYear.includes(RANGE) ? `<div class="filters" id="frange"><div class="fcol"><label for="fFrom">開始日</label><input type="text" data-dw readonly inputmode="none" id="fFrom" aria-label="開始日" value="${esc(fFrom)}"></div><div class="fcol"><label for="fTo">終了日</label><input type="text" data-dw readonly inputmode="none" id="fTo" aria-label="終了日" value="${esc(fTo)}"></div></div>` : ""}${clrRow()}`;
 }
 function msApply(id, vals, changed){
+  fromLink = false;
   if(id === "fg") fGenre = vals;
   else if(id === "far"){ fArea = vals; fPref = fPref.filter(x => !fArea.length || fArea.includes(areaOf(x))); }
   else if(id === "fpr") fPref = vals;
@@ -1035,7 +1044,7 @@ function bindFilter(){
   bindMs();
   { /* 日付を選んでいる途中で画面を作り直すと、カレンダーが閉じてしまう。一覧は一覧だけを更新し、集計は入力が終わってから(フォーカスが外れたとき)反映する */
     const a = $("#fFrom"), b = $("#fTo"); let pend = false;
-    const apply = () => { if(tab === "list") fillList(); else pend = true; };
+    const apply = () => { fromLink = false; if(tab === "list") fillList(); else pend = true; };
     if(a) a.onchange = e => { fFrom = e.target.value; if(fTo && fFrom > fTo){ fTo = fFrom; if(b) b.value = fTo; } apply(); };
     if(b) b.onchange = e => { fTo = e.target.value; if(fFrom && fTo < fFrom){ fFrom = fTo; if(a) a.value = fFrom; } apply(); };
     [a, b].forEach(x => { if(x) x.onblur = () => { if(pend){ pend = false; render(); } }; });
@@ -1227,7 +1236,7 @@ function renderList(){
   bindFilter();
   $("#viewToggle").onclick = e => { cycleLv(); e.currentTarget.innerHTML = lvIcon(); e.currentTarget.setAttribute("aria-label", lvAria()); fillList(); };
   $("#sortToggle").onclick = e => { sortAsc = !sortAsc; try { localStorage.setItem("livelog_sort", sortAsc ? "asc" : "desc"); } catch(err){} e.currentTarget.textContent = (sortAsc ? "古い順" : "新しい順") + " ⇅"; fillList(); };
-  if(exact) $("#exOff").onclick = () => { exact = null; yAll = false; renderList(); };
+  if(exact) $("#exOff").onclick = () => { fromLink = false; exact = null; yAll = false; renderList(); };
   if($("#bulkBtn")) $("#bulkBtn").onclick = () => { bulk = true; bulkSel.clear(); renderList(); };
   if($("#bulkAll")) $("#bulkAll").onclick = () => { const all = bulkVisible.length && bulkVisible.every(i => bulkSel.has(i)); bulkVisible.forEach(i => { if(all) bulkSel.delete(i); else bulkSel.add(i); }); fillList(); };
   if($("#bulkCancel")) $("#bulkCancel").onclick = () => { bulk = false; bulkSel.clear(); renderList(); };
@@ -1469,7 +1478,7 @@ function fillList(){
   const items = bulk || listView() !== "tour" ? rows.map(l => ({l})) : groupItems(rows); /* 「ツアーごと」のときだけまとめる(選択モードは全件) */
   const box = $("#listBody");
   if(!box) return;
-  { const cf = $("#clrFilter"); if(cf){ cf.hidden = !filtersActive(); cf.onclick = clearFilters; } }
+  { const cf = $("#clrFilter"); if(cf){ cf.hidden = !clrShow(); cf.onclick = clearFilters; } }
   const cn = $("#listCnt"); if(cn) cn.textContent = loaded ? rows.length + "件" : "読み込み中…";
   bulkVisible = rows.map(l => l.id);
   if(bulk) [...bulkSel].forEach(i => { if(!bulkVisible.includes(i)) bulkSel.delete(i); }); /* 絞り込みで見えなくなったものは選択から外す */
@@ -1559,7 +1568,7 @@ function renderStats(){
   bindFilter();
   $("#dirToggle").onclick = () => { statDir = statDir === "asc" ? "desc" : "asc"; renderStats(); };
   $("#metricToggle").onclick = () => { statMetric = statMetric === "s" ? "n" : "s"; renderStats(); };
-  document.querySelectorAll("#app .line[data-q]").forEach(b => b.onclick = () => { const k = b.dataset.k, q = b.dataset.q; exact = null; query = ""; if(k === "year") fYear = [q]; else if(k === "genre") fGenre = [q]; else if(q === NONE_KEY) exact = {kind: k, value: q}; else if(k === "area"){ fArea = [q]; fPref = []; } else if(k === "pref") fPref = [q]; else if(k === "venue" || k === "artist" || k === "tag") exact = {kind: k, value: q}; else query = q; yPrev = ""; yAll = !fYear.length; setTab("list", {top: true}); });
+  document.querySelectorAll("#app .line[data-q]").forEach(b => b.onclick = () => { const k = b.dataset.k, q = b.dataset.q; exact = null; query = ""; if(k === "year") fYear = [q]; else if(k === "genre") fGenre = [q]; else if(q === NONE_KEY) exact = {kind: k, value: q}; else if(k === "area"){ fArea = [q]; fPref = []; } else if(k === "pref") fPref = [q]; else if(k === "venue" || k === "artist" || k === "tag") exact = {kind: k, value: q}; else query = q; yPrev = ""; yAll = !fYear.length; fromLink = true; setTab("list", {top: true}); });
 }
 
 
@@ -1620,7 +1629,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.43</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.19.47</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -1778,7 +1787,7 @@ function openDetail(id){
   $("#nextEv").onclick = () => { if(nb.next){ openDetail(nb.next); slideIn("l"); } };
   $("#back").onclick = () => setTab("list");
   $("#edit").onclick = () => openForm(l);
-  document.querySelectorAll("#app .lk").forEach(b => b.onclick = () => { const k = b.dataset.lk, q = b.dataset.q; fGenre = k === "genre" ? [q] : []; fYear = []; fArea = k === "area" ? [q] : []; fPref = k === "pref" ? [q] : []; fFrom = ""; fTo = ""; exact = k === "venue" || k === "artist" ? {kind: k, value: canon(k, q)} : k === "tag" ? {kind: k, value: q} : null; query = ""; yPrev = ""; yAll = true; setTab("list", {top: true}); });
+  document.querySelectorAll("#app .lk").forEach(b => b.onclick = () => { const k = b.dataset.lk, q = b.dataset.q; fGenre = k === "genre" ? [q] : []; fYear = []; fArea = k === "area" ? [q] : []; fPref = k === "pref" ? [q] : []; fFrom = ""; fTo = ""; exact = k === "venue" || k === "artist" ? {kind: k, value: canon(k, q)} : k === "tag" ? {kind: k, value: q} : null; query = ""; yPrev = ""; yAll = true; fromLink = true; setTab("list", {top: true}); });
 }
 
 /* 抽出結果(オブジェクト)をフォームに反映 */
