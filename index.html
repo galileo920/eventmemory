@@ -352,7 +352,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.1</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.3</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1641,7 +1641,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.1</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.3</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -2234,6 +2234,11 @@ ${RULES}`;
   const getPhotos = setupPhotos(l);
   $("#save").onclick = async () => {
     if(getPhotos.over() > 0) return;
+    /* 「出演者をまとめて追加」に入力したまま、入力欄に追加せず保存しようとしたときの確認(標準のダイアログ) */
+    if($("#artIn") && $("#artIn").value.trim()){
+      if(!confirm("「出演者をまとめて追加」に入力した名前が、まだ出演者の入力欄に追加されていません。\n\nOK:入力欄に追加して保存\nキャンセル:保存せずに戻る")) return;
+      $("#artApply").onclick();
+    }
     FIELDS.forEach(k => { if(k !== "genre") l[k] = $("#f_" + k).value.trim(); });
     { const mv = window.__readMoreVenues ? window.__readMoreVenues().filter(v => v.venue) : []; if(mv.length) l.moreVenues = mv; else delete l.moreVenues; }
     l.tags = splitTags(l.tags);
@@ -2428,6 +2433,23 @@ function renderBatch(){
     row.querySelector(".t").textContent = s.t;
     let m = row.querySelector(".m"); if(!m && s.m){ m = document.createElement("div"); m.className = "m"; row.append(m); } if(m) m.textContent = s.m;
   };
+  /* 一括登録の編集欄でも、登録済みの出演者名・会場名から前方一致で候補を出す */
+  const fire = (el, type) => el.dispatchEvent(new Event(type, {bubbles: true}));
+  list.addEventListener("input", e => {
+    const t = e.target, k = t.dataset && t.dataset.k;
+    if(k !== "venue" && k !== "artist") return;
+    if(k === "venue"){
+      showSugg(t, regCands("venue", t.value), c => {
+        t.value = c.name; fire(t, "input");
+        const ps = document.getElementById(`b${t.dataset.bid}-pref`);
+        if(c.pref && ps){ ps.value = c.pref; fire(ps, "change"); }
+      });
+    } else {
+      const v = t.value, i = Math.max(v.lastIndexOf("、"), v.lastIndexOf(","), v.lastIndexOf("，")), head = v.slice(0, i + 1);
+      showSugg(t, regCands("artist", v.slice(i + 1), splitArtists(head.replace(/[,，]/g, "、"))), c => { t.value = head + c.name; fire(t, "input"); });
+    }
+  });
+  list.addEventListener("focusout", e => { if(e.target.dataset && (e.target.dataset.k === "venue" || e.target.dataset.k === "artist")) hideSugg(); });
   list.addEventListener("input", onEdit);
   list.addEventListener("change", onEdit);
   $("#bRun").onclick = () => { if(bRunning){ bCtl && bCtl.abort(); } else bRunAll(); };
