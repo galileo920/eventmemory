@@ -352,7 +352,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.4</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.6</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1563,7 +1563,7 @@ function renderStats(){
   fl.forEach(l => prefsOf(l).forEach(p => { const e = prefs[p] || (prefs[p] = {n: 0, s: 0}); e.n++; e.s += Number(l.price) || 0; }));
   fl.forEach(l => areasOf(l).forEach(a => { const e = areas[a] || (areas[a] = {n: 0, s: 0}); e.n++; e.s += Number(l.price) || 0; }));
   const mv = e => statMetric === "s" ? (e.s ?? e.spend) : e.n, dr = statDir === "asc" ? -1 : 1;
-  const sorted = o => Object.entries(o).sort((a, b) => (mv(b[1]) - mv(a[1])) * dr || b[1].n - a[1].n || a[0].localeCompare(b[0], "ja"));
+  const sorted = o => Object.entries(o).sort((a, b) => (a[0] === NONE_KEY) - (b[0] === NONE_KEY) || (mv(b[1]) - mv(a[1])) * dr || b[1].n - a[1].n || a[0].localeCompare(b[0], "ja")); /* 未入力は、数や並び順に関係なく、いちばん下にする */
   const list = (arr, kind) => arr.length ? arr.map(([k, v]) => `<button type="button" class="line" data-k="${kind}" data-q="${esc(k)}"><span>${k === NONE_KEY ? "未入力" : esc(k)}</span>${spLine(v)}</button>`).join("") : `<div class="hint">データなし</div>`;
   $("#app").innerHTML = `
     ${filterBar()}
@@ -1639,7 +1639,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.4</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.6</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
