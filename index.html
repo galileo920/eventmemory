@@ -287,6 +287,17 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .line{font-size:12px;display:flex;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:6px}
 .line span{overflow-wrap:anywhere;min-width:0}
 .line b{font-family:var(--font-mono);font-weight:500;white-space:nowrap}
+.sdh{margin:0 0 12px}.sdh small{display:block;font-size:12px;color:var(--sub)}.sdh .nm{font-size:20px;font-weight:700;overflow-wrap:anywhere}
+.line.sdev{width:100%;text-align:left;align-items:center;cursor:pointer;color:inherit;font:inherit;font-size:12px}
+.line.sdev>span{display:flex;flex-direction:column;gap:2px}
+.line.sdev small{font-size:12px;color:var(--sub)}
+.line.sdev .tt{font-family:inherit;font-weight:700;font-size:14px;white-space:normal;overflow-wrap:anywhere}
+.sdsec{margin:18px 0 6px;font-size:12px;color:var(--sub);font-weight:500}
+.sdbar{display:flex;align-items:center;gap:10px;font-size:12px;margin-bottom:6px;width:100%;padding:4px 0;border:0;background:none;color:inherit;font-family:inherit;text-align:left;cursor:pointer}
+.sdbar .y{flex:0 0 44px;font-family:var(--font-mono)}
+.sdbar .t{flex:1;height:14px;background:var(--accent-soft);border-radius:7px;overflow:hidden}
+.sdbar .t i{display:block;height:100%;background:var(--accent);border-radius:7px}
+.sdbar .v{flex:0 0 auto;min-width:40px;text-align:right;font-family:var(--font-mono)}
 .prow{display:flex;gap:8px;align-items:center}
 .prow+.prow{margin-top:6px}
 .prow input{margin-top:4px}
@@ -352,7 +363,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.6</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.12</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1003,7 +1014,7 @@ const manualPull = () => {
   }
   return false;
 };
-const clrShow = () => manualPull() || (tab === "list" && !!query.trim() && !qLinked);
+const clrShow = () => manualPull() || (tab === "list" && !!query.trim());
 function clearFilters(){ linkDim = ""; linkVal = ""; qLinked = false; query = ""; exact = null; fGenre = []; fArea = []; fPref = []; fYear = filterDefYear() ? [filterDefYear()] : []; fFrom = ""; fTo = ""; yAll = false; yPrev = ""; render(); }
 /* チェックボックスで複数選べるプルダウン(ボタンを押すと一覧が開く。選ぶたびに絞り込みへ反映) */
 let msOpen = "", msOpenTab = "";
@@ -1109,7 +1120,8 @@ function onSwipe(dx){
     return;
   }
   if(dx < 0) return;
-  if(subKind === "detail"){ setTab("list", {dir: "r"}); return; }
+  if(subKind === "detail"){ detailBack(); return; }
+  if(subKind === "sdetail"){ sdBack(); return; }
   if(subKind === "batch"){
     if(confirm("読み取った内容をすべて破棄して戻ります。よろしいですか?")){ bCtl && bCtl.abort(); bNoteState = null; setTab("list", {dir: "r", top: true}); }
     return;
@@ -1148,6 +1160,7 @@ let subEdit = false;
 function screenTitle(){
   if(sub && subKind === "batch") return "参加イベント一括登録";
   if(sub && subKind === "bulk") return "一括編集";
+  if(sub && subKind === "sdetail") return "詳細集計";
   if(sub) return subKind === "detail" ? "参加イベント詳細" : subEdit ? "参加イベント編集" : "参加イベント登録";
   return tab === "stats" ? "参加イベント集計" : tab === "settings" ? "設定" : "参加イベント一覧";
 }
@@ -1578,8 +1591,72 @@ function renderStats(){
   bindFilter();
   $("#dirToggle").onclick = () => { statDir = statDir === "asc" ? "desc" : "asc"; renderStats(); };
   $("#metricToggle").onclick = () => { statMetric = statMetric === "s" ? "n" : "s"; renderStats(); };
-  document.querySelectorAll("#app .line[data-q]").forEach(b => b.onclick = () => { const k = b.dataset.k, q = b.dataset.q; exact = null; query = ""; if(k === "year") fYear = [q]; else if(k === "genre") fGenre = [q]; else if(q === NONE_KEY) exact = {kind: k, value: q}; else if(k === "area"){ fArea = [q]; fPref = []; } else if(k === "pref") fPref = [q]; else if(k === "venue" || k === "artist" || k === "tag") exact = {kind: k, value: q}; else query = q; qLinked = !!query; linkDim = ["year", "genre", "area", "pref"].includes(k) ? k : ""; linkVal = linkDim ? JSON.stringify(linkDim === "year" ? fYear : linkDim === "genre" ? fGenre : linkDim === "area" ? fArea : fPref) : ""; yPrev = ""; yAll = !fYear.length; setTab("list", {top: true}); });
+  document.querySelectorAll("#app .line[data-q]").forEach(b => b.onclick = () => { const k = b.dataset.k, q = b.dataset.q; if((k === "artist" || k === "venue") && q !== NONE_KEY){ openSDetail(k, q, null); slideIn("l"); return; } /* 出演者・会場は、詳細集計の画面へ(一覧への絞り込みは、その画面のボタンから) */ exact = null; query = ""; if(k === "year") fYear = [q]; else if(k === "genre") fGenre = [q]; else if(q === NONE_KEY) exact = {kind: k, value: q}; else if(k === "area"){ fArea = [q]; fPref = []; } else if(k === "pref") fPref = [q]; else if(k === "venue" || k === "artist" || k === "tag") exact = {kind: k, value: q}; else query = q; qLinked = false; linkDim = ""; linkVal = ""; /* 集計の行から移ったときも、クリアボタンを出す(タグ・未入力の完全一致は出さない) */ yPrev = ""; yAll = !fYear.length; setTab("list", {top: true}); });
 }
+
+/* ---------- 詳細集計(集計の行を押したときの画面。いまは出演者・会場だけ) ---------- */
+let sdCur = null, detailFrom = null;
+function openSDetail(kind, value, prev){
+  saveScroll(); sub = true; subKind = "sdetail"; subEdit = false;
+  sdCur = {kind, value, prev: prev || null};
+  window.scrollTo(0, 0);
+  $("#fab").style.display = "none"; document.querySelector(".tabbar").hidden = true;
+  renderSDetail();
+}
+function sdBack(){
+  const p = sdCur && sdCur.prev;
+  if(p){ openSDetail(p.kind, p.value, p.prev); slideIn("r"); }
+  else { document.querySelector(".tabbar").hidden = false; setTab("stats", {dir: "r"}); }
+}
+function detailBack(){
+  const f = detailFrom;
+  if(f){ openSDetail(f.kind, f.value, f.prev); slideIn("r"); } else setTab("list", {dir: "r"});
+}
+function renderSDetail(){
+  const cur = sdCur, k = cur.kind, val = cur.value, isA = k === "artist";
+  const hit = l => isA ? canonArtists(l).includes(val) : venueNamesOf(l).some(v => canon("venue", v) === val);
+  const evs = lives.filter(hit), n = evs.length; /* 集計画面のプルダウンの絞り込みは反映しない(全データで集計) */
+  const price = l => Number(l.price) || 0, spend = evs.reduce((s, l) => s + price(l), 0), priced = evs.filter(l => price(l) > 0).length;
+  const dated = evs.filter(l => l.date).sort((a, b) => a.date.localeCompare(b.date) || (a.start || a.open || "").localeCompare(b.start || b.open || "")), first = dated[0], last = dated[dated.length - 1];
+  /* 初回・直近のイベント: 日付・公演名、出演者の集計なら会場、会場の集計なら出演者も出す。押すとイベント詳細へ */
+  const evBtn = (l, id) => { if(!l) return `<div class="hint">データなし</div>`; const ttl = l.title || artistLine(l) || "(未入力)", sub = isA ? venueLabel(l) : artistLine(l); return `<button type="button" class="line sdev" data-ev="${esc(l.id)}" id="sd_${id}"><span><small>${fmtDate(l.date)}</small><b class="tt">${esc(ttl)}</b>${sub && sub !== ttl ? `<small>${esc(sub)}</small>` : ""}</span><b>›</b></button>`; };
+  const cnt = keys => { const m = {}; evs.forEach(l => keys(l).forEach(x => { m[x] = (m[x] || 0) + 1; })); return Object.entries(m).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "ja")); };
+  const gParts = GENRES.map(g => { const ls = evs.filter(l => genreOf(l) === g); return {g, n: ls.length, s: ls.reduce((s, l) => s + price(l), 0)}; }).filter(p => p.n);
+  const ys = cnt(l => yearOf(l) ? [yearOf(l)] : []).sort((a, b) => b[0].localeCompare(a[0])), ymax = Math.max(1, ...ys.map(y => y[1]));
+  const rank = (title, arr, kind, min) => {
+    const rows = arr.filter(([, c]) => c >= (min || 1)).slice(0, 10);
+    return `<div class="sdsec">${title}</div>` + (rows.length ? rows.map(([name, c]) => kind ? `<button type="button" class="line" data-${kind === "area" || kind === "pref" ? "sf" : "sk"}="${kind}" data-sq="${esc(name)}"><span>${esc(name)}</span><b>${c}回 ›</b></button>` : `<div class="line"><span>${esc(name)}</span><b>${c}回</b></div>`).join("") : `<div class="hint">${min > 1 ? "2回以上はありません" : "データなし"}</div>`);
+  };
+  const resetDd = () => { fGenre = []; fYear = []; fArea = []; fPref = []; fFrom = ""; fTo = ""; }; /* 一覧へ移るときは、集計のプルダウンの絞り込みを外す */
+  $("#app").innerHTML = `
+    <div class="sdh"><small>${isA ? "出演者" : "会場"}</small><div class="nm">${esc(val)}</div></div>
+    <div class="stats">
+      <div class="sc"><label>参加数</label><div class="card">${gParts.length ? donut(gParts.map(p => ({g: p.g, v: p.n})), "ジャンル別の参加数の内訳") : ""}<b>${n}</b></div></div>
+      <div class="sc"><label>チケット代</label><div class="card">${gParts.length && spend ? donut(gParts.map(p => ({g: p.g, v: p.s})), "ジャンル別のチケット代の内訳") : ""}<b>${spend ? yen(spend) : "-"}</b></div></div>
+    </div>
+    ${gParts.length ? `<div class="gleg">${gParts.map(p => `<span><i style="--c:${gColor(p.g)}"></i>${esc(p.g)}</span>`).join("")}</div>` : ""}
+    <div class="line"><span>平均チケット代</span><b>${priced ? yen(Math.round(spend / priced)) : "-"}</b></div>
+    <div class="sdsec">初めての参加イベント</div>${evBtn(first, "first")}
+    <div class="sdsec">直近の参加イベント</div>${evBtn(last, "last")}
+    <div class="sdsec">年別の参加数</div>
+    ${ys.length ? ys.map(([y, c]) => `<button type="button" class="sdbar" data-sf="year" data-sq="${esc(y)}"><span class="y">${y}年</span><span class="t"><i style="width:${Math.max(4, Math.round(c / ymax * 100))}%"></i></span><span class="v">${c}回 ›</span></button>`).join("") : `<div class="hint">データなし</div>`}
+    ${isA
+      ? rank("よく一緒になる出演者(2回以上)", cnt(l => canonArtists(l).filter(a => a !== val)), "artist", 2) + rank("会場別", cnt(l => [...new Set(venueNamesOf(l).map(v => canon("venue", v)))]), "venue") + rank("エリア別", cnt(l => areasOf(l)), "area") + rank("都道府県別", cnt(l => prefsOf(l)), "pref")
+      : rank("出演者別", cnt(l => canonArtists(l)), "artist")}
+    <div class="bbar"><div class="bbar-in" style="grid-template-columns:1fr 1fr"><button class="btn sec" id="sdBack">戻る</button><button class="btn" id="sdList">一覧で見る</button></div></div>`;
+  $("#sdBack").onclick = sdBack;
+  $("#sdList").onclick = () => { resetDd(); exact = {kind: k, value: val}; query = ""; qLinked = false; linkDim = ""; linkVal = ""; yPrev = ""; yAll = !fYear.length; setTab("list", {top: true}); };
+  /* 年・エリア・都道府県を押すと、開いている出演者・会場と、その年・エリア・都道府県で絞り込んだ一覧へ */
+  document.querySelectorAll("#app [data-sf]").forEach(b => b.onclick = () => {
+    const d = b.dataset.sf, q = b.dataset.sq;
+    resetDd(); if(d === "year") fYear = [q]; else if(d === "area") fArea = [q]; else fPref = [q];
+    exact = {kind: k, value: val}; query = ""; qLinked = false; linkDim = ""; linkVal = ""; yPrev = ""; yAll = !fYear.length;
+    setTab("list", {top: true});
+  });
+  document.querySelectorAll("#app [data-ev]").forEach(b => b.onclick = () => { openDetail(b.dataset.ev, cur); slideIn("l"); });
+  document.querySelectorAll("#app [data-sk]").forEach(b => b.onclick = () => { openSDetail(b.dataset.sk, b.dataset.sq, cur); slideIn("l"); });
+}
+
 
 
 /* 設定画面の各項目を、見出しだけ表示して、タップで開く形にする。開くのは1つだけで、ほかは閉じる */
@@ -1639,7 +1716,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.6</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.12</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -1768,10 +1845,11 @@ function linkify(text){
 }
 const lkBtn = (k, v) => `<button type="button" class="lk" data-lk="${k}" data-q="${esc(v)}">${esc(v)}</button>`;
 const venueLinks = l => venueNamesOf(l).map(n => lkBtn("venue", n)).join("、") + (l.pref ? (venueNamesOf(l).length ? `<span style="white-space:nowrap">(${lkBtn("pref", l.pref)})</span>` : lkBtn("pref", l.pref)) : "");
-function openDetail(id){
+function openDetail(id, from){
   closeDial();
   const l = lives.find(x => x.id === id);
   if(!l) return;
+  detailFrom = from || null;
   document.querySelector(".tabbar").hidden = true;
   saveScroll(); sub = true; subKind = "detail";
   window.scrollTo(0, 0);
@@ -1795,9 +1873,9 @@ function openDetail(id){
     <div class="bbar"><div class="bbar-in" style="grid-template-columns:1fr 1fr 52px 52px"><button class="btn sec" id="back">戻る</button><button class="btn" id="edit">編集</button><button type="button" class="btn sec" id="prevEv" style="padding:0" aria-label="前のイベント"${nb.prev ? "" : " disabled"}>◀</button><button type="button" class="btn sec" id="nextEv" style="padding:0" aria-label="次のイベント"${nb.next ? "" : " disabled"}>▶</button></div></div>
   `;
   bindPhotoGallery(l);
-  $("#prevEv").onclick = () => { if(nb.prev){ openDetail(nb.prev); slideIn("r"); } };
-  $("#nextEv").onclick = () => { if(nb.next){ openDetail(nb.next); slideIn("l"); } };
-  $("#back").onclick = () => setTab("list");
+  $("#prevEv").onclick = () => { if(nb.prev){ openDetail(nb.prev, detailFrom); slideIn("r"); } };
+  $("#nextEv").onclick = () => { if(nb.next){ openDetail(nb.next, detailFrom); slideIn("l"); } };
+  $("#back").onclick = () => detailFrom ? detailBack() : setTab("list"); /* 詳細集計から開いたときは、詳細集計に戻る */
   $("#edit").onclick = () => openForm(l);
   document.querySelectorAll("#app .lk").forEach(b => b.onclick = () => { const k = b.dataset.lk, q = b.dataset.q; fGenre = k === "genre" ? [q] : []; fYear = []; fArea = k === "area" ? [q] : []; fPref = k === "pref" ? [q] : []; fFrom = ""; fTo = ""; exact = k === "venue" || k === "artist" ? {kind: k, value: canon(k, q)} : k === "tag" ? {kind: k, value: q} : null; query = ""; qLinked = false; linkDim = (k === "genre" || k === "area" || k === "pref") ? k : ""; linkVal = linkDim ? JSON.stringify(linkDim === "genre" ? fGenre : linkDim === "area" ? fArea : fPref) : ""; yPrev = ""; yAll = true; setTab("list", {top: true}); });
 }
