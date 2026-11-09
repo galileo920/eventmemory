@@ -366,7 +366,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.15</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.17</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1018,7 +1018,14 @@ const manualPull = () => {
   return false;
 };
 const clrShow = () => manualPull() || (tab === "list" && !!query.trim());
-function clearFilters(){ linkDim = ""; linkVal = ""; qLinked = false; query = ""; exact = null; fGenre = []; fArea = []; fPref = []; fYear = filterDefYear() ? [filterDefYear()] : []; fFrom = ""; fTo = ""; yAll = false; yPrev = ""; render(); }
+/* クリアは、出演者・会場・タグの完全一致(「○○」と完全一致の表示)だけを残し、検索語・ジャンル・年・エリア・都道府県・期間はリンクで入ったものも含めて解除する */
+function clearFilters(){
+  linkDim = ""; linkVal = ""; qLinked = false; query = "";
+  fGenre = []; fArea = []; fPref = [];
+  fYear = filterDefYear() ? [filterDefYear()] : []; fFrom = ""; fTo = ""; yPrev = "";
+  if(!exact) yAll = false;
+  render();
+}
 /* チェックボックスで複数選べるプルダウン(ボタンを押すと一覧が開く。選ぶたびに絞り込みへ反映) */
 let msOpen = "", msOpenTab = "";
 function msel(id, label, aria, opts, sel, single){
@@ -1735,7 +1742,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.15</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.17</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
