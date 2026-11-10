@@ -222,6 +222,11 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .gxk input[type=checkbox]{width:20px;height:20px;flex:none;margin:0;padding:0}
 .gxk label,.gxk span{white-space:nowrap}
 .gxl{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;font-size:12px;color:var(--sub)}
+.gxl.one{grid-template-columns:1fr;gap:0;margin-top:4px}
+.gxl.one label{margin-top:0}
+.gxl.one .nb{white-space:nowrap}
+.gxl.one input{width:calc(50% - 4px)}
+.gxl.one.dis{opacity:.45}
 .gxl input{display:block;width:100%;height:40px;margin-top:3px;padding:0 10px;font:inherit;font-size:15px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
 .gxn{font-size:12px;color:var(--sub);margin-top:8px}
 .gxh{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:0;font:inherit;color:var(--ink);text-align:left;cursor:pointer;min-height:36px}
@@ -356,7 +361,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.19</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.20</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -503,7 +508,7 @@ function genreCardHtml(){
         <div class="gxk"><span>自動入力しない:</span>${ck("skipArtist", "出演者")}${ck("skipOpen", "開場")}${ck("skipStart", "開演")}</div>
         <div class="gxl"><label>開場の表示名<input data-gi="${i}" data-gk="openLabel" value="${esc(g.openLabel || "")}" placeholder="開場" maxlength="6"></label><label>開演の表示名<input data-gi="${i}" data-gk="startLabel" value="${esc(g.startLabel || "")}" placeholder="開演" maxlength="6"></label></div>
         <div class="gxk"><label><input type="checkbox" data-gi="${i}" data-gk="noGroup"${g.noGroup ? " checked" : ""}>「ツアーごと」の表示でまとめない</label></div>
-        <div class="gxl"><label>まとめたときの数え方(全○○)<input data-gi="${i}" data-gk="groupUnit" value="${esc(g.groupUnit || "")}" placeholder="公演" maxlength="4"></label></div>
+        <div class="gxl one${g.noGroup ? " dis" : ""}"><label>まとめたときの数え方<span class="nb">(全○○)</span><input data-gi="${i}" data-gk="groupUnit" value="${esc(g.groupUnit || "")}" placeholder="公演" maxlength="4"${g.noGroup ? " disabled" : ""}></label></div>
         <div class="gxn">${g.orig ? (n ? `登録 ${n}件(イベントがあるため削除できません)` : "登録なし") : "新規"}</div>
       </div>
     </div>`;
@@ -523,7 +528,7 @@ function bindGenreCard(rerender){
   const err = m => { st.className = "status err"; st.textContent = m; };
   document.querySelectorAll("#app .gname").forEach(i => i.addEventListener("input", e => { gDraft[Number(i.dataset.gi)].name = e.target.value; const t = i.closest(".gxe").querySelector(".gxt"); if(t) t.textContent = e.target.value.trim() || "(名前を入力)"; }));
   document.querySelectorAll("#app .gxh").forEach(h => h.onclick = () => { const g = gDraft[Number(h.dataset.gi)]; g.open = !g.open; h.setAttribute("aria-expanded", g.open); h.closest(".gxe").querySelector(".gxb").hidden = !g.open; });
-  document.querySelectorAll("#app [data-gk]").forEach(i => i.addEventListener("input", e => { gDraft[Number(i.dataset.gi)][i.dataset.gk] = i.type === "checkbox" ? i.checked : i.value; }));
+  document.querySelectorAll("#app [data-gk]").forEach(i => i.addEventListener("input", e => { gDraft[Number(i.dataset.gi)][i.dataset.gk] = i.type === "checkbox" ? i.checked : i.value; if(i.dataset.gk === "noGroup"){ const w = i.closest(".gxb").querySelector(".gxl.one"); if(w){ w.classList.toggle("dis", i.checked); const u = w.querySelector("input"); if(u) u.disabled = i.checked; } } }));
   document.querySelectorAll("#app .gxsw").forEach(b => b.onclick = () => {
     const i = Number(b.dataset.gi); gDraft[i].color = Number(b.dataset.gc);
     b.parentElement.querySelectorAll(".gxsw").forEach(x => { const on = x === b; x.classList.toggle("on", on); x.setAttribute("aria-pressed", on); });
@@ -1714,7 +1719,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.19</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.20</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -2061,11 +2066,11 @@ function openForm(existing){
       <div class="cw"><input id="siteUrl" type="url" inputmode="url" placeholder=" " autocomplete="off"><button type="button" class="cx" data-clr="siteUrl" aria-label="クリア">×</button></div>
       <button type="button" class="btn" id="siteGo">読み取る</button>
       <div class="status" id="stSite"></div>
-      <div class="hint">イベントの公式ページや販売ページのURLから、公演名・出演者・日付・会場などを読み取ります。入力済みの項目は変わりません。</div>
+      <div class="hint">イベントの公式ページや販売ページのURLから、イベント名・出演者・日付・会場などを読み取ります。入力済みの項目は変わりません。</div>
     </div>
     ${photoCardHtml()}
     <div class="card">
-      <label>公演名</label><div class="cw"><textarea id="f_title" placeholder=" " style="min-height:110px">${v("title")}</textarea><button type="button" class="cx" data-clr="f_title" aria-label="クリア">×</button></div>
+      <label>イベント名</label><div class="cw"><textarea id="f_title" placeholder=" " style="min-height:110px">${v("title")}</textarea><button type="button" class="cx" data-clr="f_title" aria-label="クリア">×</button></div>
       <label>出演者</label><div id="artists"></div>
       <button type="button" class="btn sec" id="addArtist" style="margin-top:8px">＋ 出演者を追加</button>
       <div class="mrow"><button type="button" class="btn sec" id="modeSort">並び替え</button><button type="button" class="btn sec" id="modeDel">削除</button></div>
@@ -2221,7 +2226,7 @@ function openForm(existing){
   if($("#artSearch")){
     $("#artSearch").onclick = e => {
       const c = ctxNow();
-      if(!c.title){ const sst = $("#stSearch"); sst.className = "status err"; sst.textContent = "先に公演名を入力してください。"; return; }
+      if(!c.title){ const sst = $("#stSearch"); sst.className = "status err"; sst.textContent = "先にイベント名を入力してください。"; return; }
       const known = readArtists().filter(Boolean);
       runFetch(e.currentTarget, $("#stSearch"), "検索しています…(数十秒かかることがあります)", async () => {
         const prompt = `${head(c)}
@@ -2320,7 +2325,7 @@ ${RULES}`;
     l.title = l.title.replace(/\s*\n\s*/g, " ");
     l.artists = readArtists().filter(Boolean); delete l.artist;
     { const rr = {}; readRows().forEach(r => { if(r.name && r.role) rr[r.name] = r.role; }); l.artistRoles = rr; }
-    if(!l.artists.length && !l.title){ alert("公演名か出演者を入力してください"); return; }
+    if(!l.artists.length && !l.title){ alert("イベント名か出演者を入力してください"); return; }
     l.price = l.price === "" ? "" : Number(l.price);
     { const ph = getPhotos(); if(ph.length) l.photos = ph; else delete l.photos; }
     l.updatedAt = Date.now();
@@ -2376,7 +2381,7 @@ function bSummary(it){
   const f = it.f;
   if(it.status === "ok" || f.title || f.venue){
     const m = [f.date ? fmtDate(f.date) : "", [f.venue, f.pref && `(${f.pref})`].filter(Boolean).join("")].filter(Boolean).join(" ／ ");
-    return {t: f.title || f.artist || "(公演名なし)", m: m || "内容を確認してください"};
+    return {t: f.title || f.artist || "(イベント名なし)", m: m || "内容を確認してください"};
   }
   return {t: it.status === "err" ? "読み取れませんでした" : it.status === "run" ? "読み取り中…" : "未読み取り", m: ""};
 }
@@ -2391,7 +2396,7 @@ function bEditHtml(it){
     const inp = (k, label, extra = "") => `<label for="b${it.id}-${k}">${label}</label><div class="cw"><input id="b${it.id}-${k}" data-bid="${it.id}" data-k="${k}" value="${esc(f[k])}" placeholder=" " ${extra}><button type="button" class="cx" data-clr="b${it.id}-${k}" aria-label="クリア">×</button></div>`;
   return `<div class="bedit">
     <label for="b${it.id}-genre">ジャンル</label><select id="b${it.id}-genre" data-bid="${it.id}" data-k="genre"><option value="">未選択</option>${GENRES.map(g => `<option${f.genre === g ? " selected" : ""}>${g}</option>`).join("")}</select>
-    <label for="b${it.id}-title">公演名</label><div class="cw"><textarea id="b${it.id}-title" data-bid="${it.id}" data-k="title" placeholder=" ">${esc(f.title)}</textarea><button type="button" class="cx" data-clr="b${it.id}-title" aria-label="クリア">×</button></div>
+    <label for="b${it.id}-title">イベント名</label><div class="cw"><textarea id="b${it.id}-title" data-bid="${it.id}" data-k="title" placeholder=" ">${esc(f.title)}</textarea><button type="button" class="cx" data-clr="b${it.id}-title" aria-label="クリア">×</button></div>
     ${inp("artist", "出演者(「、」区切り)")}
     ${inp("venue", "会場")}
     <label for="b${it.id}-pref">会場(都道府県)</label><div class="cw"><select id="b${it.id}-pref" data-bid="${it.id}" data-k="pref"><option value="">未選択</option>${PREFS.map(p => `<option${f.pref === p ? " selected" : ""}>${p}</option>`).join("")}</select></div>
@@ -2596,7 +2601,7 @@ async function bRegister(){
     const f = it.f, now = Date.now();
     const rec = {id: uid(), genre: GENRES.includes(f.genre) ? f.genre : GENRES[0], title: f.title, venue: f.venue, pref: f.pref, date: f.date, open: f.open, start: f.start, seatType: f.seatType, seat: f.seat, price: f.price === "" ? "" : Number(f.price), setlist: "", artistRoles: {}, createdAt: now, updatedAt: now};
     { const arr = Array.isArray(f.artists) && f.artists.join("、") === f.artist ? f.artists : splitNames(f.artist); rec.artists = arr; } /* 画面で書き換えていなければ、読み取った配列のまま保存 */
-    if(!rec.artists.length && !rec.title){ fail++; it.err = "公演名か出演者を入力してください。"; it.open = true; continue; }
+    if(!rec.artists.length && !rec.title){ fail++; it.err = "イベント名か出演者を入力してください。"; it.open = true; continue; }
     try { await dbPut(rec); n++; bItems = bItems.filter(x => x !== it); if(bMedia[it.id]){ URL.revokeObjectURL(bMedia[it.id].url); delete bMedia[it.id]; } }
     catch(e){ fail++; it.err = "登録できませんでした。"; it.open = true; }
   }
