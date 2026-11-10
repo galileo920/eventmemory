@@ -14,7 +14,6 @@
 <style>
 
 :root{
-  --card:var(--surface); --fg:var(--ink); --accent-fg:var(--accent-ink);
   --bg:#edeff4; --surface:#ffffff; --ink:#15171f; --sub:#5e6372; --line:#d9dce6;
   --accent:#1f2330; --accent-ink:#ffffff; --accent-soft:#e4e6ee; --ok:#15803d; --danger:#c62828;
   --g-owarai:#d9730d; --g-butai:#7c4dcc; --g-talk:#0f8a8a; --g-sports:#3f8f1f; --g-exhibit:#2f6fd0; --g-other:#6b7280; --g-yellow:#b8860b; --g-red:#d0382c; --g-indigo:#3f4fc4; --g-brown:#8a5a2b; --g-music:#d93a6b;
@@ -308,7 +307,6 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .mrow .btn{margin:0;flex:1}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .scan input{display:none}
-.preview{max-width:100%;max-height:180px;border-radius:10px;margin-top:10px;display:block}
 .thumb{width:100%;border-radius:10px;margin-top:8px}
 select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit}
 .card select{height:46px;margin-top:4px;padding:0 12px}
@@ -358,7 +356,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.18</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.19</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1716,7 +1714,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.18</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.19</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
