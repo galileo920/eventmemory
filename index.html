@@ -168,14 +168,6 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .stub.old .who{font-size:14px}
 .stub.old .ttl{font-size:12px;color:var(--sub);overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .stub.old .where{font-size:12px;color:var(--ink);margin-top:2px}
-.lvopt{display:block;width:100%;margin-top:12px;padding:10px;text-align:left;font:inherit;color:inherit;background:var(--surface);border:2px solid var(--line);border-radius:16px;cursor:pointer}
-.lvopt.on{border-color:var(--accent);background:var(--accent-soft)}
-.lvopt .lvname{display:flex;align-items:baseline;gap:8px;margin-bottom:8px;font-weight:700}
-.lvopt .lvname{flex-wrap:wrap;row-gap:2px}
-.lvopt .lvname b{white-space:nowrap}
-.lvopt .lvname span{font-size:12px;font-weight:400;color:var(--sub)}
-.lvopt.on .lvname::before{content:"✓";display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:12px;align-self:center}
-.lvph{position:absolute;inset:0;background:linear-gradient(160deg,color-mix(in srgb,var(--g) 40%,var(--surface)),var(--g))}
 .yhead{font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.04em;margin:14px 2px 8px;display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 0;-webkit-user-select:none;user-select:none}
 .yhead .yn{font-weight:400;letter-spacing:normal}
 .yhead .ya{margin-left:auto;transition:transform .15s;transform:rotate(90deg)}
@@ -221,8 +213,8 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .gxe{border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:10px;background:var(--bg)}
 .gxr{display:flex;gap:8px;align-items:center}
 .gxr input{flex:1;min-width:0;height:44px;padding:0 12px;font:inherit;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
-.gxr button,.gxfix{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--danger);border-radius:999px;padding:8px 14px;font:inherit;font-size:13px;cursor:pointer}
-.gxr button:disabled{opacity:.4;cursor:default}.gxfix{color:var(--sub)}
+.gxr button{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--danger);border-radius:999px;padding:8px 14px;font:inherit;font-size:13px;cursor:pointer}
+.gxr button:disabled{opacity:.4;cursor:default}
 .gxp{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;justify-items:center;margin:12px 0 4px}
 .gxsw{width:32px;height:32px;border-radius:50%;border:2px solid transparent;box-shadow:inset 0 0 0 1px rgba(0,0,0,.18);cursor:pointer;padding:0}
 .gxsw.on{border-color:var(--ink);box-shadow:0 0 0 2px var(--surface) inset}
@@ -366,7 +358,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.17</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.18</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -986,32 +978,17 @@ const inYear = l => !fYear.length || (fYear.includes(RANGE) ? (!fFrom && !fTo) |
 const genreOk = l => !fGenre.length || fGenre.includes(genreOf(l));
 const locOk = (l, skipArea, skipPref) => (skipArea || !fArea.length || areasOf(l).some(a => fArea.includes(a))) && (skipPref || !fPref.length || prefsOf(l).some(p => fPref.includes(p)));
 const filtered = () => lives.filter(l => genreOk(l) && inYear(l) && locOk(l));
-/* 一覧は年ごとに表示する(初期表示は今年。検索や絞り込みのときだけ「すべて」にできる) */
-const YEAR_ONLY = false; /* true にすると、一覧は年ごとの表示(初期表示は今年)になる */
-let yAll = false, yPrev = "";
-const narrowing = () => !!query.trim() || !!exact || yAll;
-const defYear = () => { const ys = [...new Set(lives.map(yearOf).filter(Boolean))].sort().reverse(), cy = String(new Date().getFullYear()); return ys.includes(cy) ? cy : (ys[0] || ""); };
-function ensureYear(){ if(YEAR_ONLY && !fYear.length && !narrowing()) fYear = defYear() ? [defYear()] : []; }
-function syncYearSel(){} /* 年の候補は検索で変わらないので、何もしない */
 function onQuery(v){
-  qLinked = false;
-  const was = !!query.trim(); query = v; const now = !!query.trim();
-  if(!YEAR_ONLY){ /* 年の自動切り替えはしない */ }
-  else if(now && !was){ yPrev = fYear; fYear = []; }
-  else if(!now && was){ if(!fYear.length && !exact && !yAll) fYear = yPrev.length ? yPrev : (defYear() ? [defYear()] : []); yPrev = ""; }
-  if(now !== was) syncYearSel();
+  qLinked = false; query = v;
   fillList();
 }
-/* 検索・ジャンル・年を、まとめて初期状態に戻す */
-const filterDefYear = () => YEAR_ONLY ? defYear() : "";
-const filtersActive = () => !!query.trim() || !!fGenre.length || !!fArea.length || !!fPref.length || !!exact || fYear.join("|") !== filterDefYear();
 /* クリアボタンを出す条件: 自分でプルダウン・検索ボックスを操作して絞り込んでいるときだけ出す。リンク(詳細・集計)で付いた絞り込みは数えない。集計画面では、検索ボックスは数えない */
 let linkDim = "", linkVal = "", qLinked = false; /* リンクで付いたプルダウンの項目(genre/year/area/pref)とその値、リンクで入った検索語かどうか */
 const manualPull = () => {
   const dims = {genre: fGenre, year: fYear, area: fArea, pref: fPref};
   for(const d in dims){
     const v = dims[d];
-    if(d === "year" ? v.join("|") === filterDefYear() : !v.length) continue;
+    if(!v.length) continue;
     if(d === linkDim && JSON.stringify(v) === linkVal) continue;
     return true;
   }
@@ -1022,8 +999,7 @@ const clrShow = () => manualPull() || (tab === "list" && !!query.trim());
 function clearFilters(){
   linkDim = ""; linkVal = ""; qLinked = false; query = "";
   fGenre = []; fArea = []; fPref = [];
-  fYear = filterDefYear() ? [filterDefYear()] : []; fFrom = ""; fTo = ""; yPrev = "";
-  if(!exact) yAll = false;
+  fYear = []; fFrom = ""; fTo = "";
   render();
 }
 /* チェックボックスで複数選べるプルダウン(ボタンを押すと一覧が開く。選ぶたびに絞り込みへ反映) */
@@ -1053,7 +1029,6 @@ function msApply(id, vals, changed){
   else if(id === "fy"){
     if(changed && changed.value === RANGE && changed.checked) fYear = [RANGE]; /* 期間指定は、年とは同時に選べない */
     else fYear = fYear.includes(RANGE) || vals.includes(RANGE) ? vals.filter(v => v !== RANGE) : vals;
-    yAll = !fYear.length && tab === "list";
   }
 }
 function bindMs(){
@@ -1257,7 +1232,6 @@ function openBulkEdit(){
   bindBulkEdit(ids);
 }
 function renderList(){
-  ensureYear();
   $("#fab").style.display = bulk ? "none" : ""; document.querySelector(".tabbar").hidden = bulk;
   $("#app").innerHTML = `
     <div class="cw sw"><input class="search" id="q" type="search" placeholder="公演名・出演者・会場・タグで検索" value="${esc(query)}"><button type="button" class="cx" data-clr="q" aria-label="クリア">×</button></div>
@@ -1269,7 +1243,7 @@ function renderList(){
   bindFilter();
   $("#viewToggle").onclick = e => { cycleLv(); e.currentTarget.innerHTML = lvIcon(); e.currentTarget.setAttribute("aria-label", lvAria()); fillList(); };
   $("#sortToggle").onclick = e => { sortAsc = !sortAsc; try { localStorage.setItem("livelog_sort", sortAsc ? "asc" : "desc"); } catch(err){} e.currentTarget.textContent = (sortAsc ? "古い順" : "新しい順") + " ⇅"; fillList(); };
-  if(exact) $("#exOff").onclick = () => { exact = null; yAll = false; renderList(); };
+  if(exact) $("#exOff").onclick = () => { exact = null; renderList(); };
   if($("#bulkBtn")) $("#bulkBtn").onclick = () => { bulk = true; bulkSel.clear(); renderList(); };
   if($("#bulkAll")) $("#bulkAll").onclick = () => { const all = bulkVisible.length && bulkVisible.every(i => bulkSel.has(i)); bulkVisible.forEach(i => { if(all) bulkSel.delete(i); else bulkSel.add(i); }); fillList(); };
   if($("#bulkCancel")) $("#bulkCancel").onclick = () => { bulk = false; bulkSel.clear(); renderList(); };
@@ -1518,7 +1492,7 @@ function fillList(){
   const cn = $("#listCnt"); if(cn) cn.textContent = loaded ? rows.length + "件" : "読み込み中…";
   bulkVisible = rows.map(l => l.id);
   if(bulk) [...bulkSel].forEach(i => { if(!bulkVisible.includes(i)) bulkSel.delete(i); }); /* 絞り込みで見えなくなったものは選択から外す */
-  let lastY = null; const lv = listView() === "tour" ? "old" : listView(); let card;
+  const lv = listView() === "tour" ? "old" : listView(); let card;
   const cardL = (l, sub) => {
     const p = dateParts(l.date), y = p ? p.y + "年" : "日付未設定", ph = photoList(l)[0] || "";
     const head = ""; /* 年見出しは、下の見出し行(yh)で出す */
@@ -1617,7 +1591,7 @@ function renderStats(){
   bindFilter();
   $("#dirToggle").onclick = () => { statDir = statDir === "asc" ? "desc" : "asc"; renderStats(); };
   $("#metricToggle").onclick = () => { statMetric = statMetric === "s" ? "n" : "s"; renderStats(); };
-  document.querySelectorAll("#app .line[data-q]").forEach(b => b.onclick = () => { const k = b.dataset.k, q = b.dataset.q; if((k === "artist" || k === "venue") && q !== NONE_KEY){ openSDetail(k, q, null); slideIn("l"); return; } /* 出演者・会場は、詳細集計の画面へ(一覧への絞り込みは、その画面のボタンから) */ exact = null; query = ""; if(k === "year") fYear = [q]; else if(k === "genre") fGenre = [q]; else if(q === NONE_KEY) exact = {kind: k, value: q}; else if(k === "area"){ fArea = [q]; fPref = []; } else if(k === "pref") fPref = [q]; else if(k === "venue" || k === "artist" || k === "tag") exact = {kind: k, value: q}; else query = q; qLinked = false; linkDim = ""; linkVal = ""; /* 集計の行から移ったときも、クリアボタンを出す(タグ・未入力の完全一致は出さない) */ yPrev = ""; yAll = !fYear.length; setTab("list", {top: true}); });
+  document.querySelectorAll("#app .line[data-q]").forEach(b => b.onclick = () => { const k = b.dataset.k, q = b.dataset.q; if((k === "artist" || k === "venue") && q !== NONE_KEY){ openSDetail(k, q, null); slideIn("l"); return; } /* 出演者・会場は、詳細集計の画面へ(一覧への絞り込みは、その画面のボタンから) */ exact = null; query = ""; if(k === "year") fYear = [q]; else if(k === "genre") fGenre = [q]; else if(q === NONE_KEY) exact = {kind: k, value: q}; else if(k === "area"){ fArea = [q]; fPref = []; } else if(k === "pref") fPref = [q]; else if(k === "venue" || k === "artist" || k === "tag") exact = {kind: k, value: q}; else query = q; qLinked = false; linkDim = ""; linkVal = ""; /* 集計の行から移ったときも、クリアボタンを出す(タグ・未入力の完全一致は出さない) */ setTab("list", {top: true}); });
 }
 
 /* ---------- 詳細集計(集計の行を押したときの画面。いまは出演者・会場だけ) ---------- */
@@ -1671,16 +1645,16 @@ function renderSDetail(){
       : rank("出演者別", cnt(l => canonArtists(l)), "artist")}
     <div class="bbar"><div class="bbar-in" style="grid-template-columns:1fr 1fr"><button class="btn sec" id="sdBack">戻る</button><button class="btn" id="sdList">一覧で見る</button></div></div>`;
   $("#sdBack").onclick = sdBack;
-  $("#sdList").onclick = () => { resetDd(); exact = {kind: k, value: val}; query = ""; qLinked = false; linkDim = ""; linkVal = ""; yPrev = ""; yAll = !fYear.length; setTab("list", {top: true}); };
+  $("#sdList").onclick = () => { resetDd(); exact = {kind: k, value: val}; query = ""; qLinked = false; linkDim = ""; linkVal = ""; setTab("list", {top: true}); };
   /* 年・エリア・都道府県を押すと、開いている出演者・会場と、その年・エリア・都道府県で絞り込んだ一覧へ */
   document.querySelectorAll("#app [data-sf]").forEach(b => b.onclick = () => {
     const d = b.dataset.sf, q = b.dataset.sq;
     resetDd(); if(d === "year") fYear = [q]; else if(d === "area") fArea = [q]; else fPref = [q];
-    exact = {kind: k, value: val}; query = ""; qLinked = false; linkDim = ""; linkVal = ""; yPrev = ""; yAll = !fYear.length;
+    exact = {kind: k, value: val}; query = ""; qLinked = false; linkDim = ""; linkVal = ""; 
     setTab("list", {top: true});
   });
   document.querySelectorAll("#app [data-ev]").forEach(b => b.onclick = () => { openDetail(b.dataset.ev, cur); slideIn("l"); });
-  document.querySelectorAll("#app [data-sk]").forEach(b => b.onclick = () => { /* 共演者・会場別・出演者別の行は、開いている出演者・会場で絞り込み+押した名前を検索ボックスに入れた一覧へ */ resetDd(); exact = {kind: k, value: val}; query = b.dataset.sq; qLinked = false; linkDim = ""; linkVal = ""; yPrev = ""; yAll = !fYear.length; setTab("list", {top: true}); });
+  document.querySelectorAll("#app [data-sk]").forEach(b => b.onclick = () => { /* 共演者・会場別・出演者別の行は、開いている出演者・会場で絞り込み+押した名前を検索ボックスに入れた一覧へ */ resetDd(); exact = {kind: k, value: val}; query = b.dataset.sq; qLinked = false; linkDim = ""; linkVal = ""; setTab("list", {top: true}); });
 }
 
 
@@ -1742,7 +1716,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.17</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.18</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -1903,7 +1877,7 @@ function openDetail(id, from){
   $("#nextEv").onclick = () => { if(nb.next){ openDetail(nb.next, detailFrom); slideIn("l"); } };
   $("#back").onclick = () => detailFrom ? detailBack() : setTab("list"); /* 詳細集計から開いたときは、詳細集計に戻る */
   $("#edit").onclick = () => openForm(l);
-  document.querySelectorAll("#app .lk").forEach(b => b.onclick = () => { const k = b.dataset.lk, q = b.dataset.q; fGenre = k === "genre" ? [q] : []; fYear = []; fArea = k === "area" ? [q] : []; fPref = k === "pref" ? [q] : []; fFrom = ""; fTo = ""; exact = k === "venue" || k === "artist" ? {kind: k, value: canon(k, q)} : k === "tag" ? {kind: k, value: q} : null; query = ""; qLinked = false; linkDim = (k === "genre" || k === "area" || k === "pref") ? k : ""; linkVal = linkDim ? JSON.stringify(linkDim === "genre" ? fGenre : linkDim === "area" ? fArea : fPref) : ""; yPrev = ""; yAll = true; setTab("list", {top: true}); });
+  document.querySelectorAll("#app .lk").forEach(b => b.onclick = () => { const k = b.dataset.lk, q = b.dataset.q; fGenre = k === "genre" ? [q] : []; fYear = []; fArea = k === "area" ? [q] : []; fPref = k === "pref" ? [q] : []; fFrom = ""; fTo = ""; exact = k === "venue" || k === "artist" ? {kind: k, value: canon(k, q)} : k === "tag" ? {kind: k, value: q} : null; query = ""; qLinked = false; linkDim = (k === "genre" || k === "area" || k === "pref") ? k : ""; linkVal = linkDim ? JSON.stringify(linkDim === "genre" ? fGenre : linkDim === "area" ? fArea : fPref) : ""; setTab("list", {top: true}); });
 }
 
 /* 抽出結果(オブジェクト)をフォームに反映 */
