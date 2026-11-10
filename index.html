@@ -361,7 +361,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.20</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.22</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1237,7 +1237,7 @@ function openBulkEdit(){
 function renderList(){
   $("#fab").style.display = bulk ? "none" : ""; document.querySelector(".tabbar").hidden = bulk;
   $("#app").innerHTML = `
-    <div class="cw sw"><input class="search" id="q" type="search" placeholder="公演名・出演者・会場・タグで検索" value="${esc(query)}"><button type="button" class="cx" data-clr="q" aria-label="クリア">×</button></div>
+    <div class="cw sw"><input class="search" id="q" type="search" placeholder="イベント名・出演者・会場・タグで検索" value="${esc(query)}"><button type="button" class="cx" data-clr="q" aria-label="クリア">×</button></div>
     ${filterBar()}
     <div class="sortrow"><span class="cl"><span class="cnt" id="listCnt"></span></span><span class="grp">${bulk ? `<button type="button" id="bulkAll">全選択</button>` : `<button type="button" id="bulkBtn">一括編集</button>`}<button type="button" id="viewToggle" aria-label="${lvAria()}">${lvIcon()}</button><button type="button" id="sortToggle" aria-label="並び順を切り替え">${sortAsc ? "古い順" : "新しい順"} ⇅</button></span></div>
     ${exact ? `<div class="exact"><span>${exact.kind === "venue" ? "会場" : exact.kind === "tag" ? "タグ" : "出演者"}${exact.value === NONE_KEY ? "が未入力のイベント" : `「${esc(exact.value)}」と完全一致`}${exact.value !== NONE_KEY && exact.kind !== "tag" && aliasNames(exact.kind, exact.value).length > 1 ? "(旧名を含む)" : ""}</span><button type="button" id="exOff">解除</button></div>` : ""}
@@ -1719,7 +1719,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.20</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.22</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -2419,7 +2419,7 @@ function bSetNote(cls, text){ bNoteState = text ? {cls, text} : null; const n = 
 function bRefresh(){
   const list = $("#bList"); if(!list) return;
   if(!bItems.length){
-    list.innerHTML = `<div class="bempty">写真を追加すると、ここに1枚1公演ずつ並びます。<br>読み取りが終わったら内容を確認して、「登録」を押します。</div>`;
+    list.innerHTML = `<div class="bempty">写真を追加すると、ここに読み取ったイベントが1件ずつ並びます。<br>読み取りが終わったら内容を確認して、「登録」を押します。</div>`;
   } else {
     const stage = bItems.filter(i => i.status === "wait" && bMedia[i.id]), rows = bItems.filter(i => !(i.status === "wait" && bMedia[i.id]));
     /* 読み取る前の写真は、サムネイルの一覧で確認できる(タップで拡大、×で外す) */
@@ -2458,7 +2458,7 @@ function renderBatch(){
     </div>
     <input id="bPick" type="file" accept="image/*" multiple style="display:none">
     <input id="bCam" type="file" accept="image/*" capture="environment" style="display:none">
-    <p class="bhint">写真1枚を1公演として読み取ります。1枚にチケットが複数並んでいるときは、1枚ずつ別の公演として読み取ります。チケットの写真や電子チケットのスクリーンショットを、まとめて選べます。選んだ写真はサムネイルで確認でき、タップで拡大、×で外せます。</p>
+    <p class="bhint">チケット1枚を1件のイベントとして読み取ります。1枚の写真に複数のチケットが並んでいるときは、それぞれ別のイベントになります。チケットの写真や電子チケットのスクリーンショットを、まとめて選べます。選んだ写真はサムネイルで確認でき、タップで拡大、×で外せます。</p>
     <div id="bList"></div>
     <div class="bend"><button type="button" class="btn" id="bRun" disabled>読み取る</button><button type="button" class="btn" id="bReg" disabled>登録</button></div>
     <p class="bnote" id="bNote" role="status"></p>
