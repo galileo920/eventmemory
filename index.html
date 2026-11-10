@@ -361,7 +361,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.22</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.23</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1719,7 +1719,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.22</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.23</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -2395,7 +2395,6 @@ function bEditHtml(it){
   const f = it.f;
     const inp = (k, label, extra = "") => `<label for="b${it.id}-${k}">${label}</label><div class="cw"><input id="b${it.id}-${k}" data-bid="${it.id}" data-k="${k}" value="${esc(f[k])}" placeholder=" " ${extra}><button type="button" class="cx" data-clr="b${it.id}-${k}" aria-label="クリア">×</button></div>`;
   return `<div class="bedit">
-    <label for="b${it.id}-genre">ジャンル</label><select id="b${it.id}-genre" data-bid="${it.id}" data-k="genre"><option value="">未選択</option>${GENRES.map(g => `<option${f.genre === g ? " selected" : ""}>${g}</option>`).join("")}</select>
     <label for="b${it.id}-title">イベント名</label><div class="cw"><textarea id="b${it.id}-title" data-bid="${it.id}" data-k="title" placeholder=" ">${esc(f.title)}</textarea><button type="button" class="cx" data-clr="b${it.id}-title" aria-label="クリア">×</button></div>
     ${inp("artist", "出演者(「、」区切り)")}
     ${inp("venue", "会場")}
@@ -2408,7 +2407,8 @@ function bEditHtml(it){
     ${inp("seatType", "席種・券種")}
     ${inp("seat", "座席・整理番号")}
     ${inp("price", "チケット代", 'type="number" inputmode="numeric"')}
-    ${it.err ? `<div class="bmsg">${esc(it.err)}</div>` : ""}
+    <label for="b${it.id}-genre">ジャンル</label><select id="b${it.id}-genre" data-bid="${it.id}" data-k="genre"><option value="">未選択</option>${GENRES.map(g => `<option${f.genre === g ? " selected" : ""}>${g}</option>`).join("")}</select>
+    ${it.err ?`<div class="bmsg">${esc(it.err)}</div>` : ""}
     <div class="bacts">
       ${bMedia[it.id] && !it.src ? `<button type="button" class="btn sec small" data-bact="retry" data-bid="${it.id}">再読み取り</button>` : ""}
       <button type="button" class="btn sec small" data-bact="del" data-bid="${it.id}" style="color:var(--danger)">削除</button>
