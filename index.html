@@ -103,6 +103,8 @@ label{display:block;margin-top:14px;font-size:12px;color:var(--sub);font-weight:
 .clrrow{display:flex;justify-content:flex-end;margin:-2px 0 8px}
 .clrrow button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:500;cursor:pointer}
 .sortrow .cnt{font-size:12px;color:var(--sub)}
+.eqw{display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px} /* 集計の切り替えボタンと並び順ボタンを、同じ幅(広いほうに合わせる)にする */
+.eqw button{width:100%}
 .sortrow button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:500;cursor:pointer}
 .sugg{border:1px solid var(--line);border-radius:10px;background:var(--surface);margin-top:4px;overflow:hidden}
 .sugg button{display:block;width:100%;text-align:left;border:0;border-top:1px solid var(--line);background:none;padding:10px 12px;font:inherit;cursor:pointer}
@@ -365,7 +367,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.33</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.34</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1605,11 +1607,11 @@ function renderStats(){
     </div>
     ${gParts ? `<div class="gleg">${gParts.map(p => `<span><i style="--c:${gColor(p.g)}"></i>${esc(p.g)}</span>`).join("")}</div>` : ""}
     <div class="filters fq">${msel("fst", "集計項目", "集計する項目を選ぶ", [{v: "artist", t: "出演者"},{v: "venue", t: "会場"},{v: "area", t: "エリア"},{v: "pref", t: "都道府県"},{v: "genre", t: "ジャンル"},{v: "year", t: "年"},{v: "tag", t: "タグ"}], [statTab], true)}</div>
-    <div class="sortrow" style="justify-content:flex-end;gap:8px"><button type="button" id="metricToggle" aria-label="表示する項目を切り替え"><span class="tg"><span${statMetric === "n" ? "" : ' class="off"'}>参加数 ⇅</span><span${statMetric === "s" ? "" : ' class="off"'}>チケット代 ⇅</span><span${statMetric === "p" ? "" : ' class="off"'}>参加割合 ⇅</span></span></button><button type="button" id="dirToggle" aria-label="並び順を切り替え"><span class="tg"><span${statDir === "asc" ? ' class="off"' : ""}>多い順 ⇅</span><span${statDir === "asc" ? "" : ' class="off"'}>少ない順 ⇅</span></span></button></div>
+    <div class="sortrow" style="justify-content:flex-end"><span class="eqw"><button type="button" id="metricToggle" aria-label="表示する項目を切り替え"><span class="tg"><span${statMetric === "n" ? "" : ' class="off"'}>参加数 ⇅</span><span${statMetric === "p" ? "" : ' class="off"'}>参加割合 ⇅</span><span${statMetric === "s" ? "" : ' class="off"'}>チケット代 ⇅</span></span></button><button type="button" id="dirToggle" aria-label="並び順を切り替え"><span class="tg"><span${statDir === "asc" ? ' class="off"' : ""}>多い順 ⇅</span><span${statDir === "asc" ? "" : ' class="off"'}>少ない順 ⇅</span></span></button></span></div>
     ${statTab === "tag" ? list(sorted(tags), "tag") : statTab === "venue" ? list(sorted(venues), "venue") : statTab === "genre" ? (GENRES.some(g => genres[g]) ? GENRES.filter(g => genres[g]).sort((a, b) => (mv(genres[b]) - mv(genres[a])) * dr || GENRES.indexOf(a) - GENRES.indexOf(b)).map(g => `<button type="button" class="line" data-k="genre" data-q="${g}"><span>${g}</span>${spLine(genres[g])}</button>`).join("") : `<div class="hint">データなし</div>`) : statTab === "year" ? (Object.keys(years).length ? Object.keys(years).sort((a, b) => (mv(years[b]) - mv(years[a])) * dr || b.localeCompare(a)).map(y => `<button type="button" class="line" data-k="year" data-q="${y}"><span>${y}年</span>${spLine(years[y])}</button>`).join("") : `<div class="hint">データなし</div>`) : statTab === "area" ? list(Object.entries(areas).sort((a, b) => (mv(b[1]) - mv(a[1])) * dr || b[1].n - a[1].n || AREAS.indexOf(a[0]) - AREAS.indexOf(b[0])), "area") : statTab === "pref" ? list(Object.entries(prefs).sort((a, b) => (mv(b[1]) - mv(a[1])) * dr || b[1].n - a[1].n || PREFS.indexOf(a[0]) - PREFS.indexOf(b[0])), "pref") : list(sorted(artists), "artist")}`;
   bindFilter();
   $("#dirToggle").onclick = () => { statDir = statDir === "asc" ? "desc" : "asc"; renderStats(); };
-  $("#metricToggle").onclick = () => { statMetric = statMetric === "n" ? "s" : statMetric === "s" ? "p" : "n"; renderStats(); };
+  $("#metricToggle").onclick = () => { statMetric = statMetric === "n" ? "p" : statMetric === "p" ? "s" : "n"; renderStats(); };
   document.querySelectorAll("#app .line[data-q]").forEach(b => b.onclick = () => { const k = b.dataset.k, q = b.dataset.q; if((k === "artist" || k === "venue") && q !== NONE_KEY){ openSDetail(k, q, null); slideIn("l"); return; } /* 出演者・会場は、詳細集計の画面へ(一覧への絞り込みは、その画面のボタンから) */ exact = null; query = ""; if(k === "year") fYear = [q]; else if(k === "genre") fGenre = [q]; else if(q === NONE_KEY) exact = {kind: k, value: q}; else if(k === "area"){ fArea = [q]; fPref = []; } else if(k === "pref") fPref = [q]; else if(k === "venue" || k === "artist" || k === "tag") exact = {kind: k, value: q}; else query = q; qLinked = false; linkDim = ""; linkVal = ""; /* 集計の行から移ったときも、クリアボタンを出す(タグ・未入力の完全一致は出さない) */ setTab("list", {top: true}); });
 }
 
@@ -1735,7 +1737,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.33</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.34</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
