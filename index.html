@@ -98,7 +98,7 @@ label{display:block;margin-top:14px;font-size:12px;color:var(--sub);font-weight:
 .msel .mopt{display:flex;align-items:center;gap:10px;margin:0;padding:11px 14px;font-size:12px;color:var(--ink);font-weight:400;cursor:pointer}
 .msel .mopt input{width:22px;height:22px;flex:none;margin:0;padding:0}
 .msel .mopt span{min-width:0;overflow-wrap:anywhere}
-.mfoot{position:sticky;bottom:0;display:flex;justify-content:space-between;gap:8px;padding:8px 10px;background:var(--surface);border-top:1px solid var(--line)}
+.mfoot{position:sticky;bottom:0;display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 8px;padding:8px 10px;background:var(--surface);border-top:1px solid var(--line)}
 .mfoot button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:500;cursor:pointer}
 .clrrow{display:flex;justify-content:flex-end;margin:-2px 0 8px}
 .clrrow button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:500;cursor:pointer}
@@ -361,7 +361,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.24</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.27</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1010,7 +1010,7 @@ let msOpen = "", msOpenTab = "";
 function msel(id, label, aria, opts, sel, single){
   const on = new Set(sel), chosen = opts.filter(o => on.has(o.v)), open = msOpen === id && msOpenTab === tab;
   const sum = !chosen.length ? "すべて" : chosen.length > 1 ? (chosen[0].s || chosen[0].t) + ` +${chosen.length - 1}` : chosen[0].t; /* 複数選んだときは、短い表記(2025・東京など)で件数を見せる */
-  return `<div class="fcol"><label for="${id}">${label}</label><div class="msel"><button type="button" class="msb" id="${id}" aria-label="${aria}" aria-haspopup="true" aria-expanded="${open}"><span>${esc(sum)}</span><i aria-hidden="true">▼</i></button><div class="mpanel" id="${id}P" role="group" aria-label="${aria}"${open ? "" : " hidden"}>${opts.map(o => `<label class="mopt"><input type="${single ? "radio" : "checkbox"}" name="${id}" data-ms="${id}" value="${esc(o.v)}"${on.has(o.v) ? " checked" : ""}><span>${esc(o.t)}</span></label>`).join("")}<div class="mfoot"${single ? ' style="justify-content:flex-end"' : ""}>${single ? "" : `<button type="button" data-mclr="${id}">選択を解除</button>`}<button type="button" data-mclose="${id}">閉じる</button></div></div></div></div>`;
+  return `<div class="fcol"><label for="${id}">${label}</label><div class="msel"><button type="button" class="msb" id="${id}" aria-label="${aria}" aria-haspopup="true" aria-expanded="${open}"><span>${esc(sum)}</span><i aria-hidden="true">▼</i></button><div class="mpanel" id="${id}P" role="group" aria-label="${aria}"${open ? "" : " hidden"}>${opts.map(o => `<label class="mopt"><input type="${single ? "radio" : "checkbox"}" name="${id}" data-ms="${id}" value="${esc(o.v)}"${on.has(o.v) ? " checked" : ""}><span>${esc(o.t)}</span></label>`).join("")}<div class="mfoot"${single ? ' style="justify-content:flex-end"' : ""}>${single ? "" : `<button type="button" data-mall="${id}">すべて選択</button><button type="button" data-mclr="${id}">選択を解除</button>`}<button type="button" data-mclose="${id}">閉じる</button></div></div></div></div>`;
 }
 function locCols(){
   const inA = l => !fArea.length || areasOf(l).some(a => fArea.includes(a));
@@ -1034,11 +1034,19 @@ function msApply(id, vals, changed){
     else fYear = fYear.includes(RANGE) || vals.includes(RANGE) ? vals.filter(v => v !== RANGE) : vals;
   }
 }
+/* 開いたパネルが画面の左右にはみ出さないよう、ボタンの位置から横にずらして画面内に収める */
+function fitPanel(pn){
+  if(!pn || pn.hidden) return;
+  pn.style.right = "auto"; pn.style.left = "0px";
+  const r = pn.getBoundingClientRect(), vw = document.documentElement.clientWidth, m = 8;
+  let dx = 0; if(r.right > vw - m) dx = vw - m - r.right; if(r.left + dx < m) dx = m - r.left;
+  pn.style.left = dx + "px";
+}
 function bindMs(){
   const closeAll = () => { msOpen = ""; document.querySelectorAll("#app .mpanel").forEach(p => { p.hidden = true; }); document.querySelectorAll("#app .msb").forEach(b => b.setAttribute("aria-expanded", "false")); };
   document.querySelectorAll("#app .msb").forEach(b => b.onclick = () => {
     const wasOpen = msOpen === b.id && msOpenTab === tab; closeAll();
-    if(!wasOpen){ msOpen = b.id; msOpenTab = tab; const pn = $("#" + b.id + "P"); pn.hidden = false; b.setAttribute("aria-expanded", "true"); }
+    if(!wasOpen){ msOpen = b.id; msOpenTab = tab; const pn = $("#" + b.id + "P"); pn.hidden = false; b.setAttribute("aria-expanded", "true"); fitPanel(pn); }
   });
   const redo = id => { const pn = $("#" + id + "P"), pt = pn ? pn.scrollTop : 0; msOpen = id; msOpenTab = tab; render(); const np = $("#" + id + "P"); if(np) np.scrollTop = pt; };
   document.querySelectorAll("#app input[data-ms]").forEach(i => i.onchange = () => {
@@ -1046,10 +1054,12 @@ function bindMs(){
     if(id === "fst"){ statTab = vals[0]; msOpen = ""; render(); return; } /* 集計項目は1つだけ選ぶ。選んだらパネルを閉じる */
     msApply(id, vals, i); redo(id);
   });
+  document.querySelectorAll("#app [data-mall]").forEach(b => b.onclick = () => { const id = b.dataset.mall; const vals = [...$("#" + id + "P").querySelectorAll("input[data-ms]")].map(x => x.value).filter(v => v !== RANGE); msApply(id, vals, null); redo(id); }); /* すべて選択(年は期間指定を除く) */
   document.querySelectorAll("#app [data-mclr]").forEach(b => b.onclick = () => { const id = b.dataset.mclr; msApply(id, [], null); if(id === "fy") fYear = []; redo(id); });
   document.querySelectorAll("#app [data-mclose]").forEach(b => b.onclick = () => closeAll());
+  if(msOpen && msOpenTab === tab) fitPanel($("#" + msOpen + "P"));
 }
-document.addEventListener("click", e => { if(!msOpen || !document.contains(e.target) || e.target.closest(".msel")) return; msOpen = ""; document.querySelectorAll(".mpanel").forEach(p => { p.hidden = true; }); document.querySelectorAll(".msb").forEach(b => b.setAttribute("aria-expanded", "false")); });
+document.addEventListener("click", e => { if(!msOpen || !document.contains(e.target) || e.target.closest(".msel")) return; e.preventDefault(); e.stopPropagation(); msOpen = ""; document.querySelectorAll(".mpanel").forEach(p => { p.hidden = true; }); document.querySelectorAll(".msb").forEach(b => b.setAttribute("aria-expanded", "false")); }, true); /* プルダウンを開いているときは、外側のタップはプルダウンを閉じるだけで、後ろのリンク・ボタンは反応させない */
 function bindFilter(){
   { const cf = $("#clrFilter"); if(cf) cf.onclick = clearFilters; }
   bindMs();
@@ -1719,7 +1729,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.24</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.27</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
