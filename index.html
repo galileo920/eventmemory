@@ -367,7 +367,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.35</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.36</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1575,7 +1575,8 @@ function fillList(){
 }
 
 let pctBase = 0; /* 割合の分母(絞り込み後のイベント総数) */
-const avgOf = o => { const c = o.pn || 0; return c ? (o.s ?? o.spend) / c : null; }; /* 平均チケット代: チケット代が入っているイベントだけで割る */
+const hasPrice = l => l.price !== "" && l.price != null && Number.isFinite(Number(l.price)); /* チケット代が入力されている(0円を含む)。未入力は含まない */
+const avgOf = o => { const c = o.pn || 0; return c ? (o.s ?? o.spend) / c : null; }; /* 平均チケット代: チケット代が入力されているイベント(0円を含む)で割る。未入力は分母に入れない */
 const DIR_LABELS = ["多い順", "少ない順", "高い順", "低い順", "高い順(合計)", "安い順(合計)", "高い順(平均)", "安い順(平均)"]; /* 0-1: 参加数、2-3: 参加割合、4-7: チケット代 */
 const valTxt = o => statMetric === "s" ? (statAvg ? (avgOf(o) == null ? "-" : yen(Math.round(avgOf(o)))) : yen(o.s ?? o.spend)) : statMetric === "p" ? (pctBase ? (o.n / pctBase * 100).toFixed(1) + "%" : "-") : o.n + "回";
 const spLine = o => `<b>${valTxt(o)} ›</b>`;
@@ -1587,16 +1588,16 @@ function renderStats(){
   const artists = {}, venues = {}, prefs = {}, areas = {}, years = {}, tags = {};
   const gParts = total ? GENRES.filter(g => !fGenre.length || fGenre.includes(g)).map(g => { const ls = fl.filter(l => genreOf(l) === g); return {g, n: ls.length, s: ls.reduce((s, l) => s + (Number(l.price) || 0), 0)}; }).filter(p => p.n) : null;
   const genres = {};
-  fl.forEach(l => { const g = genreOf(l); const o = genres[g] || (genres[g] = {n: 0, spend: 0}); o.n++; o.spend += Number(l.price) || 0; if(Number(l.price)) o.pn = (o.pn || 0) + 1; });
-  fl.forEach(l => { const y = yearOf(l); if(!y) return; const o = years[y] || (years[y] = {n: 0, spend: 0}); o.n++; o.spend += Number(l.price) || 0; if(Number(l.price)) o.pn = (o.pn || 0) + 1; });
+  fl.forEach(l => { const g = genreOf(l); const o = genres[g] || (genres[g] = {n: 0, spend: 0}); o.n++; o.spend += Number(l.price) || 0; if(hasPrice(l)) o.pn = (o.pn || 0) + 1; });
+  fl.forEach(l => { const y = yearOf(l); if(!y) return; const o = years[y] || (years[y] = {n: 0, spend: 0}); o.n++; o.spend += Number(l.price) || 0; if(hasPrice(l)) o.pn = (o.pn || 0) + 1; });
   fl.forEach(l => {
-    const pr = Number(l.price) || 0, add = (o, k) => { const e = o[k] || (o[k] = {n: 0, s: 0}); e.n++; e.s += pr; if(pr) e.pn = (e.pn || 0) + 1; };
+    const pr = Number(l.price) || 0, add = (o, k) => { const e = o[k] || (o[k] = {n: 0, s: 0}); e.n++; e.s += pr; if(hasPrice(l)) e.pn = (e.pn || 0) + 1; };
     const ca = canonArtists(l); if(ca.length) ca.forEach(a => add(artists, a)); else add(artists, NONE_KEY); /* 未入力も数える */
     { const vn = [...new Set(venueNamesOf(l).map(v => canon("venue", v)))]; if(vn.length) vn.forEach(v => add(venues, v)); else add(venues, NONE_KEY); } /* 複数会場のイベントは、会場ごとに1回数える */
     { const tg = tagsOf(l); if(tg.length) tg.forEach(t => add(tags, t)); else add(tags, NONE_KEY); } /* タグなしも数える */
   });
-  fl.forEach(l => prefsOf(l).forEach(p => { const e = prefs[p] || (prefs[p] = {n: 0, s: 0}); e.n++; e.s += Number(l.price) || 0; if(Number(l.price)) e.pn = (e.pn || 0) + 1; }));
-  fl.forEach(l => areasOf(l).forEach(a => { const e = areas[a] || (areas[a] = {n: 0, s: 0}); e.n++; e.s += Number(l.price) || 0; if(Number(l.price)) e.pn = (e.pn || 0) + 1; }));
+  fl.forEach(l => prefsOf(l).forEach(p => { const e = prefs[p] || (prefs[p] = {n: 0, s: 0}); e.n++; e.s += Number(l.price) || 0; if(hasPrice(l)) e.pn = (e.pn || 0) + 1; }));
+  fl.forEach(l => areasOf(l).forEach(a => { const e = areas[a] || (areas[a] = {n: 0, s: 0}); e.n++; e.s += Number(l.price) || 0; if(hasPrice(l)) e.pn = (e.pn || 0) + 1; }));
   pctBase = total; /* 割合の分母: 絞り込み後のイベント総数。出演者・会場・タグは1イベントに複数付くので、合計が100%を超えることがある */
   const mv = e => statMetric === "s" ? (statAvg ? (avgOf(e) ?? (dr > 0 ? -Infinity : Infinity)) : (e.s ?? e.spend)) : e.n, dr = statDir === "asc" ? -1 : 1; /* 参加割合は参加数と同じ並び順。平均は、チケット代の入ったイベントがない行をいちばん下にする */
   const dirCur = (statMetric === "s" ? (statAvg ? 6 : 4) : statMetric === "p" ? 2 : 0) + (statDir === "asc" ? 1 : 0), dirTg = DIR_LABELS.map((t, i) => `<span${i === dirCur ? "" : ' class="off"'}>${t} ⇅</span>`).join("");
@@ -1640,7 +1641,7 @@ function renderSDetail(){
   const cur = sdCur, k = cur.kind, val = cur.value, isA = k === "artist";
   const hit = l => isA ? canonArtists(l).includes(val) : venueNamesOf(l).some(v => canon("venue", v) === val);
   const evs = lives.filter(hit), n = evs.length; /* 集計画面のプルダウンの絞り込みは反映しない(全データで集計) */
-  const price = l => Number(l.price) || 0, spend = evs.reduce((s, l) => s + price(l), 0), priced = evs.filter(l => price(l) > 0).length;
+  const price = l => Number(l.price) || 0, spend = evs.reduce((s, l) => s + price(l), 0), priced = evs.filter(hasPrice).length; /* 0円は分母に入れる。未入力は入れない */
   const dated = evs.filter(l => l.date).sort((a, b) => a.date.localeCompare(b.date) || (a.start || a.open || "").localeCompare(b.start || b.open || "")), first = dated[0], last = dated[dated.length - 1];
   /* 初回・直近のイベント: 日付・公演名、出演者の集計なら会場、会場の集計なら出演者も出す。押すとイベント詳細へ */
   const evBtn = (l, id) => { if(!l) return `<div class="hint">データなし</div>`; const ttl = l.title || artistLine(l) || "(未入力)", sub = isA ? venueLabel(l) : artistLine(l); return `<button type="button" class="line sdev" data-ev="${esc(l.id)}" id="sd_${id}"><span><small>${fmtDate(l.date)}</small><b class="tt">${esc(ttl)}</b>${sub && sub !== ttl ? `<small>${esc(sub)}</small>` : ""}</span><b>›</b></button>`; };
@@ -1740,7 +1741,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.35</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.36</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
