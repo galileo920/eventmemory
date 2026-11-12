@@ -41,9 +41,15 @@ button,input,textarea{font:inherit;color:inherit}
 .bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding-block:12px;padding-left:var(--gutter-l);padding-right:var(--gutter-r)}
 .bar-in{max-width:560px;margin:0 auto;display:flex;align-items:baseline;justify-content:space-between;gap:12px}
 .bar h1{margin:0;font-size:20px;font-weight:700;letter-spacing:.02em}
+.bar-in{justify-content:flex-start}
+.hdback{flex:none;align-self:center;width:32px;height:36px;margin:-3px -7px -3px -10px;padding:0;border:0;background:none;color:var(--ink);display:grid;place-items:center;cursor:pointer;-webkit-appearance:none}
+.hdback svg{width:22px;height:22px;display:block}
+.hdset{flex:none;align-self:center;width:36px;height:36px;margin:-3px -6px -3px auto;padding:0;border:0;background:none;color:var(--sub);display:grid;place-items:center;cursor:pointer;-webkit-appearance:none}
+.hdset.on{color:var(--accent)}
+.hdset svg{width:24px;height:24px;display:block}
 .stitle{margin:0 0 14px;font-size:18px;font-weight:700;letter-spacing:.02em}
 main{max-width:560px;margin:0 auto;padding-block:14px 150px;padding-left:var(--gutter-l);padding-right:var(--gutter-r)}
-.toast{position:fixed;z-index:9;left:50%;transform:translateX(-50%);bottom:calc(76px + env(safe-area-inset-bottom,0px));max-width:min(92vw,420px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.28)}
+.toast{position:fixed;z-index:9;left:50%;transform:translateX(-50%);bottom:calc(82px + env(safe-area-inset-bottom,0px));max-width:min(92vw,420px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.28)}
 @keyframes inFromRight{from{opacity:0;transform:translateX(32px)}to{opacity:1;transform:none}}
 @keyframes inFromLeft{from{opacity:0;transform:translateX(-32px)}to{opacity:1;transform:none}}
 .in-l{animation:inFromRight .22s ease-out}
@@ -52,7 +58,15 @@ main{max-width:560px;margin:0 auto;padding-block:14px 150px;padding-left:var(--g
 .tabbar-in{max-width:560px;margin:0 auto;display:flex}
 .tabbar button{flex:1;border:0;background:none;color:var(--sub);padding:12px 4px;font-size:14px;font-weight:500;cursor:pointer;border-top:3px solid transparent}
 .tabbar button.on{color:var(--accent);font-weight:700;border-top-color:var(--accent)}
-.fab{position:fixed;z-index:7;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(64px + env(safe-area-inset-bottom,0px));width:56px;height:56px;border-radius:50%;border:0;padding:0;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink);cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.28)}
+.tabbar button[data-tab]{position:relative}
+/* 一覧は左端、集計は右端まで線と反応範囲を伸ばす。文字の真ん中に線が来るよう、内側にも同じ長さだけ伸ばす */
+.tabbar button[data-tab]::after{content:"";position:absolute;top:-3px;bottom:0}
+.tabbar button[data-tab="list"]::after{left:calc(-1*var(--gutter-l));right:calc(-1*var(--gutter-l))}
+.tabbar button[data-tab="stats"]::after{left:calc(-1*var(--gutter-r));right:calc(-1*var(--gutter-r))}
+.tabbar button[data-tab].on{border-top-color:transparent}
+.tabbar button[data-tab].on::after{background:linear-gradient(var(--accent),var(--accent)) top/100% 3px no-repeat}
+.tabbar .fabcell{flex:1;display:grid;place-items:center;padding:2px 0 5px;border-top:3px solid transparent}
+.tabbar .fab{flex:none;width:42px;height:42px;padding:0;border:0;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink);box-shadow:0 2px 8px rgba(0,0,0,.25)}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .search{margin-bottom:12px}
 [hidden]{display:none!important}
@@ -324,11 +338,11 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 .cw>input,.cw>textarea,.cw>select{display:block}
 .dial{position:fixed;inset:0;z-index:8}
 .dial-scrim{position:absolute;inset:0;background:rgba(15,17,24,.45)}
-.dial-items{position:absolute;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(132px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;align-items:flex-end;gap:12px}
-.dial-btn{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:700;border-radius:999px;padding:12px 18px;box-shadow:0 4px 14px rgba(0,0,0,.28);cursor:pointer}
+.dial-items{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(68px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:row;align-items:center;gap:12px}
+.dial-btn{display:flex;align-items:center;gap:10px;white-space:nowrap;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:700;border-radius:999px;padding:12px 18px;box-shadow:0 4px 14px rgba(0,0,0,.28);cursor:pointer}
 .dial-btn svg{width:22px;height:22px;color:var(--accent)}
-.fab.open{z-index:9}
-.fab svg{transition:transform .18s}
+.tabbar.dialon{z-index:9}
+.fab svg{width:24px;height:24px;transition:transform .18s}
 .fab.open svg{transform:rotate(45deg)}
 .badd{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .badd .btn{margin:0}
@@ -364,10 +378,11 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 .bbar{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));padding-left:var(--gutter-l);padding-right:var(--gutter-r)}
 .bbar-in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .bbar .btn{margin:0}
+.bnav{display:grid;grid-template-columns:1fr 1fr;gap:10px;min-width:0}
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.38</span></h1></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.21.0</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -376,12 +391,11 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
     <button type="button" class="dial-btn" id="dialPhoto">一括登録</button>
   </div>
 </div>
-<button class="fab" id="fab" aria-label="イベントを追加"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg></button>
 <div class="toast" id="toast" hidden></div>
 <nav class="tabbar"><div class="tabbar-in">
   <button data-tab="list" class="on">一覧</button>
+  <div class="fabcell" id="fabCell"><button type="button" class="fab" id="fab" aria-label="イベントを追加" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg></button></div>
   <button data-tab="stats">集計</button>
-  <button data-tab="settings">設定</button>
 </div></nav>
 
 <script>
@@ -1081,7 +1095,7 @@ function bindFilter(){
 
 async function refresh(){ lives = (await dbAll()).map(normLive); loaded = true; }
 
-const TABS = ["list", "stats", "settings"];
+const TABS = ["list", "stats"]; /* スワイプで行き来するタブ。設定は歯車から開くので入れない */
 const scrollPos = {};
 let sub = false; /* 詳細・登録画面を開いているか */
 const curY = () => window.scrollY || document.documentElement.scrollTop || 0;
@@ -1094,12 +1108,14 @@ document.addEventListener("click", e => { const b = e.target.closest && e.target
 let dataMsg = null;
 /* 設定画面で開いている項目(1つだけ。別の画面へ移ると全部閉じる) */
 let setOpen = "";
+let tabBeforeSettings = "list"; /* 設定を開く前のタブ(歯車をもう一度押すと、ここへ戻る) */
 function setDataMsg(cls, text, id){ id = id || "#dst"; dataMsg = {cls, text, id}; const d = $(id); if(d){ d.className = "status " + cls; d.textContent = text; } }
 function setTab(t, o = {}){
   if(!o.keepBulk) bulk = false;
   if(t !== tab || sub){ dataMsg = null; setOpen = ""; }
   saveScroll();
   sub = false;
+  if(t === "settings" && tab !== "settings") tabBeforeSettings = tab;
   tab = t;
   document.querySelectorAll(".tabbar button").forEach(b => b.classList.toggle("on", b.dataset.tab === t));
   $("#fab").style.display = ""; document.querySelector(".tabbar").hidden = false; closeDial();
@@ -1107,10 +1123,14 @@ function setTab(t, o = {}){
   window.scrollTo(0, o.top ? 0 : (scrollPos[t] || 0));
   if(o.dir) slideIn(o.dir);
 }
-document.querySelectorAll(".tabbar button").forEach(b => b.onclick = () => {
+document.querySelectorAll(".tabbar button[data-tab]").forEach(b => b.onclick = () => {
   const t = b.dataset.tab, same = !sub && tab === t;
   setTab(t, {top: same});
 });
+/* 設定は、ヘッダーの歯車から開く。設定を開いているときにもう一度押すと、開く前のタブへ戻る */
+$("#hdSet").onclick = () => { if(!sub && tab === "settings") setTab(tabBeforeSettings || "list"); else setTab("settings"); };
+/* ヘッダーの＜: イベント詳細は元の画面(詳細集計から開いたときは詳細集計)へ、詳細集計は元の画面へ戻る */
+$("#hdBack").onclick = () => { if(subKind === "sdetail") sdBack(); else if(detailFrom) detailBack(); else setTab("list"); };
 let toastTimer = 0;
 function showToast(msg){ const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 3200); }
 /* スワイプ: 履歴↔集計↔設定、詳細→履歴、登録→戻る(入力中の誤操作を防ぐため確認ダイアログ) */
@@ -1118,6 +1138,7 @@ let subKind = "", subBack = null;
 function onSwipe(dx){
   if(!sub){
     if(bulk) return;
+    if(tab === "settings"){ if(dx > 0) setTab(tabBeforeSettings || "list", {dir: "r"}); return; } /* 設定では、右へのスワイプで開く前のタブへ戻る */
     const i = TABS.indexOf(tab), j = dx < 0 ? i + 1 : i - 1;
     if(j < 0 || j >= TABS.length) return;
     setTab(TABS[j], {dir: dx < 0 ? "l" : "r"});
@@ -1149,14 +1170,15 @@ function onSwipe(dx){
     if(Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.8 && Date.now() - t0 < 700) onSwipe(dx);
   }, {passive: true});
 })();
-function closeDial(){ const d = $("#dial"); if(d) d.hidden = true; const f = $("#fab"); if(f){ f.classList.remove("open"); f.setAttribute("aria-expanded", "false"); } }
+function closeDial(){ const d = $("#dial"); if(d) d.hidden = true; const f = $("#fab"); if(f){ f.classList.remove("open"); f.setAttribute("aria-expanded", "false"); } const tb = document.querySelector(".tabbar"); if(tb) tb.classList.remove("dialon"); }
 $("#fab").onclick = () => {
   if(!getSet().apiKey){ openForm(); return; } /* APIキーが無いときは、ダイヤルを出さずに登録画面へ */
   const d = $("#dial");
   if(!d.hidden){ closeDial(); return; }
-  d.hidden = false; $("#fab").classList.add("open"); $("#fab").setAttribute("aria-expanded", "true");
+  d.hidden = false; $("#fab").classList.add("open"); $("#fab").setAttribute("aria-expanded", "true"); document.querySelector(".tabbar").classList.add("dialon"); /* ダイヤルを開いている間も、下のタブバー(＋)を暗くしない */
 };
 $("#dialScrim").onclick = closeDial;
+$("#fabCell").onclick = e => { if(e.target === e.currentTarget) closeDial(); }; /* ダイヤルを開いているとき、＋の周りを押したら閉じる(＋の周りでは何も起きない) */
 $("#dialManual").onclick = () => { closeDial(); openForm(); };
 $("#dialPhoto").onclick = () => { closeDial(); openBatch(); };
 
@@ -1173,6 +1195,15 @@ new MutationObserver(() => {
   if(!a || (a.firstElementChild && a.firstElementChild.classList.contains("stitle"))) return;
   a.insertAdjacentHTML("afterbegin", `<h2 class="stitle">${screenTitle()}</h2>`);
 }).observe(document.getElementById("app"), {childList: true});
+/* ヘッダーの＜(詳細・詳細集計だけ)と歯車(下のタブバーを出す画面だけ。設定を開いているときは濃い色)を、画面に合わせる */
+function syncHeader(){
+  const tb = document.querySelector(".tabbar");
+  $("#hdBack").hidden = !(sub && (subKind === "detail" || subKind === "sdetail"));
+  $("#hdSet").hidden = tb.hidden;
+  $("#hdSet").classList.toggle("on", !sub && tab === "settings");
+}
+new MutationObserver(syncHeader).observe(document.getElementById("app"), {childList: true});
+new MutationObserver(syncHeader).observe(document.querySelector(".tabbar"), {attributes: true, attributeFilter: ["hidden"]});
 function render(){
   if(tab === "list") renderList();
   else if(tab === "stats") renderStats();
@@ -1541,7 +1572,7 @@ function fillList(){
     });
     items.length = 0; out.forEach(x => items.push(x));
   }
-  const emptyHtml = `<div class="empty">${!loaded ? "読み込み中…" : lives.length ? "該当するイベントがありません" : "まだイベントがありません。<br>右下の＋から、最初のイベントを追加しましょう"}</div>`;
+  const emptyHtml = `<div class="empty">${!loaded ? "読み込み中…" : lives.length ? "該当するイベントがありません" : "まだイベントがありません。<br>下の＋から、最初のイベントを追加しましょう"}</div>`;
   /* 一覧のカードは、最初に一部だけ作り、スクロールに合わせて続きを足す(1000件でも軽く開ける) */
   const lvNow = listView(), base = lvNow === "grid" ? 90 : lvNow === "thumb" ? 36 : 60;
   const sig = [tab, query, fGenre, fArea, fPref, fYear, fFrom, fTo, exact ? exact.kind + exact.value : "", lvNow, sortAsc, rows.length].join("|");
@@ -1671,8 +1702,7 @@ function renderSDetail(){
     ${isA
       ? rank("よく一緒になる出演者(2回以上)", cnt(l => canonArtists(l).filter(a => a !== val)), "artist", 2) + rank("会場別", cnt(l => [...new Set(venueNamesOf(l).map(v => canon("venue", v)))]), "venue") + rank("エリア別", cnt(l => areasOf(l)), "area") + rank("都道府県別", cnt(l => prefsOf(l)), "pref")
       : rank("出演者別", cnt(l => canonArtists(l)), "artist")}
-    <div class="bbar"><div class="bbar-in" style="grid-template-columns:52px 52px 1fr 1fr"><button type="button" class="btn sec" id="sdPrev" style="padding:0" aria-label="前の${isA ? "出演者" : "会場"}"${nbs.prev ? "" : " disabled"}>◀</button><button type="button" class="btn sec" id="sdNext" style="padding:0" aria-label="次の${isA ? "出演者" : "会場"}"${nbs.next ? "" : " disabled"}>▶</button><button class="btn sec" id="sdBack">戻る</button><button class="btn" id="sdList">一覧</button></div></div>`;
-  $("#sdBack").onclick = sdBack;
+    <div class="bbar"><div class="bbar-in"><div class="bnav"><button type="button" class="btn sec" id="sdPrev" aria-label="前の${isA ? "出演者" : "会場"}"${nbs.prev ? "" : " disabled"}>◀</button><button type="button" class="btn sec" id="sdNext" aria-label="次の${isA ? "出演者" : "会場"}"${nbs.next ? "" : " disabled"}>▶</button></div><button class="btn" id="sdList">一覧</button></div></div>`;
   $("#sdPrev").onclick = () => { if(nbs.prev){ openSDetail(k, nbs.prev, cur.prev); slideIn("r"); } };
   $("#sdNext").onclick = () => { if(nbs.next){ openSDetail(k, nbs.next, cur.prev); slideIn("l"); } };
   $("#sdList").onclick = () => { resetDd(); exact = {kind: k, value: val}; query = ""; qLinked = false; linkDim = ""; linkVal = ""; setTab("list", {top: true}); };
@@ -1746,7 +1776,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.38</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.21.0</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -1900,12 +1930,11 @@ function openDetail(id, from){
     <div class="field"><small>ジャンル</small><div>${lkBtn("genre", genreOf(l))}</div></div>
     ${(() => { const t = String(l.setlist || "").trim(); return t ? `<div class="field"><small>詳細</small><div>${linkify(t)}</div></div>` : ""; })()}
     ${(() => { const g = tagsOf(l); return g.length ? `<div class="field"><small>タグ</small><div>${g.map(n => lkBtn("tag", n)).join("、")}</div></div>` : ""; })()}
-    <div class="bbar"><div class="bbar-in" style="grid-template-columns:52px 52px 1fr 1fr"><button type="button" class="btn sec" id="prevEv" style="padding:0" aria-label="前のイベント"${nb.prev ? "" : " disabled"}>◀</button><button type="button" class="btn sec" id="nextEv" style="padding:0" aria-label="次のイベント"${nb.next ? "" : " disabled"}>▶</button><button class="btn sec" id="back">戻る</button><button class="btn" id="edit">編集</button></div></div>
+    <div class="bbar"><div class="bbar-in"><div class="bnav"><button type="button" class="btn sec" id="prevEv" aria-label="前のイベント"${nb.prev ? "" : " disabled"}>◀</button><button type="button" class="btn sec" id="nextEv" aria-label="次のイベント"${nb.next ? "" : " disabled"}>▶</button></div><button class="btn" id="edit">編集</button></div></div>
   `;
   bindPhotoGallery(l);
   $("#prevEv").onclick = () => { if(nb.prev){ openDetail(nb.prev, detailFrom); slideIn("r"); } };
   $("#nextEv").onclick = () => { if(nb.next){ openDetail(nb.next, detailFrom); slideIn("l"); } };
-  $("#back").onclick = () => detailFrom ? detailBack() : setTab("list"); /* 詳細集計から開いたときは、詳細集計に戻る */
   $("#edit").onclick = () => openForm(l);
   document.querySelectorAll("#app .lk").forEach(b => b.onclick = () => { const k = b.dataset.lk, q = b.dataset.q; fGenre = k === "genre" ? [q] : []; fYear = []; fArea = k === "area" ? [q] : []; fPref = k === "pref" ? [q] : []; fFrom = ""; fTo = ""; exact = k === "venue" || k === "artist" ? {kind: k, value: canon(k, q)} : k === "tag" ? {kind: k, value: q} : null; query = ""; qLinked = false; linkDim = (k === "genre" || k === "area" || k === "pref") ? k : ""; linkVal = linkDim ? JSON.stringify(linkDim === "genre" ? fGenre : linkDim === "area" ? fArea : fPref) : ""; setTab("list", {top: true}); });
 }
