@@ -367,7 +367,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.36</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.37</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1574,6 +1574,7 @@ function fillList(){
   watch();
 }
 
+let statKeys = {artist: [], venue: []}; /* 集計画面に並んでいる出演者・会場の順番(詳細集計の前後ボタン用) */
 let pctBase = 0; /* 割合の分母(絞り込み後のイベント総数) */
 const hasPrice = l => l.price !== "" && l.price != null && Number.isFinite(Number(l.price)); /* チケット代が入力されている(0円を含む)。未入力は含まない */
 const avgOf = o => { const c = o.pn || 0; return c ? (o.s ?? o.spend) / c : null; }; /* 平均チケット代: チケット代が入力されているイベント(0円を含む)で割る。未入力は分母に入れない */
@@ -1602,6 +1603,7 @@ function renderStats(){
   const mv = e => statMetric === "s" ? (statAvg ? (avgOf(e) ?? (dr > 0 ? -Infinity : Infinity)) : (e.s ?? e.spend)) : e.n, dr = statDir === "asc" ? -1 : 1; /* 参加割合は参加数と同じ並び順。平均は、チケット代の入ったイベントがない行をいちばん下にする */
   const dirCur = (statMetric === "s" ? (statAvg ? 6 : 4) : statMetric === "p" ? 2 : 0) + (statDir === "asc" ? 1 : 0), dirTg = DIR_LABELS.map((t, i) => `<span${i === dirCur ? "" : ' class="off"'}>${t} ⇅</span>`).join("");
   const sorted = o => Object.entries(o).sort((a, b) => (a[0] === NONE_KEY) - (b[0] === NONE_KEY) || (mv(b[1]) - mv(a[1])) * dr || b[1].n - a[1].n || a[0].localeCompare(b[0], "ja")); /* 未入力は、数や並び順に関係なく、いちばん下にする */
+  statKeys = {artist: sorted(artists).map(e => e[0]).filter(x => x !== NONE_KEY), venue: sorted(venues).map(e => e[0]).filter(x => x !== NONE_KEY)};
   const list = (arr, kind) => arr.length ? arr.map(([k, v]) => `<button type="button" class="line" data-k="${kind}" data-q="${esc(k)}"><span>${k === NONE_KEY ? "未入力" : esc(k)}</span>${spLine(v)}</button>`).join("") : `<div class="hint">データなし</div>`;
   $("#app").innerHTML = `
     ${filterBar()}
@@ -1652,6 +1654,7 @@ function renderSDetail(){
     const rows = arr.filter(([, c]) => c >= (min || 1)).slice(0, 10);
     return `<div class="sdsec">${title}</div>` + (rows.length ? rows.map(([name, c]) => kind ? `<button type="button" class="line" data-${kind === "area" || kind === "pref" ? "sf" : "sk"}="${kind}" data-sq="${esc(name)}"><span>${esc(name)}</span><b>${c}回 ›</b></button>` : `<div class="line"><span>${esc(name)}</span><b>${c}回</b></div>`).join("") : `<div class="hint">${min > 1 ? "2回以上はありません" : "データなし"}</div>`);
   };
+  const nbs = (() => { const ks = statKeys[k] || [], i = ks.indexOf(val); return {prev: i > 0 ? ks[i - 1] : "", next: i >= 0 && i < ks.length - 1 ? ks[i + 1] : ""}; })(); /* 集計画面と同じ並び順での、前後の出演者・会場 */
   const resetDd = () => { fGenre = []; fYear = []; fArea = []; fPref = []; fFrom = ""; fTo = ""; }; /* 一覧へ移るときは、集計のプルダウンの絞り込みを外す */
   $("#app").innerHTML = `
     <div class="sdh"><small>${isA ? "出演者" : "会場"}</small><div class="nm">${esc(val)}</div></div>
@@ -1668,8 +1671,10 @@ function renderSDetail(){
     ${isA
       ? rank("よく一緒になる出演者(2回以上)", cnt(l => canonArtists(l).filter(a => a !== val)), "artist", 2) + rank("会場別", cnt(l => [...new Set(venueNamesOf(l).map(v => canon("venue", v)))]), "venue") + rank("エリア別", cnt(l => areasOf(l)), "area") + rank("都道府県別", cnt(l => prefsOf(l)), "pref")
       : rank("出演者別", cnt(l => canonArtists(l)), "artist")}
-    <div class="bbar"><div class="bbar-in" style="grid-template-columns:1fr 1fr"><button class="btn sec" id="sdBack">戻る</button><button class="btn" id="sdList">一覧で見る</button></div></div>`;
+    <div class="bbar"><div class="bbar-in" style="grid-template-columns:52px 52px 1fr 1fr"><button type="button" class="btn sec" id="sdPrev" style="padding:0" aria-label="前の${isA ? "出演者" : "会場"}"${nbs.prev ? "" : " disabled"}>◀</button><button type="button" class="btn sec" id="sdNext" style="padding:0" aria-label="次の${isA ? "出演者" : "会場"}"${nbs.next ? "" : " disabled"}>▶</button><button class="btn sec" id="sdBack">戻る</button><button class="btn" id="sdList">一覧で見る</button></div></div>`;
   $("#sdBack").onclick = sdBack;
+  $("#sdPrev").onclick = () => { if(nbs.prev){ openSDetail(k, nbs.prev, cur.prev); slideIn("r"); } };
+  $("#sdNext").onclick = () => { if(nbs.next){ openSDetail(k, nbs.next, cur.prev); slideIn("l"); } };
   $("#sdList").onclick = () => { resetDd(); exact = {kind: k, value: val}; query = ""; qLinked = false; linkDim = ""; linkVal = ""; setTab("list", {top: true}); };
   /* 年・エリア・都道府県を押すと、開いている出演者・会場と、その年・エリア・都道府県で絞り込んだ一覧へ */
   document.querySelectorAll("#app [data-sf]").forEach(b => b.onclick = () => {
@@ -1741,7 +1746,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.36</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.37</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -1895,7 +1900,7 @@ function openDetail(id, from){
     <div class="field"><small>ジャンル</small><div>${lkBtn("genre", genreOf(l))}</div></div>
     ${(() => { const t = String(l.setlist || "").trim(); return t ? `<div class="field"><small>詳細</small><div>${linkify(t)}</div></div>` : ""; })()}
     ${(() => { const g = tagsOf(l); return g.length ? `<div class="field"><small>タグ</small><div>${g.map(n => lkBtn("tag", n)).join("、")}</div></div>` : ""; })()}
-    <div class="bbar"><div class="bbar-in" style="grid-template-columns:1fr 1fr 52px 52px"><button class="btn sec" id="back">戻る</button><button class="btn" id="edit">編集</button><button type="button" class="btn sec" id="prevEv" style="padding:0" aria-label="前のイベント"${nb.prev ? "" : " disabled"}>◀</button><button type="button" class="btn sec" id="nextEv" style="padding:0" aria-label="次のイベント"${nb.next ? "" : " disabled"}>▶</button></div></div>
+    <div class="bbar"><div class="bbar-in" style="grid-template-columns:52px 52px 1fr 1fr"><button type="button" class="btn sec" id="prevEv" style="padding:0" aria-label="前のイベント"${nb.prev ? "" : " disabled"}>◀</button><button type="button" class="btn sec" id="nextEv" style="padding:0" aria-label="次のイベント"${nb.next ? "" : " disabled"}>▶</button><button class="btn sec" id="back">戻る</button><button class="btn" id="edit">編集</button></div></div>
   `;
   bindPhotoGallery(l);
   $("#prevEv").onclick = () => { if(nb.prev){ openDetail(nb.prev, detailFrom); slideIn("r"); } };
