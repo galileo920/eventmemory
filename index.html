@@ -367,7 +367,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.37</span></h1></div></div>
+<div class="bar"><div class="bar-in"><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.20.38</span></h1></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1671,7 +1671,7 @@ function renderSDetail(){
     ${isA
       ? rank("よく一緒になる出演者(2回以上)", cnt(l => canonArtists(l).filter(a => a !== val)), "artist", 2) + rank("会場別", cnt(l => [...new Set(venueNamesOf(l).map(v => canon("venue", v)))]), "venue") + rank("エリア別", cnt(l => areasOf(l)), "area") + rank("都道府県別", cnt(l => prefsOf(l)), "pref")
       : rank("出演者別", cnt(l => canonArtists(l)), "artist")}
-    <div class="bbar"><div class="bbar-in" style="grid-template-columns:52px 52px 1fr 1fr"><button type="button" class="btn sec" id="sdPrev" style="padding:0" aria-label="前の${isA ? "出演者" : "会場"}"${nbs.prev ? "" : " disabled"}>◀</button><button type="button" class="btn sec" id="sdNext" style="padding:0" aria-label="次の${isA ? "出演者" : "会場"}"${nbs.next ? "" : " disabled"}>▶</button><button class="btn sec" id="sdBack">戻る</button><button class="btn" id="sdList">一覧で見る</button></div></div>`;
+    <div class="bbar"><div class="bbar-in" style="grid-template-columns:52px 52px 1fr 1fr"><button type="button" class="btn sec" id="sdPrev" style="padding:0" aria-label="前の${isA ? "出演者" : "会場"}"${nbs.prev ? "" : " disabled"}>◀</button><button type="button" class="btn sec" id="sdNext" style="padding:0" aria-label="次の${isA ? "出演者" : "会場"}"${nbs.next ? "" : " disabled"}>▶</button><button class="btn sec" id="sdBack">戻る</button><button class="btn" id="sdList">一覧</button></div></div>`;
   $("#sdBack").onclick = sdBack;
   $("#sdPrev").onclick = () => { if(nbs.prev){ openSDetail(k, nbs.prev, cur.prev); slideIn("r"); } };
   $("#sdNext").onclick = () => { if(nbs.next){ openSDetail(k, nbs.next, cur.prev); slideIn("l"); } };
@@ -1746,7 +1746,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.37</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.20.38</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
