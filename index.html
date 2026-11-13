@@ -382,7 +382,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.21.0</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.22.0</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -722,11 +722,140 @@ function toPhotoData(file){
     im.src = url;
   });
 }
+/* ===== Googleフォト(Picker API)から画像を選ぶ =====
+   ログイン(Google Identity Services)→セッション作成→Googleフォトで選択→選択結果の画像を取得→既存の画像追加処理に渡す */
+const GP_CLIENT_ID = "450154535349-2j1rv2ih53t9ip933a58nemp90390219.apps.googleusercontent.com";
+const GP_SCOPE = "https://www.googleapis.com/auth/photospicker.mediaitems.readonly";
+const GP_BULK_MAX = 30;
+const GP = {token: "", exp: 0, busy: false, gis: null};
+const gpSay = el => (c, t) => { el.className = c ? "status " + c : "status"; el.textContent = t; };
+function gpGisReady(){ return !!(window.google && google.accounts && google.accounts.oauth2); }
+function gpLoadGis(){
+  if(gpGisReady()) return Promise.resolve();
+  if(GP.gis) return GP.gis;
+  GP.gis = new Promise((res, rej) => {
+    const s = document.createElement("script"); s.src = "https://accounts.google.com/gsi/client"; s.async = true;
+    s.onload = () => res(); s.onerror = () => { GP.gis = null; rej(new Error("gis")); };
+    document.head.appendChild(s);
+    setTimeout(() => { if(!gpGisReady()){ GP.gis = null; rej(new Error("gis-timeout")); } }, 10000);
+  });
+  return GP.gis;
+}
+function gpRequestToken(){
+  return new Promise((res, rej) => {
+    const tc = google.accounts.oauth2.initTokenClient({
+      client_id: GP_CLIENT_ID, scope: GP_SCOPE,
+      callback: r => {
+        if(r && r.access_token){ GP.token = r.access_token; GP.exp = Date.now() + (Number(r.expires_in) || 3600) * 1000; res(GP.token); }
+        else rej(new Error((r && r.error) || "auth"));
+      },
+      error_callback: er => rej(new Error((er && er.type) || "auth"))
+    });
+    tc.requestAccessToken();
+  });
+}
+/* ポップアップがブロックされないよう、ライブラリ読み込み済みのときはタップ直後にそのままログインを開く */
+function gpToken(){
+  if(GP.token && Date.now() < GP.exp - 60000) return Promise.resolve(GP.token);
+  if(gpGisReady()) return gpRequestToken();
+  return gpLoadGis().then(gpRequestToken);
+}
+async function gpApi(method, path){
+  const r = await fetch("https://photospicker.googleapis.com/v1/" + path, {method, headers: {Authorization: "Bearer " + GP.token, "Content-Type": "application/json"}, body: method === "POST" ? JSON.stringify(gpApi.body || {}) : undefined});
+  if(!r.ok){ if(r.status === 401) GP.token = ""; throw new Error("api" + r.status); }
+  return r.json().catch(() => null);
+}
+function gpErrMsg(e){
+  const m = (e && e.message) || "";
+  if(m === "gis" || m === "gis-timeout") return "Googleのログイン機能を読み込めませんでした。アーティファクト版では使えない場合があります。GitHub版でお試しください。";
+  if(m === "popup_closed" || m === "access_denied") return "ログインがキャンセルされました。";
+  if(m === "popup_failed_to_open") return "ログイン画面を開けませんでした。ポップアップがブロックされていないか確認してください。";
+  if(m === "api401") return "ログインの有効期限が切れました。もう一度お試しください。";
+  if(m === "api403") return "Googleフォトの利用が許可されていません。Google CloudでPicker APIが有効か、自分のアカウントがテストユーザーに登録されているか確認してください。";
+  if(m === "timeout") return "写真が選ばれないまま時間が過ぎました。もう一度お試しください。";
+  if(m === "empty") return "写真が選ばれませんでした(動画は取り込めません)。";
+  if(m === "fetch") return "画像を取得できませんでした。通信状態を確認して、もう一度お試しください。";
+  return "Googleフォトから取り込めませんでした(" + m + ")。";
+}
+function gpOverlay(onCancel){
+  const ov = document.createElement("div");
+  ov.style.cssText = "position:fixed;inset:0;z-index:60;background:rgba(15,17,24,.5);display:grid;place-items:center;padding:20px";
+  const box = document.createElement("div");
+  box.setAttribute("role", "alertdialog"); box.setAttribute("aria-modal", "true");
+  box.style.cssText = "width:100%;max-width:360px;background:var(--surface);color:var(--ink);border-radius:16px;padding:18px;box-shadow:0 8px 28px rgba(0,0,0,.35)";
+  box.innerHTML = '<b style="font-size:16px">Googleフォトで写真を選ぶ</b><p style="margin:8px 0 0;font-size:14px;color:var(--sub)">下のボタンでGoogleフォトを開き、写真を選んでください。選び終わるとこの画面に自動で取り込みます。</p>';
+  const a = document.createElement("a"); a.className = "btn"; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Googleフォトを開く"; a.style.textDecoration = "none";
+  const c = document.createElement("button"); c.type = "button"; c.className = "btn sec"; c.textContent = "キャンセル"; c.onclick = onCancel;
+  box.append(a, c); ov.appendChild(box); document.body.appendChild(ov);
+  return {el: ov, link: a};
+}
+async function gpPick(max, say){
+  await gpToken();
+  say("", "Googleフォトの準備をしています…");
+  gpApi.body = {pickingConfig: {maxItemCount: String(max)}};
+  const sess = await gpApi("POST", "sessions");
+  const sid = sess.id;
+  let cancelled = false, wake = null;
+  const ui = gpOverlay(() => { cancelled = true; if(wake) wake(); });
+  ui.link.href = sess.pickerUri + "/autoclose";
+  try {
+    const t0 = Date.now();
+    const ivOf = s => Math.max(2, parseFloat(s && s.pollingConfig && s.pollingConfig.pollInterval) || 5) * 1000;
+    let iv = ivOf(sess), set = !!sess.mediaItemsSet;
+    while(!set){
+      await new Promise(res => {
+        wake = res;
+        const t = setTimeout(res, iv);
+        const vis = () => { if(document.visibilityState === "visible"){ clearTimeout(t); res(); } };
+        document.addEventListener("visibilitychange", vis, {once: true});
+        setTimeout(() => document.removeEventListener("visibilitychange", vis), iv + 50);
+      });
+      if(cancelled) throw new Error("cancel");
+      if(Date.now() - t0 > 25 * 60 * 1000) throw new Error("timeout");
+      const s = await gpApi("GET", "sessions/" + encodeURIComponent(sid));
+      set = !!(s && s.mediaItemsSet); iv = ivOf(s);
+    }
+    ui.el.remove();
+    say("", "選んだ写真を確認しています…");
+    let items = [], pt = "";
+    do {
+      const r = await gpApi("GET", "mediaItems?sessionId=" + encodeURIComponent(sid) + "&pageSize=100" + (pt ? "&pageToken=" + encodeURIComponent(pt) : ""));
+      items = items.concat((r && r.mediaItems) || []); pt = (r && r.nextPageToken) || "";
+    } while(pt);
+    items = items.filter(m => (!m.type || m.type === "PHOTO") && m.mediaFile && m.mediaFile.baseUrl).slice(0, max);
+    if(!items.length) throw new Error("empty");
+    const files = [];
+    for(let i = 0; i < items.length; i++){
+      say("", `画像を取得しています…(${i + 1}/${items.length})`);
+      let b;
+      try {
+        const r = await fetch(items[i].mediaFile.baseUrl + "=w2048-h2048", {headers: {Authorization: "Bearer " + GP.token}});
+        if(!r.ok) throw new Error("fetch");
+        b = await r.blob();
+      } catch(err){ throw new Error("fetch"); }
+      const base = String(items[i].mediaFile.filename || "gphoto" + (i + 1)).replace(/\.[^.]+$/, "");
+      files.push(new File([b], base + ".jpg", {type: b.type && /^image\//.test(b.type) ? b.type : "image/jpeg"}));
+    }
+    return files;
+  } finally {
+    ui.el.remove();
+    gpApi("DELETE", "sessions/" + encodeURIComponent(sid)).catch(() => {}); /* 使い終わったセッションは片付ける */
+  }
+}
+async function gpChoose(max, say, onFiles){
+  if(GP.busy) return;
+  if(max <= 0){ say("err", "画像が上限に達しています。入れ替えるときは、画像の×で外してください。"); return; }
+  GP.busy = true; say("", "Googleフォトに接続しています…");
+  try { const fs = await gpPick(max, say); say("", ""); if(fs.length) await onFiles(fs); }
+  catch(e){ if(e && e.message === "cancel") say("", ""); else say("err", gpErrMsg(e)); }
+  finally { GP.busy = false; }
+}
 function photoCardHtml(){
   return `<div class="card">
     <h2>イベント画像</h2>
     <div class="hint">看板・ゲート・ステージなどの写真を${MAXPHOTO}枚まで残せます。チケットの読み取りに使った画像は保存されません。2枚以上あるときは、画像を長押ししてそのまま動かすと並び替えできます。</div>
     <div class="scan"><label class="btn sec">撮影<input id="phCam" type="file" accept="image/*" capture="environment" hidden></label><label class="btn sec">写真を選ぶ<input id="phPick" type="file" accept="image/*" multiple hidden></label></div>
+    <button type="button" class="btn sec" id="gpPhoto">Googleフォトから選ぶ</button>
     <div class="thumbs" id="phThumbs"></div>
     <div class="status" id="phSt"></div>
   </div>`;
@@ -781,8 +910,7 @@ function setupPhotos(l){
     if(over > 0){ st.className = "status err"; st.textContent = `イベント画像は${MAXPHOTO}枚までです。あと${over}枚、画像の×で外すと保存できます。`; st.dataset.ov = "1"; }
     else if(st.dataset.ov){ st.className = "status"; st.textContent = ""; delete st.dataset.ov; }
   };
-  const add = async e => {
-    const fs = [...e.target.files]; e.target.value = "";
+  const addFiles = async fs => {
     if(!fs.length) return;
     const room = MAXPHOTO - photos.length;
     if(room <= 0){ st.className = "status err"; st.textContent = `画像は${MAXPHOTO}枚までです。入れ替えるときは、画像の×で外してください。`; return; }
@@ -792,6 +920,9 @@ function setupPhotos(l){
     st.className = fail ? "status err" : "status"; st.textContent = fail ? `${fail}枚は追加できませんでした。` : "";
     draw();
   };
+  const add = e => { const fs = [...e.target.files]; e.target.value = ""; return addFiles(fs); };
+  document.getElementById("gpPhoto").addEventListener("click", () => gpChoose(MAXPHOTO - photos.length, gpSay(st), addFiles));
+  gpLoadGis().catch(() => {});
   document.getElementById("phCam").addEventListener("change", add);
   document.getElementById("phPick").addEventListener("change", add);
   enableThumbSort(box, (from, to) => { const [m] = photos.splice(from, 1); photos.splice(to, 0, m); st.textContent = ""; draw(); });
@@ -1776,7 +1907,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.21.0</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.22.0</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -2111,6 +2242,7 @@ function openForm(existing){
         <label class="btn sec">撮影<input id="cam" type="file" accept="image/*" capture="environment"></label>
         <label class="btn sec">写真を選ぶ<input id="pick" type="file" accept="image/*" multiple></label>
       </div>
+      <button type="button" class="btn sec" id="gpScan">Googleフォトから選ぶ</button>
       <div class="thumbs" id="thumbs"></div>
       <button type="button" class="btn" id="readGo" disabled>読み取る</button>
       <button type="button" class="btn sec" id="stop" hidden>中止</button>
@@ -2316,7 +2448,7 @@ ${RULES}`;
       else if(st0.dataset.ov){ st0.className = "status"; st0.textContent = ""; delete st0.dataset.ov; } }
   };
   const addStaged = e => {
-    const fs = [...e.target.files]; e.target.value = "";
+    const fs = Array.isArray(e) ? e : [...e.target.files]; if(!Array.isArray(e)) e.target.value = "";
     if(!fs.length) return;
     const room = MAXIMG - staged.length, st = $("#st");
     if(room <= 0){ st.className = "status err"; st.textContent = `画像は${MAXIMG}枚までです。入れ替えるときは、画像の×で外してください。`; return; }
@@ -2326,6 +2458,8 @@ ${RULES}`;
   };
   $("#cam").addEventListener("change", addStaged);
   $("#pick").addEventListener("change", addStaged);
+  $("#gpScan").addEventListener("click", () => gpChoose(MAXIMG - staged.length, gpSay($("#st")), addStaged));
+  gpLoadGis().catch(() => {});
   drawThumbs();
   const handle = async () => {
     const files = staged.slice(), st = $("#st"), stop = $("#stop"), go = $("#readGo");
@@ -2512,6 +2646,7 @@ function renderBatch(){
       <label class="btn sec" for="bCam">撮影する</label>
       <label class="btn sec" for="bPick">写真を選ぶ</label>
     </div>
+    <button type="button" class="btn sec" id="bGp" style="margin-top:10px">Googleフォトから選ぶ</button>
     <input id="bPick" type="file" accept="image/*" multiple style="display:none">
     <input id="bCam" type="file" accept="image/*" capture="environment" style="display:none">
     <p class="bhint">チケット1枚を1件のイベントとして読み取ります。1枚の写真に複数のチケットが並んでいるときは、それぞれ別のイベントになります。チケットの写真や電子チケットのスクリーンショットを、まとめて選べます。選んだ写真はサムネイルで確認でき、タップで拡大、×で外せます。</p>
@@ -2535,6 +2670,8 @@ function renderBatch(){
   };
   $("#bPick").onchange = e => { addFiles(e.target.files); e.target.value = ""; };
   $("#bCam").onchange = e => { addFiles(e.target.files); e.target.value = ""; };
+  $("#bGp").onclick = () => { if(bRunning) return; gpChoose(GP_BULK_MAX, (c, t) => bSetNote(c, t), addFiles); };
+  gpLoadGis().catch(() => {});
   const list = $("#bList");
   list.addEventListener("click", e => {
     const zm = e.target.closest("[data-bzoom]"); if(zm){ const all = [...list.querySelectorAll("[data-bzoom]")]; openLightbox(zm.src, all.map(x => x.src), all.indexOf(zm)); return; }
