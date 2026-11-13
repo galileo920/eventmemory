@@ -54,6 +54,7 @@ main{max-width:560px;margin:0 auto;padding-block:14px 150px;padding-left:var(--g
 @keyframes inFromLeft{from{opacity:0;transform:translateX(-32px)}to{opacity:1;transform:none}}
 .in-l{animation:inFromRight .22s ease-out}
 .in-r{animation:inFromLeft .22s ease-out}
+.tabbar,.dial,.toast{translate:0 var(--vvfix,0px)} /* iOSで固定表示の位置がずれたとき、JSで求めたずれ分だけ戻す */
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:var(--gutter-l);padding-right:var(--gutter-r)}
 .tabbar-in{max-width:560px;margin:0 auto;display:flex}
 .tabbar button{flex:1;border:0;background:none;color:var(--sub);padding:12px 4px;font-size:14px;font-weight:500;cursor:pointer;border-top:3px solid transparent}
@@ -385,7 +386,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.22.4</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.22.5</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -400,6 +401,27 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
   <div class="fabcell" id="fabCell"><button type="button" class="fab" id="fab" aria-label="イベントを追加" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg></button></div>
   <button data-tab="stats" aria-label="集計"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 21.5h19" fill="none" stroke="currentColor" stroke-linecap="round"/><rect x="3.2" y="12.5" width="4.6" height="7.5" rx="1" fill="currentColor" stroke="none"/><rect x="9.7" y="3" width="4.6" height="17" rx="1" fill="currentColor" stroke="none"/><rect x="16.2" y="8" width="4.6" height="12" rx="1" fill="currentColor" stroke="none"/></svg></button>
 </div></nav>
+<script>
+/* 下のタブバーが画面の途中に浮く(リストから分離する)ことがあるのを自動で直す。
+   iOSでは、キーボードの開閉・アプリの切り替え・引っ張り操作のあとに、固定表示(position:fixed)の基準が古い画面サイズのまま残ることがある。
+   「実際に見えている範囲の下端」と「固定表示の基準の下端」のずれを測り、ずれていれば同じ分だけ下げて戻す */
+(function(){
+  const vv = window.visualViewport, root = document.documentElement;
+  let last = 0, raf = 0;
+  function sync(){
+    raf = 0;
+    let gap = 0;
+    if(vv && vv.scale <= 1.01){ gap = Math.round(vv.offsetTop + vv.height - root.clientHeight); if(Math.abs(gap) < 2 || Math.abs(gap) > 900) gap = 0; }
+    if(gap !== last){ last = gap; root.style.setProperty("--vvfix", gap + "px"); }
+  }
+  const req = () => { if(!raf) raf = requestAnimationFrame(sync); };
+  if(vv){ vv.addEventListener("resize", req); vv.addEventListener("scroll", req); }
+  ["scroll", "resize", "orientationchange", "pageshow", "focusin", "focusout", "touchend"].forEach(e => window.addEventListener(e, () => { req(); setTimeout(req, 250); }, {passive: true}));
+  document.addEventListener("visibilitychange", () => { req(); setTimeout(req, 300); });
+  setInterval(() => { if(!document.hidden) req(); }, 600); /* イベントを取りこぼしたときの保険(約0.6秒ごとに確認) */
+  req();
+})();
+</script>
 
 <script>
 /* 暫定: 起動時のエラーを画面の上に出す(原因調査用) */
@@ -1919,7 +1941,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.22.4</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.22.5</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
