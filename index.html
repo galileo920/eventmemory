@@ -391,7 +391,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.22.9</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.22.10</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -799,9 +799,19 @@ function gpOverlay(onCancel){
   box.append(a, c); ov.appendChild(box); document.body.appendChild(ov);
   return {el: ov, link: a};
 }
+function gpNotice(msg){
+  const ov = document.createElement("div");
+  ov.style.cssText = "position:fixed;inset:0;z-index:60;background:rgba(15,17,24,.5);display:grid;place-items:center;padding:20px";
+  const box = document.createElement("div");
+  box.setAttribute("role", "alertdialog"); box.setAttribute("aria-modal", "true");
+  box.style.cssText = "width:100%;max-width:360px;background:var(--surface);color:var(--ink);border-radius:16px;padding:18px;box-shadow:0 8px 28px rgba(0,0,0,.35)";
+  const p = document.createElement("p"); p.style.cssText = "margin:0;font-size:15px"; p.textContent = msg;
+  const b = document.createElement("button"); b.type = "button"; b.className = "btn"; b.textContent = "閉じる"; b.onclick = () => ov.remove();
+  box.append(p, b); ov.appendChild(box); ov.addEventListener("click", e => { if(e.target === ov) ov.remove(); }); document.body.appendChild(ov);
+}
 async function gpPick(max, say, pre){
   await gpToken();
-  say("", "Googleフォトの準備をしています…");
+  if(!pre) say("", "Googleフォトの準備をしています…");
   gpApi.body = {pickingConfig: {maxItemCount: String(max)}};
   const sess = await gpApi("POST", "sessions");
   const sid = sess.id;
@@ -811,7 +821,7 @@ async function gpPick(max, say, pre){
   ui.link.href = sess.pickerUri + "/autoclose";
   /* ログイン済みのときは、タップ直後に開いておいた画面をそのままGoogleフォトへ切り替える(ブロックされたときは案内ボタンから開く) */
   let quiet = false, back = false, closedMiss = 0;
-  if(pre){ try { pre._nav = true; pre.location.href = ui.link.href; quiet = true; ui.el.style.display = "none"; say("", "Googleフォトで写真を選んでください。選び終わると自動で取り込みます。やり直すときは、もう一度ボタンを押してください。"); } catch(e){} } /* 直接開けたときは案内ダイアログを出さない(開けなかったときだけ出す) */
+  if(pre){ try { pre._nav = true; pre.location.href = ui.link.href; quiet = true; ui.el.style.display = "none"; } catch(e){} } /* 直接開けたときは案内ダイアログを出さない(開けなかったときだけ出す) */
   try {
     const t0 = Date.now();
     const ivOf = s => Math.max(2, parseFloat(s && s.pollingConfig && s.pollingConfig.pollInterval) || 5) * 1000;
@@ -873,12 +883,12 @@ async function gpChoose(max, say, onFiles){
   }
   /* 前回の待ちが残っているときは中止して、やり直す */
   if(GP.busy){ if(GP.cancel) GP.cancel(); while(GP.busy) await new Promise(r => setTimeout(r, 50)); }
-  GP.busy = true; say("", "Googleフォトに接続しています…");
+  GP.busy = true; if(!pre) say("", "Googleフォトに接続しています…"); /* 直接開くときは、戻ってきたときに何も表示しない */
   try {
     if(!logged){
       /* 初回ログインのあとは、画面を自動で開けない(ブロックされる)ので、もう一度ボタンを押してもらう */
       await gpToken();
-      say("", "ログインしました。もう一度「Googleフォトから選ぶ」を押してください。");
+      say("", ""); gpNotice("ログインしました。もう一度「Googleフォトから選ぶ」を押してください。");
       return;
     }
     const fs = await gpPick(max, say, pre); say("", "");
@@ -1948,7 +1958,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.22.9</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.22.10</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
