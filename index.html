@@ -44,7 +44,7 @@ button,input,textarea{font:inherit;color:inherit}
 .bar-in{justify-content:flex-start}
 .hdback{flex:none;align-self:center;width:32px;height:36px;margin:-3px -7px -3px -10px;padding:0;border:0;background:none;color:var(--ink);display:grid;place-items:center;cursor:pointer;-webkit-appearance:none}
 .hdback svg{width:22px;height:22px;display:block}
-.hdset{flex:none;align-self:center;width:36px;height:36px;margin:-3px -6px -3px auto;padding:0;border:0;background:none;color:var(--sub);display:grid;place-items:center;cursor:pointer;-webkit-appearance:none}
+.hdset{flex:none;align-self:center;width:36px;height:36px;margin:-3px -6px -3px auto;padding:0;border:0;background:none;color:color-mix(in srgb,var(--sub) 50%,var(--bg));display:grid;place-items:center;cursor:pointer;-webkit-appearance:none}
 .hdset.on{color:var(--accent)}
 .hdset svg{width:24px;height:24px;display:block}
 .stitle{margin:0 0 14px;font-size:18px;font-weight:700;letter-spacing:.02em}
@@ -59,6 +59,9 @@ main{max-width:560px;margin:0 auto;padding-block:14px 150px;padding-left:var(--g
 .tabbar button{flex:1;border:0;background:none;color:var(--sub);padding:12px 4px;font-size:14px;font-weight:500;cursor:pointer;border-top:3px solid transparent}
 .tabbar button.on{color:var(--accent);font-weight:700;border-top-color:var(--accent)}
 .tabbar button[data-tab]{position:relative}
+.tabbar button[data-tab]:not(.on){color:color-mix(in srgb,var(--sub) 50%,var(--surface))}
+.tabbar button[data-tab] svg{width:28px;height:28px;display:block;margin:0 auto;stroke-width:1.9}
+.tabbar button[data-tab].on svg{stroke-width:2.4}
 /* 一覧は左端、集計は右端まで線と反応範囲を伸ばす。文字の真ん中に線が来るよう、内側にも同じ長さだけ伸ばす */
 .tabbar button[data-tab]::after{content:"";position:absolute;top:-3px;bottom:0}
 .tabbar button[data-tab="list"]::after{left:calc(-1*var(--gutter-l));right:calc(-1*var(--gutter-l))}
@@ -382,7 +385,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.22.1</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.22.4</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <main id="app"></main>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -393,9 +396,9 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </div>
 <div class="toast" id="toast" hidden></div>
 <nav class="tabbar"><div class="tabbar-in">
-  <button data-tab="list" class="on">一覧</button>
+  <button data-tab="list" class="on" aria-label="一覧"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="3.6" cy="5.5" r="1.7" fill="currentColor" stroke="none"/><circle cx="3.6" cy="12" r="1.7" fill="currentColor" stroke="none"/><circle cx="3.6" cy="18.5" r="1.7" fill="currentColor" stroke="none"/><path d="M8.5 5.5h13M8.5 12h13M8.5 18.5h13" fill="none" stroke="currentColor" stroke-linecap="round"/></svg></button>
   <div class="fabcell" id="fabCell"><button type="button" class="fab" id="fab" aria-label="イベントを追加" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg></button></div>
-  <button data-tab="stats">集計</button>
+  <button data-tab="stats" aria-label="集計"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 21.5h19" fill="none" stroke="currentColor" stroke-linecap="round"/><rect x="3.2" y="12.5" width="4.6" height="7.5" rx="1" fill="currentColor" stroke="none"/><rect x="9.7" y="3" width="4.6" height="17" rx="1" fill="currentColor" stroke="none"/><rect x="16.2" y="8" width="4.6" height="12" rx="1" fill="currentColor" stroke="none"/></svg></button>
 </div></nav>
 
 <script>
@@ -1321,6 +1324,7 @@ $("#dialPhoto").onclick = () => { closeDial(); openBatch(); };
 
 let subEdit = false;
 function screenTitle(){
+  if(sub && (subKind === "detail" || subKind === "sdetail")) return ""; /* イベント詳細・詳細集計は画面名を出さない */
   if(sub && subKind === "batch") return "参加イベント一括登録";
   if(sub && subKind === "bulk") return "一括編集";
   if(sub && subKind === "sdetail") return "詳細集計";
@@ -1330,7 +1334,9 @@ function screenTitle(){
 new MutationObserver(() => {
   const a = document.getElementById("app");
   if(!a || (a.firstElementChild && a.firstElementChild.classList.contains("stitle"))) return;
-  a.insertAdjacentHTML("afterbegin", `<h2 class="stitle">${screenTitle()}</h2>`);
+  const t = screenTitle();
+  if(!t) return;
+  a.insertAdjacentHTML("afterbegin", `<h2 class="stitle">${t}</h2>`);
 }).observe(document.getElementById("app"), {childList: true});
 /* ヘッダーの＜(詳細・詳細集計だけ)と歯車(下のタブバーを出す画面だけ。設定を開いているときは濃い色)を、画面に合わせる */
 function syncHeader(){
@@ -1913,7 +1919,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.22.1</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.22.4</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
