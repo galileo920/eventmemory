@@ -391,7 +391,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.22.6</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.22.7</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -799,7 +799,7 @@ function gpOverlay(onCancel){
   box.append(a, c); ov.appendChild(box); document.body.appendChild(ov);
   return {el: ov, link: a};
 }
-async function gpPick(max, say){
+async function gpPick(max, say, pre){
   await gpToken();
   say("", "Googleフォトの準備をしています…");
   gpApi.body = {pickingConfig: {maxItemCount: String(max)}};
@@ -808,6 +808,8 @@ async function gpPick(max, say){
   let cancelled = false, wake = null;
   const ui = gpOverlay(() => { cancelled = true; if(wake) wake(); });
   ui.link.href = sess.pickerUri + "/autoclose";
+  /* ログイン済みのときは、タップ直後に開いておいた画面をそのままGoogleフォトへ切り替える(ブロックされたときは案内ボタンから開く) */
+  if(pre){ try { pre._nav = true; pre.location.href = ui.link.href; } catch(e){} }
   try {
     const t0 = Date.now();
     const ivOf = s => Math.max(2, parseFloat(s && s.pollingConfig && s.pollingConfig.pollInterval) || 5) * 1000;
@@ -858,13 +860,18 @@ async function gpChoose(max, say, onFiles){
   if(GP.busy) return;
   if(max <= 0){ say("err", "画像が上限に達しています。入れ替えるときは、画像の×で外してください。"); return; }
   GP.busy = true; say("", "Googleフォトに接続しています…");
+  /* タップと同時に画面を開く必要があるので、待ち時間(await)の前に開く。ログイン済み(トークンが有効)のときだけ */
+  let pre = null;
+  if(GP.token && Date.now() < GP.exp - 60000){
+    try { pre = window.open("", "_blank"); if(pre && pre.document && pre.document.body) pre.document.body.textContent = "Googleフォトを開いています…"; } catch(e){ pre = null; }
+  }
   try {
-    const fs = await gpPick(max, say); say("", "");
+    const fs = await gpPick(max, say, pre); say("", "");
     if(fs.length) await onFiles(fs);
     if(fs.skipped) say("", `動画${fs.skipped}件は取り込めないため、写真${fs.length}枚を取り込みました。`);
   }
   catch(e){ if(e && e.message === "cancel") say("", ""); else say("err", gpErrMsg(e)); }
-  finally { GP.busy = false; }
+  finally { GP.busy = false; try { if(pre && !pre._nav) pre.close(); } catch(e){} }
 }
 function photoCardHtml(){
   return `<div class="card">
@@ -1926,7 +1933,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.22.6</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.22.7</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
