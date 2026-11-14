@@ -41,7 +41,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-siz
    これでタブバーが本文から離れる(分離する)ことが原理的に起きない */
 html,body{height:100%;overflow:hidden;overscroll-behavior:none}
 body{position:fixed;inset:0;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
-#scroller{flex:1 1 auto;min-height:0;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
+#scroller{position:relative;z-index:7;flex:1 1 auto;min-height:0;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
 button,input,textarea{font:inherit;color:inherit}
 .bar{position:relative;flex:none;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding-block:12px;padding-left:var(--gutter-l);padding-right:var(--gutter-r)}
 .bar-in{max-width:560px;margin:0 auto;display:flex;align-items:baseline;justify-content:space-between;gap:12px}
@@ -121,10 +121,45 @@ label{display:block;margin-top:14px;font-size:12px;color:var(--sub);font-weight:
 .msel .mopt{display:flex;align-items:center;gap:10px;margin:0;padding:11px 14px;font-size:12px;color:var(--ink);font-weight:400;cursor:pointer}
 .msel .mopt input{width:22px;height:22px;flex:none;margin:0;padding:0}
 .msel .mopt span{min-width:0;overflow-wrap:anywhere}
-.mfoot{position:sticky;bottom:0;display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 8px;padding:8px 10px;background:var(--surface);border-top:1px solid var(--line)}
+.mfoot{position:sticky;bottom:0;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px 8px;padding:8px 10px;background:var(--surface);border-top:1px solid var(--line)}
 .mfoot button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:500;cursor:pointer}
-.clrrow{display:flex;justify-content:flex-end;margin:-2px 0 8px}
-.clrrow button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:500;cursor:pointer}
+/* チケット代の行: 左にプルダウン。クリアボタンは範囲指定の入力欄の下の行 */
+#prange{gap:6px;margin-top:-2px}
+#prange label{font-size:12px;margin:0 0 2px}
+#prange input{height:34px;padding:0 10px;font-size:16px;border-radius:8px;margin-top:0}
+/* 絞り込みボタン・チップ・シート */
+.qrow{display:flex;gap:8px;align-items:stretch;margin-bottom:12px}
+.qrow .cw.sw{flex:1;min-width:0;margin-bottom:0}
+.fbtn{flex:none;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:0 12px;font-size:12px;font-weight:500;cursor:pointer;-webkit-appearance:none}
+.qrow .fbtn{margin-top:4px;padding:0 11px}
+.qrow .fbtn>span:not(.fbadge){display:none} /* 検索欄の横では、アイコンだけにして検索欄の幅を確保する */
+.qrow .search::placeholder{font-size:13px}
+.chips .fbtn{height:30px;border-radius:999px;padding:0 12px}
+.fbtn.on{border-color:var(--accent)}
+.fbadge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--accent);color:var(--accent-ink);font-size:11px;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 10px}
+.chip{display:inline-flex;align-items:center;gap:2px;max-width:100%;background:var(--accent-soft);border-radius:999px;padding:3px 3px 3px 10px;font-size:12px}
+.chip>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip button{flex:none;position:relative;width:22px;height:22px;border:0;border-radius:50%;background:none;color:var(--sub);font:inherit;font-size:15px;line-height:1;padding:0 0 1px;cursor:pointer;-webkit-appearance:none}
+.chip button::after{content:"";position:absolute;inset:-6px}
+.fsheet{position:fixed;inset:0;z-index:12}
+body.fs-lock #scroller{overflow:hidden} /* 絞り込みシートを開いている間は、後ろの画面をスクロールさせない */
+.fsheet-scrim{position:absolute;inset:0;background:rgba(15,17,24,.45);touch-action:none}
+.fsheet-box{position:absolute;left:0;right:0;bottom:0;margin:0 auto;width:100%;max-width:560px;max-height:86vh;display:flex;flex-direction:column;background:var(--surface);border-radius:16px 16px 0 0;box-shadow:0 -6px 24px rgba(0,0,0,.25);padding-bottom:env(safe-area-inset-bottom,0px)}
+.fsheet.up .fsheet-box{animation:fsUp .22s ease-out}
+@keyframes fsUp{from{transform:translateY(40px);opacity:.6}to{transform:none;opacity:1}}
+.fsheet-hd{display:flex;justify-content:space-between;align-items:center;padding:14px var(--gutter-r) 4px var(--gutter-l);font-size:16px}
+.fsheet-hd button{width:32px;height:32px;margin-right:-6px;border:0;border-radius:50%;background:none;color:var(--sub);font:inherit;font-size:22px;line-height:1;cursor:pointer;-webkit-appearance:none}
+.fsheet-body{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 var(--gutter-r) 12px var(--gutter-l)}
+.fsheet .fsec .fcol{display:block;margin-bottom:10px}
+.fsheet .fsec .fcol>label{margin:6px 0 4px;white-space:normal}
+.fsheet .fq .msb{height:46px;padding:0 12px;font-size:14px}
+.fsheet .msel{position:relative}
+.fsheet .mpanel{position:static;left:auto;right:auto;min-width:0;width:auto;max-width:none;max-height:260px;margin-top:4px;box-shadow:none}
+.fsheet .filters{margin-bottom:10px}
+.fsheet-ft{display:flex;gap:10px;padding:10px var(--gutter-r) 10px var(--gutter-l);border-top:1px solid var(--line)}
+.fsheet-ft .btn{margin:0;flex:1}
+.fsheet-hd .fsn{margin-left:6px;font-size:13px;font-weight:500;color:var(--sub)}
 .sortrow .cnt{font-size:12px;color:var(--sub)}
 .eqw{display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px} /* 集計の切り替えボタンと並び順ボタンを、同じ幅(広いほうに合わせる)にする */
 .eqw button{width:100%}
@@ -399,7 +434,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.22.25</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.24.3</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1202,29 +1237,30 @@ const RANGE = "range";
 const inYear = l => !fYear.length || (fYear.includes(RANGE) ? (!fFrom && !fTo) || (!!l.date && (!fFrom || l.date >= fFrom) && (!fTo || l.date <= fTo)) : fYear.includes(yearOf(l)));
 const genreOk = l => !fGenre.length || fGenre.includes(genreOf(l));
 const locOk = (l, skipArea, skipPref) => (skipArea || !fArea.length || areasOf(l).some(a => fArea.includes(a))) && (skipPref || !fPref.length || prefsOf(l).some(p => fPref.includes(p)));
-const filtered = () => lives.filter(l => genreOk(l) && inYear(l) && locOk(l));
+/* チケット代の絞り込み: 「範囲指定」(下限〜上限の金額)と「未入力」を選べ、両方選ぶと、範囲内のイベントと未入力のイベントをまとめて出す */
+let fPrice = [], fPMin = "", fPMax = "";
+const PRICE_OPTS = [{v: RANGE, t: "範囲指定"}, {v: "none", t: "未入力"}];
+const priceNone = l => l.price === "" || l.price == null || !Number.isFinite(Number(l.price)); /* チケット代が未入力(0円は入力済み) */
+const priceOk = l => {
+  if(!fPrice.length) return true;
+  if(priceNone(l)) return fPrice.includes("none"); /* 未入力のイベントは、「未入力」を選んだときだけ出す */
+  if(!fPrice.includes(RANGE)) return false;
+  const p = Number(l.price);
+  return (!fPMin || p >= Number(fPMin)) && (!fPMax || p <= Number(fPMax)); /* 範囲指定: 範囲内のイベント。金額が空なら制限なし */
+};
+const filtered = () => lives.filter(l => genreOk(l) && inYear(l) && locOk(l) && priceOk(l));
 function onQuery(v){
   qLinked = false; query = v;
   fillList();
 }
 /* クリアボタンを出す条件: 自分でプルダウン・検索ボックスを操作して絞り込んでいるときだけ出す。リンク(詳細・集計)で付いた絞り込みは数えない。集計画面では、検索ボックスは数えない */
 let linkDim = "", linkVal = "", qLinked = false; /* リンクで付いたプルダウンの項目(genre/year/area/pref)とその値、リンクで入った検索語かどうか */
-const manualPull = () => {
-  const dims = {genre: fGenre, year: fYear, area: fArea, pref: fPref};
-  for(const d in dims){
-    const v = dims[d];
-    if(!v.length) continue;
-    if(d === linkDim && JSON.stringify(v) === linkVal) continue;
-    return true;
-  }
-  return false;
-};
-const clrShow = () => manualPull() || (tab === "list" && !!query.trim());
-/* クリアは、出演者・会場・タグの完全一致(「○○」と完全一致の表示)だけを残し、検索語・ジャンル・年・エリア・都道府県・期間はリンクで入ったものも含めて解除する */
-function clearFilters(){
-  linkDim = ""; linkVal = ""; qLinked = false; query = "";
+/* 絞り込み画面の「クリア」: プルダウン・期間・金額の絞り込みをすべて外す(検索ボックスと、出演者・会場・タグの完全一致は残す) */
+function clearPulls(){
+  linkDim = ""; linkVal = "";
   fGenre = []; fArea = []; fPref = [];
   fYear = []; fFrom = ""; fTo = "";
+  fPrice = []; fPMin = ""; fPMax = "";
   render();
 }
 /* チェックボックスで複数選べるプルダウン(ボタンを押すと一覧が開く。選ぶたびに絞り込みへ反映) */
@@ -1240,17 +1276,34 @@ function locCols(){
   const ps = PREFS.filter(x => lives.some(l => prefsOf(l).includes(x) && inA(l)) || fPref.includes(x));
   return msel("far", "エリア", "エリアで絞り込み", as.map(a => ({v: a, t: a})), fArea) + msel("fpr", "都道府県", "都道府県で絞り込み", ps.map(x => ({v: x, t: x, s: x === "北海道" ? x : x.replace(/[都府県]$/, "")})), fPref);
 }
-const clrRow = () => `<div class="clrrow"><button type="button" id="clrFilter" aria-label="検索・ジャンル・年・エリア・都道府県の絞り込みをまとめてクリア"${clrShow() ? "" : " hidden"}>クリア</button></div>`;
-function filterBar(){
+/* 絞り込みは「絞り込み」ボタンから開く下からのシートで行い、効いている条件は一覧・集計の上にチップで見せる */
+let fOpen = false, fsScroll = 0, fDirty = false; /* fDirty: 金額・期間の入力で、チップがまだ更新されていない */
+const fDate = d => String(d || "").replace(/^(\d+)-0?(\d+)-0?(\d+)$/, "$1/$2/$3");
+function activeChips(){
+  const c = [];
+  fGenre.forEach(v => c.push({id: "fg", v, t: v}));
+  fYear.forEach(v => c.push(v === RANGE ? {id: "fy", v, t: (fFrom || fTo) ? `${fDate(fFrom)}〜${fDate(fTo)}` : "期間指定"} : {id: "fy", v, t: v + "年"}));
+  fArea.forEach(v => c.push({id: "far", v, t: v}));
+  fPref.forEach(v => c.push({id: "fpr", v, t: v}));
+  fPrice.forEach(v => c.push(v === RANGE ? {id: "fpc", v, t: "チケット代 " + ((fPMin || fPMax) ? `${fPMin ? yen(fPMin) : ""}〜${fPMax ? yen(fPMax) : ""}` : "範囲指定")} : {id: "fpc", v, t: "チケット代 未入力"}));
+  return c;
+}
+const FUNNEL = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg>`;
+const fBtn = () => { const n = activeChips().length; return `<button type="button" class="fbtn${n ? " on" : ""}" id="fOpen" aria-haspopup="dialog">${FUNNEL}<span>絞り込み</span>${n ? `<span class="fbadge">${n}</span>` : ""}</button>`; };
+function filterBar(withBtn){
+  const chips = activeChips();
   const ys = [...new Set(lives.map(yearOf).filter(Boolean).concat(fYear.filter(x => x !== RANGE)))].sort().reverse();
   const yo = [{v: RANGE, t: "期間指定"}].concat(ys.map(y => ({v: y, t: y + "年", s: y})));
-  return `<div class="filters fq">${msel("fg", "ジャンル", "ジャンルで絞り込み", GENRES.map(g => ({v: g, t: g})), fGenre)}${msel("fy", "年", "年で絞り込み", yo, fYear)}${locCols()}</div>${fYear.includes(RANGE) ? `<div class="filters" id="frange"><div class="fcol"><label for="fFrom">開始日</label><input type="text" data-dw readonly inputmode="none" id="fFrom" aria-label="開始日" value="${esc(fFrom)}"></div><div class="fcol"><label for="fTo">終了日</label><input type="text" data-dw readonly inputmode="none" id="fTo" aria-label="終了日" value="${esc(fTo)}"></div></div>` : ""}${clrRow()}`;
+  const cnt = !loaded ? 0 : tab === "list" ? listRows().length : filtered().length;
+  const chipRow = (withBtn || chips.length) ? `<div class="chips">${withBtn ? fBtn() : ""}${chips.map(c => `<span class="chip"><span>${esc(c.t)}</span><button type="button" data-chip="${c.id}" data-v="${esc(c.v)}" aria-label="${esc(c.t)}を解除">×</button></span>`).join("")}</div>` : "";
+  return chipRow + `<div class="fsheet" id="fsheet" role="dialog" aria-label="絞り込み"${fOpen ? "" : " hidden"}><div class="fsheet-scrim" id="fsScrim"></div><div class="fsheet-box"><div class="fsheet-hd"><b>絞り込み<span class="fsn">(<span id="fsCnt">${cnt}</span>件)</span></b><button type="button" id="fsClose" aria-label="閉じる">×</button></div><div class="fsheet-body"><div class="fsec fq">${msel("fg", "ジャンル", "ジャンルで絞り込み", GENRES.map(g => ({v: g, t: g})), fGenre)}</div><div class="fsec fq">${msel("fy", "年", "年で絞り込み", yo, fYear)}</div>${fYear.includes(RANGE) ? `<div class="filters" id="frange"><div class="fcol"><label for="fFrom">開始日</label><input type="text" data-dw readonly inputmode="none" id="fFrom" aria-label="開始日" value="${esc(fFrom)}"></div><div class="fcol"><label for="fTo">終了日</label><input type="text" data-dw readonly inputmode="none" id="fTo" aria-label="終了日" value="${esc(fTo)}"></div></div>` : ""}<div class="fsec fq">${locCols()}</div><div class="fsec fq">${msel("fpc", "チケット代", "チケット代で絞り込み", PRICE_OPTS, fPrice)}</div>${fPrice.includes(RANGE) ? `<div class="filters" id="prange"><div class="fcol"><label for="pMin">下限(円)</label><input type="text" inputmode="numeric" autocomplete="off" id="pMin" aria-label="チケット代の下限" placeholder="0" value="${esc(fPMin)}"></div><div class="fcol"><label for="pMax">上限(円)</label><input type="text" inputmode="numeric" autocomplete="off" id="pMax" aria-label="チケット代の上限" placeholder="上限なし" value="${esc(fPMax)}"></div></div>` : ""}</div><div class="fsheet-ft"><button type="button" class="btn sec" id="fsClear"${chips.length ? "" : " disabled"}>クリア</button><button type="button" class="btn" id="fsDone">完了</button></div></div></div>`;
 }
 function msApply(id, vals, changed){
   { const dm = {fg: "genre", fy: "year", far: "area", fpr: "pref"}[id]; if(dm === linkDim) linkDim = ""; }
   if(id === "fg") fGenre = vals;
   else if(id === "far"){ fArea = vals; fPref = fPref.filter(x => !fArea.length || fArea.includes(areaOf(x))); }
   else if(id === "fpr") fPref = vals;
+  else if(id === "fpc") fPrice = vals;
   else if(id === "fy"){
     if(changed && changed.value === RANGE && changed.checked) fYear = [RANGE]; /* 期間指定は、年とは同時に選べない */
     else fYear = fYear.includes(RANGE) || vals.includes(RANGE) ? vals.filter(v => v !== RANGE) : vals;
@@ -1281,15 +1334,41 @@ function bindMs(){
   document.querySelectorAll("#app [data-mclose]").forEach(b => b.onclick = () => closeAll());
   if(msOpen && msOpenTab === tab) fitPanel($("#" + msOpen + "P"));
 }
-document.addEventListener("click", e => { if(!msOpen || !document.contains(e.target) || e.target.closest(".msel")) return; e.preventDefault(); e.stopPropagation(); msOpen = ""; document.querySelectorAll(".mpanel").forEach(p => { p.hidden = true; }); document.querySelectorAll(".msb").forEach(b => b.setAttribute("aria-expanded", "false")); }, true); /* プルダウンを開いているときは、外側のタップはプルダウンを閉じるだけで、後ろのリンク・ボタンは反応させない */
+document.addEventListener("click", e => { if(!msOpen || !document.contains(e.target) || e.target.closest(".msel, .fsheet")) return; e.preventDefault(); e.stopPropagation(); msOpen = ""; document.querySelectorAll(".mpanel").forEach(p => { p.hidden = true; }); document.querySelectorAll(".msb").forEach(b => b.setAttribute("aria-expanded", "false")); }, true); /* プルダウンを開いているときは、外側のタップはプルダウンを閉じるだけで、後ろのリンク・ボタンは反応させない */
+document.addEventListener("scroll", e => { const t = e.target; if(t && t.classList && t.classList.contains("fsheet-body")) fsScroll = t.scrollTop; }, true);
 function bindFilter(){
-  { const cf = $("#clrFilter"); if(cf) cf.onclick = clearFilters; }
+  { /* 絞り込みシートの開閉・クリア、チップの×。シートは再描画しても、開いたまま・スクロール位置そのままにする */
+    const fs = $("#fsheet"), fb = fs && fs.querySelector(".fsheet-body");
+    if(fs && fb){
+      if(fOpen) fb.scrollTop = fsScroll;
+      fs.addEventListener("touchmove", e => { if(!e.target.closest(".fsheet-body")) e.preventDefault(); }, {passive: false}); /* シートの外側・見出し・下のボタンをなぞっても、後ろの画面は動かさない */
+      const closeS = () => { document.body.classList.remove("fs-lock"); fOpen = false; fsScroll = 0; msOpen = ""; fs.hidden = true; if(fDirty){ fDirty = false; render(); return; } /* 金額・期間を入力したときは、閉じるときにチップへ反映する */ fs.querySelectorAll(".mpanel").forEach(p => { p.hidden = true; }); fs.querySelectorAll(".msb").forEach(b => b.setAttribute("aria-expanded", "false")); };
+      const op = $("#fOpen"); if(op) op.onclick = () => { document.body.classList.add("fs-lock"); fOpen = true; fsScroll = 0; fb.scrollTop = 0; fs.classList.remove("up"); void fs.offsetWidth; fs.classList.add("up"); fs.hidden = false; };
+      $("#fsScrim").onclick = closeS; $("#fsClose").onclick = closeS; $("#fsDone").onclick = closeS;
+      $("#fsClear").onclick = () => { fsScroll = fb.scrollTop; msOpen = ""; clearPulls(); };
+    }
+    document.querySelectorAll("#app [data-chip]").forEach(b => b.onclick = () => {
+      const id = b.dataset.chip, v = b.dataset.v;
+      if(id === "fy" && v === RANGE){ fFrom = ""; fTo = ""; }
+      if(id === "fpc" && v === RANGE){ fPMin = ""; fPMax = ""; }
+      const cur = {fg: fGenre, fy: fYear, far: fArea, fpr: fPref, fpc: fPrice}[id];
+      msApply(id, cur.filter(x => x !== v), null); render();
+    });
+  }
   bindMs();
   { /* 日付を選んでいる途中で画面を作り直すと、カレンダーが閉じてしまう。一覧は一覧だけを更新し、集計は入力が終わってから(フォーカスが外れたとき)反映する */
     const a = $("#fFrom"), b = $("#fTo"); let pend = false;
     const apply = () => { if(tab === "list") fillList(); else pend = true; };
-    if(a) a.onchange = e => { fFrom = e.target.value; if(fTo && fFrom > fTo){ fTo = fFrom; if(b) b.value = fTo; } apply(); };
-    if(b) b.onchange = e => { fTo = e.target.value; if(fFrom && fTo < fFrom){ fFrom = fTo; if(a) a.value = fFrom; } apply(); };
+    if(a) a.onchange = e => { fDirty = true; fFrom = e.target.value; if(fTo && fFrom > fTo){ fTo = fFrom; if(b) b.value = fTo; } apply(); };
+    if(b) b.onchange = e => { fDirty = true; fTo = e.target.value; if(fFrom && fTo < fFrom){ fFrom = fTo; if(a) a.value = fFrom; } apply(); };
+    [a, b].forEach(x => { if(x) x.onblur = () => { if(pend){ pend = false; render(); } }; });
+  }
+  { /* チケット代の範囲指定(下限・上限の金額)。一覧は入力のたびに反映し、集計は入力が終わってから(フォーカスが外れたとき)反映する */
+    const a = $("#pMin"), b = $("#pMax"); let pend = false;
+    const apply = () => { if(tab === "list") fillList(); else pend = true; };
+    const digits = el => { const v = el.value.replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).replace(/[^\d]/g, ""); if(v !== el.value) el.value = v; return v; };
+    if(a) a.oninput = () => { fPMin = digits(a); fDirty = true; apply(); };
+    if(b) b.oninput = () => { fPMax = digits(b); fDirty = true; apply(); };
     [a, b].forEach(x => { if(x) x.onblur = () => { if(pend){ pend = false; render(); } }; });
   }
 }
@@ -1368,7 +1447,7 @@ function onSwipe(dx, edge){
     on = false;
     if(e.touches.length !== 1) return;
     const el = e.target;
-    if(el && el.closest && el.closest("input,textarea,select,a,.grip,.field.scroll,.pgal.multi,.plbx")) return;
+    if(el && el.closest && el.closest("input,textarea,select,a,.grip,.field.scroll,.pgal.multi,.plbx,.fsheet")) return;
     const t = e.touches[0]; sx = t.clientX; sy = t.clientY; t0 = Date.now(); on = true; edge = sx <= 36; /* 左端から始まったか(詳細画面の「戻る」判定) */
   }, {passive: true});
   document.addEventListener("touchend", e => {
@@ -1415,6 +1494,8 @@ function syncHeader(){
 new MutationObserver(syncHeader).observe(document.getElementById("app"), {childList: true});
 new MutationObserver(syncHeader).observe(document.querySelector(".tabbar"), {attributes: true, attributeFilter: ["hidden"]});
 function render(){
+  if(tab !== "list" && tab !== "stats") fOpen = false; /* 絞り込みシートは、一覧・集計以外の画面では閉じる */
+  document.body.classList.toggle("fs-lock", fOpen);
   if(tab === "list") renderList();
   else if(tab === "stats") renderStats();
   else renderSettings();
@@ -1494,7 +1575,7 @@ function openBulkEdit(){
 function renderList(){
   $("#fab").style.display = bulk ? "none" : ""; document.querySelector(".tabbar").hidden = bulk;
   $("#app").innerHTML = `
-    <div class="cw sw"><input class="search" id="q" type="search" placeholder="イベント名・出演者・会場・タグで検索" value="${esc(query)}"><button type="button" class="cx" data-clr="q" aria-label="クリア">×</button></div>
+    <div class="qrow"><div class="cw sw"><input class="search" id="q" type="search" placeholder="イベント名・出演者・会場・タグで検索" value="${esc(query)}"><button type="button" class="cx" data-clr="q" aria-label="クリア">×</button></div>${fBtn()}</div>
     ${filterBar()}
     <div class="sortrow"><span class="cl"><span class="cnt" id="listCnt"></span></span><span class="grp">${bulk ? `<button type="button" id="bulkAll"><span class="tg"><span>全選択</span><span class="off">選択解除</span></span></button>` : `<button type="button" id="bulkBtn"><span class="tg"><span>一括編集</span><span class="off">選択解除</span></span></button>`}<button type="button" id="viewToggle" aria-label="${lvAria()}">${lvIcon()}</button><button type="button" id="sortToggle" aria-label="並び順を切り替え"><span class="tg"><span${sortAsc ? ' class="off"' : ""}>新しい順 ⇅</span><span${sortAsc ? "" : ' class="off"'}>古い順 ⇅</span></span></button></span></div>
     ${exact ? `<div class="exact"><span>${exact.kind === "venue" ? "会場" : exact.kind === "tag" ? "タグ" : "出演者"}${exact.value === NONE_KEY ? "が未入力のイベント" : `「${esc(exact.value)}」と完全一致`}${exact.value !== NONE_KEY && exact.kind !== "tag" && aliasNames(exact.kind, exact.value).length > 1 ? "(旧名を含む)" : ""}</span><button type="button" id="exOff">解除</button></div>` : ""}
@@ -1748,8 +1829,8 @@ function fillList(){
   const items = bulk || listView() !== "tour" ? rows.map(l => ({l})) : groupItems(rows); /* 「ツアーごと」のときだけまとめる(選択モードは全件) */
   const box = $("#listBody");
   if(!box) return;
-  { const cf = $("#clrFilter"); if(cf){ cf.hidden = !clrShow(); cf.onclick = clearFilters; } }
   const cn = $("#listCnt"); if(cn) cn.textContent = loaded ? rows.length + "件" : "読み込み中…";
+  { const fc = $("#fsCnt"); if(fc) fc.textContent = loaded ? rows.length : 0; }
   bulkVisible = rows.map(l => l.id);
   if(bulk) [...bulkSel].forEach(i => { if(!bulkVisible.includes(i)) bulkSel.delete(i); }); /* 絞り込みで見えなくなったものは選択から外す */
   const lv = listView() === "tour" ? "old" : listView(); let card;
@@ -1785,7 +1866,7 @@ function fillList(){
   const emptyHtml = `<div class="empty">${!loaded ? "読み込み中…" : lives.length ? "該当するイベントがありません" : "まだイベントがありません。<br>下の＋から、最初のイベントを追加しましょう"}</div>`;
   /* 一覧のカードは、最初に一部だけ作り、スクロールに合わせて続きを足す(1000件でも軽く開ける) */
   const lvNow = listView(), base = lvNow === "grid" ? 90 : lvNow === "thumb" ? 36 : 60;
-  const sig = [tab, query, fGenre, fArea, fPref, fYear, fFrom, fTo, exact ? exact.kind + exact.value : "", lvNow, sortAsc, rows.length].join("|");
+  const sig = [tab, query, fGenre, fArea, fPref, fYear, fFrom, fTo, fPrice, fPMin, fPMax, exact ? exact.kind + exact.value : "", lvNow, sortAsc, rows.length].join("|");
   if(sig !== listSig){ listSig = sig; listShown = base; }
   if(!("IntersectionObserver" in window)) listShown = items.length;
   const MORE = '<div id="listMore" style="height:1px;grid-column:1/-1"></div>';
@@ -1847,7 +1928,7 @@ function renderStats(){
   statKeys = {artist: sorted(artists).map(e => e[0]).filter(x => x !== NONE_KEY), venue: sorted(venues).map(e => e[0]).filter(x => x !== NONE_KEY)};
   const list = (arr, kind) => arr.length ? arr.map(([k, v]) => `<button type="button" class="line" data-k="${kind}" data-q="${esc(k)}"><span>${k === NONE_KEY ? "未入力" : esc(k)}</span>${spLine(v)}</button>`).join("") : `<div class="hint">データなし</div>`;
   $("#app").innerHTML = `
-    ${filterBar()}
+    ${filterBar(true)}
     <div class="stats">
       <div class="sc"><label>参加数</label><div class="card">${gParts ? donut(gParts.map(p => ({g: p.g, v: p.n})), "ジャンル別の参加数の内訳") : ""}<b>${total}</b></div></div>
       <div class="sc"><label>チケット代</label><div class="card">${gParts && spend ? donut(gParts.map(p => ({g: p.g, v: p.s})), "ジャンル別のチケット代の内訳") : ""}<b>${spend ? yen(spend) : "-"}</b></div></div>
@@ -1896,7 +1977,7 @@ function renderSDetail(){
     return `<div class="sdsec">${title}</div>` + (rows.length ? rows.map(([name, c]) => kind ? `<button type="button" class="line" data-${kind === "area" || kind === "pref" ? "sf" : "sk"}="${kind}" data-sq="${esc(name)}"><span>${esc(name)}</span><b>${c}回 ›</b></button>` : `<div class="line"><span>${esc(name)}</span><b>${c}回</b></div>`).join("") : `<div class="hint">${min > 1 ? "2回以上はありません" : "データなし"}</div>`);
   };
   const nbs = (() => { const ks = statKeys[k] || [], i = ks.indexOf(val); return {prev: i > 0 ? ks[i - 1] : "", next: i >= 0 && i < ks.length - 1 ? ks[i + 1] : ""}; })(); /* 集計画面と同じ並び順での、前後の出演者・会場 */
-  const resetDd = () => { fGenre = []; fYear = []; fArea = []; fPref = []; fFrom = ""; fTo = ""; }; /* 一覧へ移るときは、集計のプルダウンの絞り込みを外す */
+  const resetDd = () => { fGenre = []; fYear = []; fArea = []; fPref = []; fFrom = ""; fTo = ""; fPrice = []; fPMin = ""; fPMax = ""; }; /* 一覧へ移るときは、集計のプルダウンの絞り込みを外す */
   $("#app").innerHTML = `
     <div class="sdh"><small>${isA ? "出演者" : "会場"}</small><div class="nm">${esc(val)}</div></div>
     <div class="stats">
@@ -1986,7 +2067,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.22.25</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.24.3</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -2146,7 +2227,7 @@ function openDetail(id, from){
   $("#prevEv").onclick = () => { if(nb.prev){ openDetail(nb.prev, detailFrom); slideIn("r"); } };
   $("#nextEv").onclick = () => { if(nb.next){ openDetail(nb.next, detailFrom); slideIn("l"); } };
   $("#edit").onclick = () => openForm(l);
-  document.querySelectorAll("#app .lk").forEach(b => b.onclick = () => { const k = b.dataset.lk, q = b.dataset.q; fGenre = k === "genre" ? [q] : []; fYear = []; fArea = k === "area" ? [q] : []; fPref = k === "pref" ? [q] : []; fFrom = ""; fTo = ""; exact = k === "venue" || k === "artist" ? {kind: k, value: canon(k, q)} : k === "tag" ? {kind: k, value: q} : null; query = ""; qLinked = false; linkDim = (k === "genre" || k === "area" || k === "pref") ? k : ""; linkVal = linkDim ? JSON.stringify(linkDim === "genre" ? fGenre : linkDim === "area" ? fArea : fPref) : ""; setTab("list", {top: true}); });
+  document.querySelectorAll("#app .lk").forEach(b => b.onclick = () => { const k = b.dataset.lk, q = b.dataset.q; fGenre = k === "genre" ? [q] : []; fYear = []; fArea = k === "area" ? [q] : []; fPref = k === "pref" ? [q] : []; fFrom = ""; fTo = ""; fPrice = []; fPMin = ""; fPMax = ""; exact = k === "venue" || k === "artist" ? {kind: k, value: canon(k, q)} : k === "tag" ? {kind: k, value: q} : null; query = ""; qLinked = false; linkDim = (k === "genre" || k === "area" || k === "pref") ? k : ""; linkVal = linkDim ? JSON.stringify(linkDim === "genre" ? fGenre : linkDim === "area" ? fArea : fPref) : ""; setTab("list", {top: true}); });
 }
 
 /* 抽出結果(オブジェクト)をフォームに反映 */
