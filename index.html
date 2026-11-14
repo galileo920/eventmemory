@@ -379,6 +379,8 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 .bedit label{display:block;margin-top:12px;font-size:12px;color:var(--sub);font-weight:500}
 .bedit input,.bedit select,.bedit textarea{width:100%;min-width:0;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;margin-top:4px}
 .bedit textarea{min-height:64px;resize:vertical}
+/* 出演者の入力欄: 長いときは右端で折り返し、4行を超えたら縦にスクロールする */
+.bedit textarea.bart{min-height:0;height:42px;max-height:120px;resize:none;overflow-y:auto;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;-webkit-overflow-scrolling:touch}
 .bgrid{display:grid;grid-template-columns:1.45fr 1fr 1fr;gap:8px}
 .bgrid>div{min-width:0}
 .bgrid input{-webkit-appearance:none;appearance:none;display:block;width:100%;max-width:100%;min-width:0;padding:9px 4px;text-align:center}
@@ -397,7 +399,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.22.20</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.22.22</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1044,6 +1046,14 @@ function tagCands(typed, skip){
   lives.forEach(l => tagsOf(l).forEach(n => { if(!(skip || []).includes(n) && norm(n).includes(t)) m.set(n, (m.get(n) || 0) + 1); }));
   return [...m.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "ja")).slice(0, 6).map(([name]) => ({name, pref: ""}));
 }
+/* タグの自動入力: 登録済みのタグ(使用回数順、最大80個)の中からだけ、AIに選ばせる */
+function knownTags(){
+  const m = new Map(); lives.forEach(l => tagsOf(l).forEach(n => m.set(n, (m.get(n) || 0) + 1)));
+  return [...m.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "ja")).slice(0, 80).map(([n]) => n);
+}
+const TAG_FIELD = () => { const k = knownTags(); return k.length ? `"tags":["次の登録済みタグの中から、このイベントに明らかに当てはまるものだけを選んで配列にする(0個でもよい)。一覧にないタグは作らない。登録済みタグ: ${k.join("、")}"]` : `"tags":[]`; };
+/* AIが返したタグのうち、登録済みのものだけを残す */
+const pickKnownTags = v => { const k = new Set(knownTags()); return (Array.isArray(v) ? v : splitTags(v)).map(x => String(x).trim()).filter(x => k.has(x)); };
 const FIELDS = ["genre","title","venue","pref","date","open","start","seatType","seat","price","setlist","tags"];
 /* 自動入力・貼り付け取り込みの対象(同行者・セットリスト・メモは手入力のみ) */
 const AUTO_FIELDS = ["genre","title","artist","venue","pref","date","open","start","seatType","seat","price"];
@@ -1166,7 +1176,8 @@ const extractPrompt = () => `この画像はライブ・コンサートなどの
  "start":"開演時刻 HH:MM",
  "seatType":"席種・券種(例: 一般指定席、スタンディング、グッズ付指定席)",
  "seat":"座席・整理番号(例: 11列40番、整理番号C 266番)",
- "price":"チケット代(数字のみ)"
+ "price":"チケット代(数字のみ)",
+ ${TAG_FIELD()}
 }`;
 async function extractFromImage(dataUrls, signal){
   return parseJsonObject(await geminiText(extractPrompt(), Array.isArray(dataUrls) ? dataUrls : [dataUrls], signal));
@@ -1968,7 +1979,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.22.20</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.22.22</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -2159,6 +2170,8 @@ function applyResult(r){
     if(k === "pref"){ el.value = normPref(val); return; }
     el.value = k === "price" ? String(val).replace(/[^\d]/g, "") : String(val);
   });
+  /* タグ: 登録済みのタグだけを、入力欄に足す(すでに入っているタグは残す) */
+  { const te = $("#f_tags"), add = pickKnownTags(r.tags); if(te && add.length) te.value = splitTags(te.value).concat(add).filter((x, i, a) => a.indexOf(x) === i).join("、"); }
 }
 
 /* ========== 入力フォーム ========== */
@@ -2590,7 +2603,9 @@ ${RULES}`;
 const B_KEY = "livelog_batch_v1";
 let bItems = [], bLoaded = false, bRunning = false, bCtl = null, bNoteState = null;
 const bMedia = {};
-const bEmptyF = () => Object.fromEntries(AUTO_FIELDS.map(k => [k, ""]));
+const bEmptyF = () => ({...Object.fromEntries(AUTO_FIELDS.map(k => [k, ""])), tags: ""});
+/* 入力欄の高さを内容に合わせる(上限を超えたら縦にスクロール) */
+const bGrow = t => { t.style.height = "auto"; t.style.height = Math.min(t.scrollHeight + 2, 120) + "px"; };
 function bLoad(){
   if(bLoaded) return; bLoaded = true;
   try { const j = JSON.parse(localStorage.getItem(B_KEY) || "[]"); if(Array.isArray(j)) bItems = j.filter(x => x && x.id && x.f && x.status === "ok").map(x => ({...x, open: false})); } catch(e){}
@@ -2608,7 +2623,8 @@ const BPROMPT = () => `この画像はライブ・コンサートなどのイベ
  "start":"開演時刻 HH:MM",
  "seatType":"席種・券種(例: 一般指定席、スタンディング、グッズ付指定席)",
  "seat":"座席・整理番号(例: 11列40番、整理番号C 266番)",
- "price":"チケット代(数字のみ)"
+ "price":"チケット代(数字のみ)",
+ ${TAG_FIELD()}
 }`;
 function bNormalize(r){
   const f = bEmptyF();
@@ -2625,6 +2641,7 @@ function bNormalize(r){
   if(f.genre){ const gc = gCfg(f.genre); if(gc.skipOpen) f.open = ""; if(gc.skipStart) f.start = ""; if(gc.skipArtist){ f.artist = ""; f.artists = null; } }
   f.seatType = s(r.seatType); f.seat = s(r.seat);
   f.price = String(s(r.price)).replace(/[^\d]/g, "");
+  f.tags = pickKnownTags(r.tags).join("、");
   return f;
 }
 const B_PILL = {wait: ["待機中", ""], run: ["読み取り中", "run"], ok: ["読み取り済み", "ok"], err: ["失敗", "err"]};
@@ -2647,7 +2664,7 @@ function bEditHtml(it){
     const inp = (k, label, extra = "") => `<label for="b${it.id}-${k}">${label}</label><div class="cw"><input id="b${it.id}-${k}" data-bid="${it.id}" data-k="${k}" value="${esc(f[k])}" placeholder=" " ${extra}><button type="button" class="cx" data-clr="b${it.id}-${k}" aria-label="クリア">×</button></div>`;
   return `<div class="bedit">
     <label for="b${it.id}-title">イベント名</label><div class="cw"><textarea id="b${it.id}-title" data-bid="${it.id}" data-k="title" placeholder=" ">${esc(f.title)}</textarea><button type="button" class="cx" data-clr="b${it.id}-title" aria-label="クリア">×</button></div>
-    ${inp("artist", "出演者(「、」区切り)")}
+    <label for="b${it.id}-artist">出演者(「、」区切り)</label><div class="cw"><textarea id="b${it.id}-artist" class="bart" rows="1" data-bid="${it.id}" data-k="artist" placeholder=" " autocomplete="off">${esc(f.artist)}</textarea><button type="button" class="cx" data-clr="b${it.id}-artist" aria-label="クリア">×</button></div>
     ${inp("venue", "会場")}
     <label for="b${it.id}-pref">会場(都道府県)</label><div class="cw"><select id="b${it.id}-pref" data-bid="${it.id}" data-k="pref"><option value="">未選択</option>${PREFS.map(p => `<option${f.pref === p ? " selected" : ""}>${p}</option>`).join("")}</select></div>
     <div class="bgrid">
@@ -2659,6 +2676,7 @@ function bEditHtml(it){
     ${inp("seat", "座席・整理番号")}
     ${inp("price", "チケット代", 'type="number" inputmode="numeric"')}
     <label for="b${it.id}-genre">ジャンル</label><select id="b${it.id}-genre" data-bid="${it.id}" data-k="genre"><option value="">未選択</option>${GENRES.map(g => `<option${f.genre === g ? " selected" : ""}>${g}</option>`).join("")}</select>
+    ${inp("tags", "タグ(「、」区切り)", 'autocomplete="off"')}
     ${it.err ?`<div class="bmsg">${esc(it.err)}</div>` : ""}
     <div class="bacts">
       ${bMedia[it.id] && !it.src ? `<button type="button" class="btn sec small" data-bact="retry" data-bid="${it.id}">再読み取り</button>` : ""}
@@ -2685,6 +2703,7 @@ function bRefresh(){
         ${it.status === "err" ? bFailHtml(it) : it.open ? bEditHtml(it) : ""}
       </div>`;
     }).join("");
+    list.querySelectorAll("textarea.bart").forEach(bGrow);
   }
   const waiting = bItems.filter(i => (i.status === "wait" || i.status === "err") && bMedia[i.id]).length;
   const done = bItems.filter(i => i.status === "ok").length;
@@ -2770,7 +2789,13 @@ function renderBatch(){
   const fire = (el, type) => el.dispatchEvent(new Event(type, {bubbles: true}));
   list.addEventListener("input", e => {
     const t = e.target, k = t.dataset && t.dataset.k;
-    if(k !== "venue" && k !== "artist") return;
+    if(k === "artist"){ if(/[\r\n]/.test(t.value)) t.value = t.value.replace(/[\r\n]+/g, ""); bGrow(t); }
+    if(k !== "venue" && k !== "artist" && k !== "tags") return;
+    if(k === "tags"){
+      const v = t.value, i = Math.max(v.lastIndexOf("、"), v.lastIndexOf(","), v.lastIndexOf("，")), head = v.slice(0, i + 1);
+      showSugg(t, tagCands(v.slice(i + 1), splitTags(head)), c => { t.value = head + c.name; fire(t, "input"); });
+      return;
+    }
     if(k === "venue"){
       showSugg(t, regCands("venue", t.value), c => {
         t.value = c.name; fire(t, "input");
@@ -2782,7 +2807,7 @@ function renderBatch(){
       showSugg(t, regCands("artist", v.slice(i + 1), splitArtists(head.replace(/[,，]/g, "、"))), c => { t.value = head + c.name; fire(t, "input"); });
     }
   });
-  list.addEventListener("focusout", e => { if(e.target.dataset && (e.target.dataset.k === "venue" || e.target.dataset.k === "artist")) hideSugg(); });
+  list.addEventListener("focusout", e => { if(e.target.dataset && (e.target.dataset.k === "venue" || e.target.dataset.k === "artist" || e.target.dataset.k === "tags")) hideSugg(); });
   list.addEventListener("input", onEdit);
   list.addEventListener("change", onEdit);
   $("#bRun").onclick = () => { if(bRunning){ bCtl && bCtl.abort(); } else bRunAll(); };
@@ -2825,6 +2850,7 @@ async function bRunAll(only){
     try {
       const prev = it.f, list = await bReadOne(it), f = list[0];
       AUTO_FIELDS.forEach(k => { if(prev[k]) f[k] = prev[k]; }); /* 手で直した内容は上書きしない */
+      if(prev.tags) f.tags = prev.tags;
       bDropDerived(it.id); /* 再読み取りのときは、前回追加した分を作り直す */
       it.f = f; it.status = "ok"; n++;
       const m0 = bMedia[it.id];
@@ -2853,7 +2879,7 @@ async function bRegister(){
   let n = 0, fail = 0;
   for(const it of targets){
     const f = it.f, now = Date.now();
-    const rec = {id: uid(), genre: GENRES.includes(f.genre) ? f.genre : GENRES[0], title: f.title, venue: f.venue, pref: f.pref, date: f.date, open: f.open, start: f.start, seatType: f.seatType, seat: f.seat, price: f.price === "" ? "" : Number(f.price), setlist: "", artistRoles: {}, createdAt: now, updatedAt: now};
+    const rec = {id: uid(), genre: GENRES.includes(f.genre) ? f.genre : GENRES[0], title: f.title, venue: f.venue, pref: f.pref, date: f.date, open: f.open, start: f.start, seatType: f.seatType, seat: f.seat, price: f.price === "" ? "" : Number(f.price), setlist: "", artistRoles: {}, tags: splitTags(f.tags), createdAt: now, updatedAt: now};
     { const arr = Array.isArray(f.artists) && f.artists.join("、") === f.artist ? f.artists : splitNames(f.artist); rec.artists = arr; } /* 画面で書き換えていなければ、読み取った配列のまま保存 */
     if(!rec.artists.length && !rec.title){ fail++; it.err = "イベント名か出演者を入力してください。"; it.open = true; continue; }
     try { await dbPut(rec); n++; bItems = bItems.filter(x => x !== it); if(bMedia[it.id]){ URL.revokeObjectURL(bMedia[it.id].url); delete bMedia[it.id]; } }
