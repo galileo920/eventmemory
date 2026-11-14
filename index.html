@@ -399,7 +399,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.22.23</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.22.24</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1981,7 +1981,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.22.23</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.22.24</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -2612,7 +2612,7 @@ function bLoad(){
   if(bLoaded) return; bLoaded = true;
   try { const j = JSON.parse(localStorage.getItem(B_KEY) || "[]"); if(Array.isArray(j)) bItems = j.filter(x => x && x.id && x.f && x.status === "ok").map(x => ({...x, open: false})); } catch(e){}
 }
-function bPersist(){ try { localStorage.setItem(B_KEY, JSON.stringify(bItems.map(({id, status, err, f}) => ({id, status, err, f})))); } catch(e){} }
+function bPersist(){ try { localStorage.setItem(B_KEY, JSON.stringify(bItems.map(({id, status, err, f, manual}) => ({id, status, err, f, manual})))); } catch(e){} }
 const BPROMPT = () => `この画像はライブ・コンサートなどのイベントの紙のチケット、電子チケット(チケットぴあ・イープラス・ローチケ等のアプリ画面のスクリーンショット)、または予約画面です。画像に写っているチケット・予約画面は、1枚ごとに1公演として読み取ってください。画像に複数のチケットが並んでいる場合は、写っているすべてのチケットを、上から下・左から右の順に、それぞれ別の要素にしてください(1枚だけなら要素1つ)。同じ公演名でも、日付・開演時刻・券種・座席などが異なるチケットは、別の要素にしてください。読み取れる情報を、次のJSONオブジェクトを要素とする配列だけで返してください。配列以外の文章は付けないでください。読み取れない項目は空文字にしてください。推測で埋めないでください。購入者の名前は含めないでください。複数日にまたがる券の場合、dateは初日にしてください。
 {
  "genre":"ジャンル(${GENRES.join("・")}のいずれか。どれにも当てはまらない場合は「その他」、判断できなければ空文字)",
@@ -2690,12 +2690,12 @@ function bSetNote(cls, text){ bNoteState = text ? {cls, text} : null; const n = 
 function bRefresh(){
   const list = $("#bList"); if(!list) return;
   if(!bItems.length){
-    list.innerHTML = `<div class="bempty">写真を追加すると、ここに読み取ったイベントが1件ずつ並びます。<br>読み取りが終わったら内容を確認して、「登録」を押します。</div>`;
+    list.innerHTML = `<div class="bempty">写真を追加すると、ここに読み取ったイベントが1件ずつ並びます。「手入力で追加」で、写真なしの1件も追加できます。<br>内容を確認して、「登録」を押します。</div>`;
   } else {
     const stage = bItems.filter(i => i.status === "wait" && bMedia[i.id]), rows = bItems.filter(i => !(i.status === "wait" && bMedia[i.id]));
     /* 読み取る前の写真は、サムネイルの一覧で確認できる(タップで拡大、×で外す) */
     list.innerHTML = (stage.length ? `<div class="thumbs" style="margin:0 0 12px">${stage.map((it, n) => `<div class="sthumb"><img alt="選んだ写真${n + 1}" src="${bMedia[it.id].url}" data-bzoom style="cursor:zoom-in"><button type="button" data-bx="${it.id}" aria-label="写真${n + 1}を外す">×</button></div>`).join("")}</div>` : "") + rows.map(it => {
-      const s = bSummary(it), [pl, pc] = B_PILL[it.status] || B_PILL.wait, m = bMedia[it.id];
+      const s = bSummary(it), [pl, pc] = it.manual && it.status === "ok" ? ["手入力", "ok"] : (B_PILL[it.status] || B_PILL.wait), m = bMedia[it.id];
       return `<div class="bitem">
         <div class="brow"${it.status === "err" ? "" : ` role="button" tabindex="0" data-btoggle="${it.id}" aria-expanded="${it.open}"`}>
           <div class="bthumb"${m ? ` data-burl="${m.url}" style="background-image:url('${m.url}');cursor:zoom-in"` : ""}>${m ? "" : "写真なし"}</div>
@@ -2729,6 +2729,7 @@ function renderBatch(){
       <label class="btn sec" for="bPick">写真を選ぶ</label>
     </div>
     <button type="button" class="btn sec" id="bGp" style="margin-top:10px">Googleフォトから選ぶ</button>
+    <button type="button" class="btn sec" id="bManual" style="margin-top:10px">手入力で追加</button>
     <input id="bPick" type="file" accept="image/*" multiple style="display:none">
     <input id="bCam" type="file" accept="image/*" capture="environment" style="display:none">
     <p class="bhint">チケット1枚を1件のイベントとして読み取ります。1枚の写真に複数のチケットが並んでいるときは、それぞれ別のイベントになります。チケットの写真や電子チケットのスクリーンショットを、まとめて選べます。選んだ写真はサムネイルで確認でき、タップで拡大、×で外せます。</p>
@@ -2755,6 +2756,13 @@ function renderBatch(){
   $("#bGp").onclick = () => { if(bRunning) return; gpChoose(GP_BULK_MAX, (c, t) => bSetNote(c, t), addFiles); };
   gpLoadGis().catch(() => {});
   const list = $("#bList");
+  /* 写真がなくても、手入力で1件ずつ追加して、読み取り済みの分と一緒にまとめて登録できる */
+  $("#bManual").onclick = () => {
+    if(bRunning) return;
+    bItems.push({id: uid(), status: "ok", err: "", open: true, manual: true, f: bEmptyF()});
+    bSetNote("", ""); bPersist(); bRefresh();
+    const last = list.lastElementChild; if(last && last.scrollIntoView) last.scrollIntoView({block: "center", behavior: "smooth"});
+  };
   list.addEventListener("click", e => {
     const zm = e.target.closest("[data-bzoom]"); if(zm){ const all = [...list.querySelectorAll("[data-bzoom]")]; openLightbox(zm.src, all.map(x => x.src), all.indexOf(zm)); return; }
     /* 読み取り後の一覧のサムネイルをタップすると、拡大して見られる(開閉はしない) */
