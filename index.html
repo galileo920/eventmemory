@@ -213,7 +213,7 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .ticket .m .mi{position:relative;padding-left:20px}
 .ticket .m .lic{position:absolute;left:0;top:4px;width:14px;height:14px}
 .field{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:8px}
-.field small{display:block;color:var(--sub);font-size:12px}
+.field small{display:block;color:var(--sub);font-size:12px;font-weight:500}
 .field div{white-space:pre-wrap;overflow-wrap:anywhere}
 .field.scroll div{max-height:calc(1.55em * 10);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .lk{border:0;background:none;padding:0;font:inherit;color:var(--accent);text-decoration:underline;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent}
@@ -319,12 +319,12 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .line{font-size:12px;display:flex;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:6px}
 .line span{overflow-wrap:anywhere;min-width:0}
 .line b{font-family:var(--font-mono);font-weight:500;white-space:nowrap}
-.sdh{margin:0 0 12px}.sdh small{display:block;font-size:12px;color:var(--sub)}.sdh .nm{font-size:20px;font-weight:700;overflow-wrap:anywhere}
+.sdh{margin:0 0 12px}.sdh small{display:block;font-size:12px;color:var(--sub);font-weight:500}.sdh .nm{font-size:20px;font-weight:700;overflow-wrap:anywhere}
 .line.sdev{width:100%;text-align:left;align-items:center;cursor:pointer;color:inherit;font:inherit;font-size:12px}
 .line.sdev>span{display:flex;flex-direction:column;gap:2px}
 .line.sdev small{font-size:12px;color:var(--sub)}
-.line.sdev .tt{font-family:inherit;font-weight:700;font-size:14px;white-space:normal;overflow-wrap:anywhere}
-.line.sdev .li{position:relative;padding-left:16px}
+.line.sdev .tt{font-family:inherit;font-weight:700;font-size:14px;white-space:normal;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden} /* 2行を超える分は一覧と同じく省略 */
+.line.sdev .li{position:relative;padding-left:16px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .line.sdev .lic{position:absolute;left:0;top:3px;width:12px;height:12px}
 .sdsec{margin:18px 0 6px;font-size:12px;color:var(--sub);font-weight:500}
 .sdbar{display:flex;align-items:center;gap:10px;font-size:12px;margin-bottom:6px;width:100%;padding:4px 0;border:0;background:none;color:inherit;font-family:inherit;text-align:left;cursor:pointer}
@@ -397,7 +397,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.22.17</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.22.20</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1874,7 +1874,7 @@ function renderSDetail(){
   const gParts = GENRES.map(g => { const ls = evs.filter(l => genreOf(l) === g); return {g, n: ls.length, s: ls.reduce((s, l) => s + price(l), 0)}; }).filter(p => p.n);
   const ys = cnt(l => yearOf(l) ? [yearOf(l)] : []).sort((a, b) => b[0].localeCompare(a[0])), ymax = Math.max(1, ...ys.map(y => y[1]));
   const rank = (title, arr, kind, min) => {
-    const rows = arr.filter(([, c]) => c >= (min || 1)).slice(0, 10);
+    const rows = arr.filter(([, c]) => c >= (min || 1)); /* 上位の件数での絞り込みはしない(全件表示) */
     return `<div class="sdsec">${title}</div>` + (rows.length ? rows.map(([name, c]) => kind ? `<button type="button" class="line" data-${kind === "area" || kind === "pref" ? "sf" : "sk"}="${kind}" data-sq="${esc(name)}"><span>${esc(name)}</span><b>${c}回 ›</b></button>` : `<div class="line"><span>${esc(name)}</span><b>${c}回</b></div>`).join("") : `<div class="hint">${min > 1 ? "2回以上はありません" : "データなし"}</div>`);
   };
   const nbs = (() => { const ks = statKeys[k] || [], i = ks.indexOf(val); return {prev: i > 0 ? ks[i - 1] : "", next: i >= 0 && i < ks.length - 1 ? ks[i + 1] : ""}; })(); /* 集計画面と同じ並び順での、前後の出演者・会場 */
@@ -1968,7 +1968,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.22.17</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.22.20</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
