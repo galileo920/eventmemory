@@ -399,7 +399,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.22.24</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.22.25</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1337,7 +1337,7 @@ let toastTimer = 0;
 function showToast(msg){ const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 3200); }
 /* スワイプ: 履歴↔集計↔設定、詳細→履歴、登録→戻る(入力中の誤操作を防ぐため確認ダイアログ) */
 let subKind = "", subBack = null;
-function onSwipe(dx){
+function onSwipe(dx, edge){
   if(!sub){
     if(bulk) return;
     if(tab === "settings"){ if(dx > 0) setTab(tabBeforeSettings || "list", {dir: "r"}); return; } /* 設定では、右へのスワイプで開く前のタブへ戻る */
@@ -1346,9 +1346,14 @@ function onSwipe(dx){
     setTab(TABS[j], {dir: dx < 0 ? "l" : "r"});
     return;
   }
+  /* イベント詳細・詳細集計: 左端からの右スワイプで戻る、画面内の右スワイプで前へ、左スワイプで次へ(◀▶と同じ) */
+  if(subKind === "detail" || subKind === "sdetail"){
+    if(dx > 0 && edge){ if(subKind === "detail") detailBack(); else sdBack(); return; }
+    const b = subKind === "detail" ? $(dx > 0 ? "#prevEv" : "#nextEv") : $(dx > 0 ? "#sdPrev" : "#sdNext");
+    if(b && !b.disabled) b.click();
+    return;
+  }
   if(dx < 0) return;
-  if(subKind === "detail"){ detailBack(); return; }
-  if(subKind === "sdetail"){ sdBack(); return; }
   if(subKind === "batch"){
     if(confirm("読み取った内容をすべて破棄して戻ります。よろしいですか?")){ bCtl && bCtl.abort(); bNoteState = null; setTab("list", {dir: "r", top: true}); }
     return;
@@ -1358,18 +1363,18 @@ function onSwipe(dx){
   }
 }
 (() => {
-  let sx = 0, sy = 0, t0 = 0, on = false;
+  let sx = 0, sy = 0, t0 = 0, on = false, edge = false;
   document.addEventListener("touchstart", e => {
     on = false;
     if(e.touches.length !== 1) return;
     const el = e.target;
     if(el && el.closest && el.closest("input,textarea,select,a,.grip,.field.scroll,.pgal.multi,.plbx")) return;
-    const t = e.touches[0]; sx = t.clientX; sy = t.clientY; t0 = Date.now(); on = true;
+    const t = e.touches[0]; sx = t.clientX; sy = t.clientY; t0 = Date.now(); on = true; edge = sx <= 36; /* 左端から始まったか(詳細画面の「戻る」判定) */
   }, {passive: true});
   document.addEventListener("touchend", e => {
     if(!on) return; on = false;
     const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
-    if(Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.8 && Date.now() - t0 < 700) onSwipe(dx);
+    if(Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.8 && Date.now() - t0 < 700) onSwipe(dx, edge);
   }, {passive: true});
 })();
 function closeDial(){ const d = $("#dial"); if(d) d.hidden = true; const f = $("#fab"); if(f){ f.classList.remove("open"); f.setAttribute("aria-expanded", "false"); } const tb = document.querySelector(".tabbar"); if(tb) tb.classList.remove("dialon"); }
@@ -1981,7 +1986,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.22.24</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.22.25</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
