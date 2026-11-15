@@ -434,7 +434,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.24.3</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.24.4</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -787,6 +787,11 @@ const GP_CLIENT_ID = "450154535349-2j1rv2ih53t9ip933a58nemp90390219.apps.googleu
 const GP_SCOPE = "https://www.googleapis.com/auth/photospicker.mediaitems.readonly";
 const GP_BULK_MAX = 30;
 const GP = {token: "", exp: 0, busy: false, gis: null};
+/* ログイン済み(トークンが有効)かどうかで、ボタンの文言を出し分ける */
+const gpLogged = () => !!(GP.token && Date.now() < GP.exp - 60000);
+const gpLabel = () => gpLogged() ? "Googleフォトから選ぶ" : "Googleフォトにログインして選ぶ";
+const gpSync = () => document.querySelectorAll(".gpbtn").forEach(b => { const t = gpLabel(); if(b.textContent !== t) b.textContent = t; });
+setInterval(gpSync, 10000);
 const gpSay = el => (c, t) => { el.className = c ? "status " + c : "status"; el.textContent = t; };
 function gpGisReady(){ return !!(window.google && google.accounts && google.accounts.oauth2); }
 function gpLoadGis(){
@@ -805,7 +810,7 @@ function gpRequestToken(){
     const tc = google.accounts.oauth2.initTokenClient({
       client_id: GP_CLIENT_ID, scope: GP_SCOPE,
       callback: r => {
-        if(r && r.access_token){ GP.token = r.access_token; GP.exp = Date.now() + (Number(r.expires_in) || 3600) * 1000; res(GP.token); }
+        if(r && r.access_token){ GP.token = r.access_token; GP.exp = Date.now() + (Number(r.expires_in) || 3600) * 1000; gpSync(); res(GP.token); }
         else rej(new Error((r && r.error) || "auth"));
       },
       error_callback: er => rej(new Error((er && er.type) || "auth"))
@@ -821,7 +826,7 @@ function gpToken(){
 }
 async function gpApi(method, path){
   const r = await fetch("https://photospicker.googleapis.com/v1/" + path, {method, headers: {Authorization: "Bearer " + GP.token, "Content-Type": "application/json"}, body: method === "POST" ? JSON.stringify(gpApi.body || {}) : undefined});
-  if(!r.ok){ if(r.status === 401) GP.token = ""; throw new Error("api" + r.status); }
+  if(!r.ok){ if(r.status === 401){ GP.token = ""; gpSync(); } throw new Error("api" + r.status); }
   return r.json().catch(() => null);
 }
 function gpErrMsg(e){
@@ -952,7 +957,7 @@ function photoCardHtml(){
     <h2>イベント画像</h2>
     <div class="hint">看板・ゲート・ステージなどの写真を${MAXPHOTO}枚まで残せます。チケットの読み取りに使った画像は保存されません。2枚以上あるときは、画像を長押ししてそのまま動かすと並び替えできます。</div>
     <div class="scan"><label class="btn sec">撮影<input id="phCam" type="file" accept="image/*" capture="environment" hidden></label><label class="btn sec">写真を選ぶ<input id="phPick" type="file" accept="image/*" multiple hidden></label></div>
-    <button type="button" class="btn sec" id="gpPhoto">Googleフォトから選ぶ</button>
+    <button type="button" class="btn sec gpbtn" id="gpPhoto">${gpLabel()}</button>
     <div class="thumbs" id="phThumbs"></div>
     <div class="status" id="phSt"></div>
   </div>`;
@@ -2067,7 +2072,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.24.3</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.24.4</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -2404,7 +2409,7 @@ function openForm(existing){
         <label class="btn sec">撮影<input id="cam" type="file" accept="image/*" capture="environment"></label>
         <label class="btn sec">写真を選ぶ<input id="pick" type="file" accept="image/*" multiple></label>
       </div>
-      <button type="button" class="btn sec" id="gpScan">Googleフォトから選ぶ</button>
+      <button type="button" class="btn sec gpbtn" id="gpScan">${gpLabel()}</button>
       <div class="thumbs" id="thumbs"></div>
       <button type="button" class="btn" id="readGo" disabled>読み取る</button>
       <button type="button" class="btn sec" id="stop" hidden>中止</button>
@@ -2814,7 +2819,7 @@ function renderBatch(){
       <label class="btn sec" for="bCam">撮影する</label>
       <label class="btn sec" for="bPick">写真を選ぶ</label>
     </div>
-    <button type="button" class="btn sec" id="bGp" style="margin-top:10px">Googleフォトから選ぶ</button>
+    <button type="button" class="btn sec gpbtn" id="bGp" style="margin-top:10px">${gpLabel()}</button>
     <button type="button" class="btn sec" id="bManual" style="margin-top:10px">手入力で追加</button>
     <input id="bPick" type="file" accept="image/*" multiple style="display:none">
     <input id="bCam" type="file" accept="image/*" capture="environment" style="display:none">
