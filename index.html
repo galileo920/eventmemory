@@ -160,6 +160,24 @@ body.fs-lock #scroller{overflow:hidden} /* 絞り込みシートを開いてい�
 .fsheet-ft{display:flex;gap:10px;padding:10px var(--gutter-r) 10px var(--gutter-l);border-top:1px solid var(--line)}
 .fsheet-ft .btn{margin:0;flex:1}
 .fsheet-hd .fsn{margin-left:6px;font-size:13px;font-weight:500;color:var(--sub)}
+/* 出演者・会場・タグのキーワード絞り込み(含む/含まない・候補) */
+.kwsec{margin:4px 0 12px}
+.kwhd{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0 6px}
+.kwhd>label{margin:0}
+.kwmode{flex:none;display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--surface)}
+.kwmode button{border:0;background:none;color:var(--sub);padding:5px 14px;font-size:12px;font-weight:500;cursor:pointer;-webkit-appearance:none}
+.kwmode button.on{background:var(--accent);color:var(--accent-ink);font-weight:700}
+.kwlist{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+.kwc.out{background:color-mix(in srgb,var(--danger) 16%,var(--surface))}
+.kwc b{font-weight:700;margin-right:4px}
+.kwsug:empty{display:none}
+.kwcand{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px}
+.kwcand .kwcl{font-size:12px;color:var(--sub)}
+.kwcand button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 11px;font-size:13px;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-appearance:none}
+.kwcand button small{color:var(--sub);margin-left:5px;font-size:11px}
+.kwrow{display:flex;gap:8px;align-items:stretch}
+.kwrow input{flex:1;min-width:0;height:46px;margin-top:0}
+.kwrow .btn.kwadd{flex:none;width:auto;margin:0;padding:0 16px;font-size:14px;border-radius:10px}
 .sortrow .cnt{font-size:12px;color:var(--sub)}
 .eqw{display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px} /* 集計の切り替えボタンと並び順ボタンを、同じ幅(広いほうに合わせる)にする */
 .eqw button{width:100%}
@@ -434,7 +452,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.24.5</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.24.6</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1253,7 +1271,33 @@ const priceOk = l => {
   const p = Number(l.price);
   return (!fPMin || p >= Number(fPMin)) && (!fPMax || p <= Number(fPMax)); /* 範囲指定: 範囲内のイベント。金額が空なら制限なし */
 };
-const filtered = () => lives.filter(l => genreOk(l) && inYear(l) && locOk(l) && priceOk(l));
+/* 出演者(a)・会場(v)・タグ(t)のキーワード絞り込み。含む(in)はすべてのキーワードを含むもの、含まない(out)はどれも含まないものだけ出す。部分一致(ひらがな・カタカナ・大文字小文字・波ダッシュは同一視)。出演者・会場は、紐付けを適用しているときは旧名・現在の名前でも判定する */
+let fKw = [], kwMode = {a: "in", v: "in", t: "in"}, kwDraft = {a: "", v: "", t: ""}, kwFocus = "";
+const KW_FIELDS = [{f: "a", t: "出演者"}, {f: "v", t: "会場"}, {f: "t", t: "タグ"}];
+const kwLabel = f => (KW_FIELDS.find(x => x.f === f) || {}).t || "";
+const kwKey = k => k.f + "|" + k.m + "|" + k.t;
+const kwNorm = s => wfold(kata2hira(String(s == null ? "" : s))).toLowerCase().replace(/\s+/g, "");
+const kwNames = (l, f) => f === "a" ? artistsOf(l).flatMap(n => aliasNames("artist", n)) : f === "v" ? venueNamesOf(l).flatMap(n => aliasNames("venue", n)) : tagsOf(l);
+const kwOk = l => {
+  if(!fKw.length) return true;
+  const cache = {};
+  return fKw.every(k => {
+    const w = kwNorm(k.t); if(!w) return true;
+    const ns = cache[k.f] || (cache[k.f] = kwNames(l, k.f).map(kwNorm));
+    const hit = ns.some(n => n.includes(w));
+    return k.m === "out" ? !hit : hit;
+  });
+};
+/* 候補: 登録済みの名前(イベントに入力した名前のまま)から、入力した文字を含むものを、前方一致→使用回数の順に出す */
+function kwCands(f, typed){
+  const t = kwNorm(typed), m = new Map();
+  lives.forEach(l => new Set(f === "a" ? artistsOf(l) : f === "v" ? venueNamesOf(l) : tagsOf(l)).forEach(n => m.set(n, (m.get(n) || 0) + 1)));
+  const used = new Set(fKw.filter(k => k.f === f).map(k => kwNorm(k.t)));
+  return [...m].filter(([n]) => { const x = kwNorm(n); return x && !used.has(x) && (!t || x.includes(t)); })
+    .sort((a, b) => (kwNorm(b[0]).startsWith(t) - kwNorm(a[0]).startsWith(t)) || b[1] - a[1] || a[0].localeCompare(b[0], "ja"))
+    .slice(0, 8).map(([name, n]) => ({name, n}));
+}
+const filtered = () => lives.filter(l => genreOk(l) && inYear(l) && locOk(l) && priceOk(l) && kwOk(l));
 function onQuery(v){
   qLinked = false; query = v;
   fillList();
@@ -1266,6 +1310,7 @@ function clearPulls(){
   fGenre = []; fArea = []; fPref = [];
   fYear = []; fFrom = ""; fTo = "";
   fPrice = []; fPMin = ""; fPMax = "";
+  fKw = []; kwDraft = {a: "", v: "", t: ""};
   render();
 }
 /* チェックボックスで複数選べるプルダウン(ボタンを押すと一覧が開く。選ぶたびに絞り込みへ反映) */
@@ -1291,17 +1336,59 @@ function activeChips(){
   fArea.forEach(v => c.push({id: "far", v, t: v}));
   fPref.forEach(v => c.push({id: "fpr", v, t: v}));
   fPrice.forEach(v => c.push(v === RANGE ? {id: "fpc", v, t: "チケット代 " + ((fPMin || fPMax) ? `${fPMin ? yen(fPMin) : ""}〜${fPMax ? yen(fPMax) : ""}` : "範囲指定")} : {id: "fpc", v, t: "チケット代 未入力"}));
+  fKw.forEach(k => c.push({id: "fkw", v: kwKey(k), t: `${kwLabel(k.f)}${k.m === "out" ? "に含まない" : "に含む"}「${k.t}」`}));
   return c;
 }
 const FUNNEL = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg>`;
 const fBtn = () => { const n = activeChips().length; return `<button type="button" class="fbtn${n ? " on" : ""}" id="fOpen" aria-haspopup="dialog">${FUNNEL}<span>絞り込み</span>${n ? `<span class="fbadge">${n}</span>` : ""}</button>`; };
+/* 出演者・会場・タグの欄: 「含む/含まない」を選んでキーワードを入力→「追加」(Enterでも可)。入力中は登録済みの名前を候補に出す */
+function kwSection(){
+  return KW_FIELDS.map(F => {
+    const mode = kwMode[F.f], mine = fKw.filter(k => k.f === F.f);
+    return `<div class="kwsec"><div class="kwhd"><label for="kwi_${F.f}">${F.t}</label><div class="kwmode" role="group" aria-label="${F.t}の条件"><button type="button" data-kwm="${F.f}:in" class="${mode === "in" ? "on" : ""}" aria-pressed="${mode === "in"}">含む</button><button type="button" data-kwm="${F.f}:out" class="${mode === "out" ? "on" : ""}" aria-pressed="${mode === "out"}">含まない</button></div></div>`
+      + (mine.length ? `<div class="kwlist">${mine.map(k => `<span class="chip kwc${k.m === "out" ? " out" : ""}"><span><b>${k.m === "out" ? "含まない" : "含む"}</b>${esc(k.t)}</span><button type="button" data-kwdel="${esc(kwKey(k))}" aria-label="${esc(k.t)}を解除">×</button></span>`).join("")}</div>` : "")
+      + `<div class="kwsug" id="kwsug_${F.f}"></div><div class="kwrow"><input type="text" id="kwi_${F.f}" data-kwi="${F.f}" autocomplete="off" autocapitalize="off" autocorrect="off" enterkeyhint="done" placeholder="${F.t}を入力" aria-label="${F.t}のキーワード" value="${esc(kwDraft[F.f])}"><button type="button" class="btn sec kwadd" data-kwa="${F.f}">追加</button></div></div>`;
+  }).join("");
+}
+function kwAdd(f, text){
+  const parts = String(text || "").split(/[、,，]/).map(x => x.trim()).filter(Boolean);
+  if(!parts.length) return false;
+  parts.forEach(t => { const m = kwMode[f]; if(!fKw.some(k => k.f === f && k.m === m && kwNorm(k.t) === kwNorm(t))) fKw.push({f, m, t}); });
+  kwDraft[f] = ""; return true;
+}
+/* 入力欄に書いたまま「完了」で閉じたときも、そのキーワードを反映する */
+function kwFlush(){ let ch = false; KW_FIELDS.forEach(F => { const i = $("#kwi_" + F.f), v = i ? i.value : kwDraft[F.f]; if(String(v || "").trim() && kwAdd(F.f, v)) ch = true; }); return ch; }
+function kwShowSugg(f, typed){
+  const box = $("#kwsug_" + f); if(!box) return;
+  const c = kwCands(f, typed);
+  box.innerHTML = c.length ? `<div class="kwcand"><span class="kwcl">候補</span>${c.map((x, i) => `<button type="button" data-kwc="${i}">${esc(x.name)}<small>${x.n}</small></button>`).join("")}</div>` : "";
+  box._c = c;
+}
+function bindKw(){
+  document.querySelectorAll("#fsheet [data-kwm]").forEach(b => b.onclick = () => { const [f, m] = b.dataset.kwm.split(":"); kwMode[f] = m; const fb = $("#fsheet .fsheet-body"); if(fb) fsScroll = fb.scrollTop; kwDraft[f] = ($("#kwi_" + f) || {}).value || ""; render(); });
+  document.querySelectorAll("#fsheet [data-kwdel]").forEach(b => b.onclick = () => { const fb = $("#fsheet .fsheet-body"); if(fb) fsScroll = fb.scrollTop; KW_FIELDS.forEach(F => { const i = $("#kwi_" + F.f); if(i) kwDraft[F.f] = i.value; }); fKw = fKw.filter(k => kwKey(k) !== b.dataset.kwdel); render(); });
+  const doAdd = f => { const i = $("#kwi_" + f), fb = $("#fsheet .fsheet-body"); if(fb) fsScroll = fb.scrollTop; KW_FIELDS.forEach(F => { const x = $("#kwi_" + F.f); if(x) kwDraft[F.f] = x.value; }); if(!kwAdd(f, i ? i.value : "")) return; kwFocus = f; render(); };
+  document.querySelectorAll("#fsheet [data-kwa]").forEach(b => { b.onpointerdown = e => e.preventDefault(); b.onclick = () => doAdd(b.dataset.kwa); });
+  document.querySelectorAll("#fsheet [data-kwi]").forEach(i => {
+    const f = i.dataset.kwi;
+    i.addEventListener("input", () => { kwDraft[f] = i.value; kwShowSugg(f, i.value); });
+    i.addEventListener("focus", () => kwShowSugg(f, i.value));
+    i.addEventListener("blur", () => setTimeout(() => { const b = $("#kwsug_" + f); if(b && document.activeElement !== i) b.innerHTML = ""; }, 0));
+    i.addEventListener("keydown", e => { if(e.key === "Enter" && !e.isComposing && e.keyCode !== 229){ e.preventDefault(); doAdd(f); } });
+  });
+  document.querySelectorAll("#fsheet .kwsug").forEach(box => {
+    box.addEventListener("pointerdown", e => e.preventDefault()); /* 候補を押しても、入力欄のフォーカスは外さない */
+    box.addEventListener("click", e => { const b = e.target.closest("[data-kwc]"); if(!b) return; e.preventDefault(); const f = box.id.replace("kwsug_", ""), c = box._c && box._c[Number(b.dataset.kwc)]; if(!c) return; const fb = $("#fsheet .fsheet-body"); if(fb) fsScroll = fb.scrollTop; KW_FIELDS.forEach(F => { const x = $("#kwi_" + F.f); if(x) kwDraft[F.f] = x.value; }); kwAdd(f, c.name); kwFocus = f; render(); });
+  });
+  if(kwFocus){ const f = kwFocus; kwFocus = ""; const i = $("#kwi_" + f); if(i && fOpen){ i.focus(); kwShowSugg(f, i.value); } }
+}
 function filterBar(withBtn){
   const chips = activeChips();
   const ys = [...new Set(lives.map(yearOf).filter(Boolean).concat(fYear.filter(x => x !== RANGE)))].sort().reverse();
   const yo = [{v: RANGE, t: "期間指定"}].concat(ys.map(y => ({v: y, t: y + "年", s: y})));
   const cnt = !loaded ? 0 : tab === "list" ? listRows().length : filtered().length;
   const chipRow = (withBtn || chips.length) ? `<div class="chips">${withBtn ? fBtn() : ""}${chips.map(c => `<span class="chip"><span>${esc(c.t)}</span><button type="button" data-chip="${c.id}" data-v="${esc(c.v)}" aria-label="${esc(c.t)}を解除">×</button></span>`).join("")}</div>` : "";
-  return chipRow + `<div class="fsheet" id="fsheet" role="dialog" aria-label="絞り込み"${fOpen ? "" : " hidden"}><div class="fsheet-scrim" id="fsScrim"></div><div class="fsheet-box"><div class="fsheet-hd"><b>絞り込み<span class="fsn">(<span id="fsCnt">${cnt}</span>件)</span></b><button type="button" id="fsClose" aria-label="閉じる">×</button></div><div class="fsheet-body"><div class="fsec fq">${msel("fg", "ジャンル", "ジャンルで絞り込み", GENRES.map(g => ({v: g, t: g})), fGenre)}</div><div class="fsec fq">${msel("fy", "年", "年で絞り込み", yo, fYear)}</div>${fYear.includes(RANGE) ? `<div class="filters" id="frange"><div class="fcol"><label for="fFrom">開始日</label><input type="text" data-dw readonly inputmode="none" id="fFrom" aria-label="開始日" value="${esc(fFrom)}"></div><div class="fcol"><label for="fTo">終了日</label><input type="text" data-dw readonly inputmode="none" id="fTo" aria-label="終了日" value="${esc(fTo)}"></div></div>` : ""}<div class="fsec fq">${locCols()}</div><div class="fsec fq">${msel("fpc", "チケット代", "チケット代で絞り込み", PRICE_OPTS, fPrice)}</div>${fPrice.includes(RANGE) ? `<div class="filters" id="prange"><div class="fcol"><label for="pMin">下限(円)</label><input type="text" inputmode="numeric" autocomplete="off" id="pMin" aria-label="チケット代の下限" placeholder="0" value="${esc(fPMin)}"></div><div class="fcol"><label for="pMax">上限(円)</label><input type="text" inputmode="numeric" autocomplete="off" id="pMax" aria-label="チケット代の上限" placeholder="上限なし" value="${esc(fPMax)}"></div></div>` : ""}</div><div class="fsheet-ft"><button type="button" class="btn sec" id="fsClear"${chips.length ? "" : " disabled"}>クリア</button><button type="button" class="btn" id="fsDone">完了</button></div></div></div>`;
+  return chipRow + `<div class="fsheet" id="fsheet" role="dialog" aria-label="絞り込み"${fOpen ? "" : " hidden"}><div class="fsheet-scrim" id="fsScrim"></div><div class="fsheet-box"><div class="fsheet-hd"><b>絞り込み<span class="fsn">(<span id="fsCnt">${cnt}</span>件)</span></b><button type="button" id="fsClose" aria-label="閉じる">×</button></div><div class="fsheet-body"><div class="fsec fq">${msel("fg", "ジャンル", "ジャンルで絞り込み", GENRES.map(g => ({v: g, t: g})), fGenre)}</div><div class="fsec fq">${msel("fy", "年", "年で絞り込み", yo, fYear)}</div>${fYear.includes(RANGE) ? `<div class="filters" id="frange"><div class="fcol"><label for="fFrom">開始日</label><input type="text" data-dw readonly inputmode="none" id="fFrom" aria-label="開始日" value="${esc(fFrom)}"></div><div class="fcol"><label for="fTo">終了日</label><input type="text" data-dw readonly inputmode="none" id="fTo" aria-label="終了日" value="${esc(fTo)}"></div></div>` : ""}<div class="fsec fq">${locCols()}</div><div class="fsec fq">${msel("fpc", "チケット代", "チケット代で絞り込み", PRICE_OPTS, fPrice)}</div>${fPrice.includes(RANGE) ? `<div class="filters" id="prange"><div class="fcol"><label for="pMin">下限(円)</label><input type="text" inputmode="numeric" autocomplete="off" id="pMin" aria-label="チケット代の下限" placeholder="0" value="${esc(fPMin)}"></div><div class="fcol"><label for="pMax">上限(円)</label><input type="text" inputmode="numeric" autocomplete="off" id="pMax" aria-label="チケット代の上限" placeholder="上限なし" value="${esc(fPMax)}"></div></div>` : ""}${kwSection()}</div><div class="fsheet-ft"><button type="button" class="btn sec" id="fsClear"${chips.length ? "" : " disabled"}>クリア</button><button type="button" class="btn" id="fsDone">完了</button></div></div></div>`;
 }
 function msApply(id, vals, changed){
   { const dm = {fg: "genre", fy: "year", far: "area", fpr: "pref"}[id]; if(dm === linkDim) linkDim = ""; }
@@ -1347,13 +1434,14 @@ function bindFilter(){
     if(fs && fb){
       if(fOpen) fb.scrollTop = fsScroll;
       fs.addEventListener("touchmove", e => { if(!e.target.closest(".fsheet-body")) e.preventDefault(); }, {passive: false}); /* シートの外側・見出し・下のボタンをなぞっても、後ろの画面は動かさない */
-      const closeS = () => { document.body.classList.remove("fs-lock"); fOpen = false; fsScroll = 0; msOpen = ""; fs.hidden = true; if(fDirty){ fDirty = false; render(); return; } /* 金額・期間を入力したときは、閉じるときにチップへ反映する */ fs.querySelectorAll(".mpanel").forEach(p => { p.hidden = true; }); fs.querySelectorAll(".msb").forEach(b => b.setAttribute("aria-expanded", "false")); };
+      const closeS = () => { if(kwFlush()) fDirty = true; document.body.classList.remove("fs-lock"); fOpen = false; fsScroll = 0; msOpen = ""; fs.hidden = true; if(fDirty){ fDirty = false; render(); return; } /* 金額・期間を入力したときは、閉じるときにチップへ反映する */ fs.querySelectorAll(".mpanel").forEach(p => { p.hidden = true; }); fs.querySelectorAll(".msb").forEach(b => b.setAttribute("aria-expanded", "false")); };
       const op = $("#fOpen"); if(op) op.onclick = () => { document.body.classList.add("fs-lock"); fOpen = true; fsScroll = 0; fb.scrollTop = 0; fs.classList.remove("up"); void fs.offsetWidth; fs.classList.add("up"); fs.hidden = false; };
       $("#fsScrim").onclick = closeS; $("#fsClose").onclick = closeS; $("#fsDone").onclick = closeS;
       $("#fsClear").onclick = () => { fsScroll = fb.scrollTop; msOpen = ""; clearPulls(); };
     }
     document.querySelectorAll("#app [data-chip]").forEach(b => b.onclick = () => {
       const id = b.dataset.chip, v = b.dataset.v;
+      if(id === "fkw"){ fKw = fKw.filter(k => kwKey(k) !== v); render(); return; }
       if(id === "fy" && v === RANGE){ fFrom = ""; fTo = ""; }
       if(id === "fpc" && v === RANGE){ fPMin = ""; fPMax = ""; }
       const cur = {fg: fGenre, fy: fYear, far: fArea, fpr: fPref, fpc: fPrice}[id];
@@ -1361,6 +1449,7 @@ function bindFilter(){
     });
   }
   bindMs();
+  bindKw();
   { /* 日付を選んでいる途中で画面を作り直すと、カレンダーが閉じてしまう。一覧は一覧だけを更新し、集計は入力が終わってから(フォーカスが外れたとき)反映する */
     const a = $("#fFrom"), b = $("#fTo"); let pend = false;
     const apply = () => { if(tab === "list") fillList(); else pend = true; };
@@ -2072,7 +2161,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.24.5</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.24.6</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
