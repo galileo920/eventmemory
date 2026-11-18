@@ -160,6 +160,12 @@ body.fs-lock #scroller{overflow:hidden} /* 絞り込みシートを開いてい�
 .fsheet-ft{display:flex;gap:10px;padding:10px var(--gutter-r) 10px var(--gutter-l);border-top:1px solid var(--line)}
 .fsheet-ft .btn{margin:0;flex:1}
 .fsheet-hd .fsn{margin-left:6px;font-size:13px;font-weight:500;color:var(--sub)}
+/* 一覧の検索ボックスの候補(イベント名・出演者・会場・タグごとに3件、部分一致) */
+.qsug{position:absolute;z-index:15;left:0;right:0;top:calc(100% + 4px);max-height:min(60vh,440px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.28)}
+.qsug:empty{display:none}
+.qsug .qsh{padding:7px 14px 3px;font-size:12px;font-weight:500;color:var(--sub);background:var(--bg)}
+.qsug button{display:block;width:100%;text-align:left;border:0;border-top:1px solid var(--line);background:none;padding:11px 14px;font:inherit;font-size:14px;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-appearance:none}
+.qsug .qsh+button{border-top:0}
 /* 出演者・会場・タグのキーワード絞り込み(含む/含まない・候補) */
 .kwsec{margin:4px 0 12px}
 .kwhd{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0 6px}
@@ -176,7 +182,10 @@ body.fs-lock #scroller{overflow:hidden} /* 絞り込みシートを開いてい�
 .kwcand button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 11px;font-size:13px;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-appearance:none}
 .kwcand button small{color:var(--sub);margin-left:5px;font-size:11px}
 .kwrow{display:flex;gap:8px;align-items:stretch}
-.kwrow input{flex:1;min-width:0;height:46px;margin-top:0}
+.kwrow .cw{flex:1;min-width:0}
+.kwrow input{height:46px;margin-top:0}
+.kwrow input::placeholder{font-size:13px} /* 一覧の検索ボックスのプレースホルダーと同じ大きさ */
+.kwrow .cx{top:9px}
 .kwrow .btn.kwadd{flex:none;width:auto;margin:0;padding:0 16px;font-size:14px;border-radius:10px}
 .sortrow .cnt{font-size:12px;color:var(--sub)}
 .eqw{display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px} /* 集計の切り替えボタンと並び順ボタンを、同じ幅(広いほうに合わせる)にする */
@@ -452,7 +461,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.24.7</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.24.10</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1348,7 +1357,7 @@ function kwSection(){
     const mode = kwMode[F.f], mine = fKw.filter(k => k.f === F.f);
     return `<div class="kwsec"><div class="kwhd"><label for="kwi_${F.f}">${F.t}</label><div class="kwmode" role="group" aria-label="${F.t}の条件"><button type="button" data-kwm="${F.f}:in" class="${mode === "in" ? "on" : ""}" aria-pressed="${mode === "in"}">含む</button><button type="button" data-kwm="${F.f}:out" class="${mode === "out" ? "on" : ""}" aria-pressed="${mode === "out"}">含まない</button></div></div>`
       + (mine.length ? `<div class="kwlist">${mine.map(k => `<span class="chip kwc${k.m === "out" ? " out" : ""}"><span><b>${k.m === "out" ? "含まない" : "含む"}</b>${esc(k.t)}</span><button type="button" data-kwdel="${esc(kwKey(k))}" aria-label="${esc(k.t)}を解除">×</button></span>`).join("")}</div>` : "")
-      + `<div class="kwsug" id="kwsug_${F.f}"></div><div class="kwrow"><input type="text" id="kwi_${F.f}" data-kwi="${F.f}" autocomplete="off" autocapitalize="off" autocorrect="off" enterkeyhint="done" placeholder="${F.t}を入力" aria-label="${F.t}のキーワード" value="${esc(kwDraft[F.f])}"><button type="button" class="btn sec kwadd" data-kwa="${F.f}">追加</button></div></div>`;
+      + `<div class="kwrow"><div class="cw"><input type="text" id="kwi_${F.f}" data-kwi="${F.f}" autocomplete="off" autocapitalize="off" autocorrect="off" enterkeyhint="done" placeholder="${F.t}を入力" aria-label="${F.t}のキーワード" value="${esc(kwDraft[F.f])}"><button type="button" class="cx" data-clr="kwi_${F.f}" aria-label="クリア">×</button></div><button type="button" class="btn sec kwadd" data-kwa="${F.f}">追加</button></div><div class="kwsug" id="kwsug_${F.f}"></div></div>`;
   }).join("");
 }
 function kwAdd(f, text){
@@ -1362,8 +1371,9 @@ function kwFlush(){ let ch = false; KW_FIELDS.forEach(F => { const i = $("#kwi_"
 function kwShowSugg(f, typed){
   const box = $("#kwsug_" + f); if(!box) return;
   const c = kwCands(f, typed);
-  box.innerHTML = c.length ? `<div class="kwcand"><span class="kwcl">候補</span>${c.map((x, i) => `<button type="button" data-kwc="${i}">${esc(x.name)}<small>${x.n}</small></button>`).join("")}</div>` : "";
+  box.innerHTML = c.length ? `<div class="sugg">${c.map((x, i) => `<button type="button" data-kwc="${i}">${esc(x.name)}</button>`).join("")}</div>` : "";
   box._c = c;
+  if(c.length) box.scrollIntoView({block: "nearest"}); /* 候補が見えるところまでシートを送る */
 }
 function bindKw(){
   document.querySelectorAll("#fsheet [data-kwm]").forEach(b => b.onclick = () => { const [f, m] = b.dataset.kwm.split(":"); kwMode[f] = m; const fb = $("#fsheet .fsheet-body"); if(fb) fsScroll = fb.scrollTop; kwDraft[f] = ($("#kwi_" + f) || {}).value || ""; render(); });
@@ -1480,7 +1490,7 @@ function slideIn(dir){ const a = $("#app"); a.classList.remove("in-l", "in-r"); 
 /* データ(設定)画面の結果メッセージ。再描画しても残し、別の画面へ移ると消す */
 document.addEventListener("pointerdown", e => { if(e.target.closest && e.target.closest(".cx")) e.preventDefault(); });
 document.addEventListener("mousedown", e => { if(e.target.closest && e.target.closest(".cx")) e.preventDefault(); });
-document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-clr]"); if(!b) return; const i = document.getElementById(b.dataset.clr); if(!i) return; i.value = ""; if(i.dataset.bid || i.id === "q" || i.id === "siteUrl") i.dispatchEvent(new Event("input", {bubbles: true})); });
+document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-clr]"); if(!b) return; const i = document.getElementById(b.dataset.clr); if(!i) return; i.value = ""; if(i.dataset.bid || i.dataset.kwi || i.id === "q" || i.id === "siteUrl") i.dispatchEvent(new Event("input", {bubbles: true})); });
 let dataMsg = null;
 /* 設定画面で開いている項目(1つだけ。別の画面へ移ると全部閉じる) */
 let setOpen = "";
@@ -1667,10 +1677,28 @@ function openBulkEdit(){
   $("#app").innerHTML = bulkEditHtml(ids.length);
   bindBulkEdit(ids);
 }
+/* 検索ボックスの候補: 今の絞り込みに合うイベントの中から、入力した文字を含む(部分一致)イベント名・出演者・会場・タグを、それぞれ3件まで(前方一致→件数の順)。入力が空のときは出さない */
+function qCands(typed){
+  const t = kwNorm(typed); if(!t) return [];
+  const base = filtered();
+  const defs = [{t: "イベント名", get: l => l.title ? [String(l.title).trim()] : []}, {t: "出演者", get: l => artistsOf(l)}, {t: "会場", get: l => venueNamesOf(l)}, {t: "タグ", get: l => tagsOf(l)}];
+  return defs.map(d => {
+    const m = new Map(); base.forEach(l => new Set(d.get(l)).forEach(n => { if(n) m.set(n, (m.get(n) || 0) + 1); }));
+    const items = [...m].filter(([n]) => { const x = kwNorm(n); return x !== t && x.includes(t); })
+      .sort((a, b) => (kwNorm(b[0]).startsWith(t) - kwNorm(a[0]).startsWith(t)) || b[1] - a[1] || a[0].localeCompare(b[0], "ja"))
+      .slice(0, 3).map(([n]) => n);
+    return {t: d.t, items};
+  }).filter(g => g.items.length);
+}
+function qShowSugg(box, typed){
+  const g = qCands(typed); let n = 0;
+  box._c = g.flatMap(x => x.items);
+  box.innerHTML = g.map(x => `<div class="qsh">${x.t}</div>` + x.items.map(it => `<button type="button" data-qi="${n++}">${esc(it)}</button>`).join("")).join("");
+}
 function renderList(){
   $("#fab").style.display = bulk ? "none" : ""; document.querySelector(".tabbar").hidden = bulk;
   $("#app").innerHTML = `
-    <div class="qrow"><div class="cw sw"><input class="search" id="q" type="search" placeholder="イベント名・出演者・会場・タグで検索" value="${esc(query)}"><button type="button" class="cx" data-clr="q" aria-label="クリア">×</button></div>${fBtn()}</div>
+    <div class="qrow"><div class="cw sw"><input class="search" id="q" type="search" placeholder="イベント名・出演者・会場・タグで検索" value="${esc(query)}"><button type="button" class="cx" data-clr="q" aria-label="クリア">×</button><div class="qsug" id="qsug"></div></div>${fBtn()}</div>
     ${filterBar()}
     <div class="sortrow"><span class="cl"><span class="cnt" id="listCnt"></span></span><span class="grp">${bulk ? `<button type="button" id="bulkAll"><span class="tg"><span>全選択</span><span class="off">選択解除</span></span></button>` : `<button type="button" id="bulkBtn"><span class="tg"><span>一括編集</span><span class="off">選択解除</span></span></button>`}<button type="button" id="viewToggle" aria-label="${lvAria()}">${lvIcon()}</button><button type="button" id="sortToggle" aria-label="並び順を切り替え"><span class="tg"><span${sortAsc ? ' class="off"' : ""}>新しい順 ⇅</span><span${sortAsc ? "" : ' class="off"'}>古い順 ⇅</span></span></button></span></div>
     ${exact ? `<div class="exact"><span>${exact.kind === "venue" ? "会場" : exact.kind === "tag" ? "タグ" : "出演者"}${exact.value === NONE_KEY ? "が未入力のイベント" : `「${esc(exact.value)}」と完全一致`}${exact.value !== NONE_KEY && exact.kind !== "tag" && aliasNames(exact.kind, exact.value).length > 1 ? "(旧名を含む)" : ""}</span><button type="button" id="exOff">解除</button></div>` : ""}
@@ -1690,6 +1718,14 @@ function renderList(){
   qi.addEventListener("compositionstart", () => { comp = true; });
   qi.addEventListener("compositionend", () => { comp = false; onQuery(qi.value); });
   qi.addEventListener("input", () => { if(comp) return; onQuery(qi.value); });
+  { /* 候補: 変換中も出す。候補を押すと、その文字を検索ボックスに入れて検索 */
+    const qb = $("#qsug"), upd = () => qShowSugg(qb, qi.value);
+    qi.addEventListener("input", upd);
+    qi.addEventListener("focus", upd);
+    qi.addEventListener("blur", () => setTimeout(() => { if(document.activeElement !== qi) qb.innerHTML = ""; }, 0));
+    qb.addEventListener("pointerdown", e => e.preventDefault()); /* 候補を押しても、入力欄のフォーカスは外さない */
+    qb.addEventListener("click", e => { const b = e.target.closest("[data-qi]"); if(!b) return; e.preventDefault(); const v = qb._c && qb._c[Number(b.dataset.qi)]; if(v == null) return; qi.value = v; qb.innerHTML = ""; qi.blur(); onQuery(v); });
+  }
 }
 /* 検索欄は作り直さず、結果の部分だけ更新する(日本語入力を妨げないため) */
 /* 出演者・会場が未入力のイベントを表す印(集計の「未入力」と、一覧の絞り込みで使う) */
@@ -2162,7 +2198,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.24.7</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.24.10</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
