@@ -452,7 +452,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.24.6</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.24.7</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1288,14 +1288,15 @@ const kwOk = l => {
     return k.m === "out" ? !hit : hit;
   });
 };
-/* 候補: 登録済みの名前(イベントに入力した名前のまま)から、入力した文字を含むものを、前方一致→使用回数の順に出す */
+/* 候補: 登録済みの名前(イベントに入力した名前のまま)から、入力した文字で始まるもの(前方一致)を、使用回数順に最大6件出す。入力が空のときは出さない */
 function kwCands(f, typed){
   const t = kwNorm(typed), m = new Map();
+  if(!t) return []; /* 何も入力していないときは、候補を出さない */
   lives.forEach(l => new Set(f === "a" ? artistsOf(l) : f === "v" ? venueNamesOf(l) : tagsOf(l)).forEach(n => m.set(n, (m.get(n) || 0) + 1)));
   const used = new Set(fKw.filter(k => k.f === f).map(k => kwNorm(k.t)));
-  return [...m].filter(([n]) => { const x = kwNorm(n); return x && !used.has(x) && (!t || x.includes(t)); })
-    .sort((a, b) => (kwNorm(b[0]).startsWith(t) - kwNorm(a[0]).startsWith(t)) || b[1] - a[1] || a[0].localeCompare(b[0], "ja"))
-    .slice(0, 8).map(([name, n]) => ({name, n}));
+  return [...m].filter(([n]) => { const x = kwNorm(n); return x && x !== t && !used.has(x) && x.startsWith(t); })
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "ja"))
+    .slice(0, 6).map(([name, n]) => ({name, n}));
 }
 const filtered = () => lives.filter(l => genreOk(l) && inYear(l) && locOk(l) && priceOk(l) && kwOk(l));
 function onQuery(v){
@@ -2161,7 +2162,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.24.6</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.24.7</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
