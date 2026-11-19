@@ -461,7 +461,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.24.19</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.24.21</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1542,6 +1542,7 @@ function listSwipeTarget(dx){
   const i = TABS.indexOf(tab), j = dx < 0 ? i + 1 : i - 1;
   return (j < 0 || j >= TABS.length) ? null : {tab: TABS[j]};
 }
+let swipeConfirmed = false; /* スワイプ側で、戻る前の確認を済ませたか */
 function onSwipe(dx, edge){
   if(!sub){
     const tg = listSwipeTarget(dx);
@@ -1557,88 +1558,124 @@ function onSwipe(dx, edge){
   }
   if(dx < 0) return;
   if(subKind === "batch"){
-    if(confirm("読み取った内容をすべて破棄して戻ります。よろしいですか?")){ bCtl && bCtl.abort(); bNoteState = null; setTab("list", {dir: "r", top: true}); }
+    if(swipeConfirmed || confirm("読み取った内容をすべて破棄して戻ります。よろしいですか?")){ bCtl && bCtl.abort(); bNoteState = null; setTab("list", {dir: "r", top: true}); }
     return;
   }
   if(subKind === "form"){
-    if(confirm("入力中の内容は保存されません。戻りますか?")){ subBack(); slideIn("r"); }
+    if(swipeConfirmed || confirm("入力中の内容は保存されません。戻りますか?")){ subBack(); slideIn("r"); }
   }
 }
 (() => {
   let sx = 0, sy = 0, t0 = 0, on = false, edge = false;
-  /* 一覧↔集計(と設定から戻る動き)は、指に画面が追従して動く。lock: null=未判定 / "h"=横に追従中 / "v"=縦スクロール */
+  /* 画面の横スワイプは、指に画面が追従して動き、隣の画面が見える。対象: 一覧↔集計↔設定、イベント詳細(前後・戻る)、詳細集計(前後・戻る)、登録・一括登録(戻る。離したときに確認)。
+     lock: null=未判定 / "h"=横に追従中 / "v"=縦スクロール */
   let lock = null, moving = false, busy = false;
   const app = () => document.getElementById("app");
-  const clearAnim = () => { const a = app(); a.style.transition = ""; a.style.transform = ""; a.style.pointerEvents = ""; };
+  /* 動かす要素は、#appの直下の要素。#app自体を動かすと、下に固定した◀▶・保存ボタンの位置がずれるため、固定ボタンも一緒に1つずつ動かす */
+  let els = [], pin = false; /* pin: 詳細↔詳細(前後)の移動中は、下の固定ボタン(◀▶・編集)を動かさない */
+  const setT = (tr, x) => els.forEach(e => { e.style.transition = tr; e.style.transform = pin && e.classList.contains("bbar") ? "" : x; });
+  const pinFor = key => sub && (subKind === "detail" || subKind === "sdetail") && !!key && key !== "B";
+  const isForm = () => sub && (subKind === "form" || subKind === "batch" || subKind === "breg"); /* 登録系: 離したときに確認を出して戻る */
+  const clearAnim = () => { els.forEach(e => { e.style.transition = ""; e.style.transform = ""; }); els = []; const a = app(); if(a) a.style.pointerEvents = ""; };
+  /* スワイプの向き: "L"=左へ(次へ) / "R"=右へ(前へ) / "B"=戻る(詳細は左端からの右スワイプ、登録画面は右スワイプ) */
+  const swipeKey = dx => {
+    if(!sub) return bulk ? null : (dx < 0 ? "L" : "R");
+    if(subKind === "detail" || subKind === "sdetail") return dx > 0 && edge ? "B" : (dx < 0 ? "L" : "R");
+    if(isForm()) return dx > 0 ? "B" : null;
+    return null;
+  };
+  /* その向きの行き先。run()は、行き先の画面を描画する処理(隣の画面を作るときに、仮の入れ物に対して実行する)。なければnull */
+  const swipeTarget = key => {
+    if(!sub){ const t = listSwipeTarget(key === "L" ? -1 : 1); return t ? {run: () => { sub = false; tab = t.tab; render(); }} : null; }
+    if(subKind === "detail" || subKind === "sdetail"){
+      if(key === "B") return {run: subKind === "detail" ? detailBack : sdBack};
+      const b = document.getElementById(subKind === "detail" ? (key === "R" ? "prevEv" : "nextEv") : (key === "R" ? "sdPrev" : "sdNext"));
+      if(!b || b.disabled || !b.dataset.t) return null;
+      const id = b.dataset.t;
+      return subKind === "detail" ? {run: () => openDetail(id, detailFrom)} : {run: () => openSDetail(sdCur.kind, id, sdCur.prev)};
+    }
+    if(isForm()){
+      if(key !== "B") return null;
+      if(subKind === "breg") return {run: () => { sub = false; tab = "list"; render(); }, top: true};
+      return subBack ? {run: () => subBack(), top: subKind === "batch"} : null;
+    }
+    return null;
+  };
+  /* 隣の画面を作るときに、描画で変わる状態をあとで元に戻す */
+  const snap = () => ({sub, subKind, subEdit, subBack, tab, bulk, detailFrom, sdCur, dataMsg, setOpen, tabBeforeSettings, fOpen, st: SC.scrollTop, tbHidden: document.querySelector(".tabbar").hidden, fab: $("#fab").style.display, sp: {...scrollPos}});
+  const restore = o => {
+    sub = o.sub; subKind = o.subKind; subEdit = o.subEdit; subBack = o.subBack; tab = o.tab; bulk = o.bulk; detailFrom = o.detailFrom; sdCur = o.sdCur; dataMsg = o.dataMsg; setOpen = o.setOpen; tabBeforeSettings = o.tabBeforeSettings; fOpen = o.fOpen;
+    Object.keys(scrollPos).forEach(k => { delete scrollPos[k]; }); Object.assign(scrollPos, o.sp);
+    document.querySelector(".tabbar").hidden = o.tbHidden; $("#fab").style.display = o.fab; SC.scrollTop = o.st;
+    document.body.classList.toggle("fs-lock", fOpen);
+    document.querySelectorAll(".tabbar button").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
+    syncHeader();
+  };
   /* 動かしている間に隣の画面を見せる(押せない見本)。画面を描画し終えてしばらくしたあとの空き時間に、隣の画面を画面の外にあらかじめ作っておく。
      作るときは、本物の画面には触らず、仮の入れ物に描画する(スワイプし始めたときに待たされない) */
-  let ghost = null, ghostDir = 0;
-  const offX = d => (d < 0 ? 1 : -1) * (window.innerWidth || 390); /* d<0: 左へのスワイプで右から来る隣の画面 */
-  const killGhost = () => { if(ghost){ ghost.remove(); ghost = null; } ghostDir = 0; };
-  const buildGhost = (tgTab, dir) => {
-    const prevTab = tab, realApp = document.getElementById("app"); let html = "";
+  const ghosts = {}; /* "L" / "R" / "B" → 隣の画面 */
+  let gKey = ""; /* いま指に合わせて動かしている隣の画面 */
+  const offX = k => (k === "L" ? 1 : -1) * (window.innerWidth || 390); /* 左へのスワイプでは右から、右へのスワイプ・戻るでは左から来る */
+  const killGhosts = () => { Object.keys(ghosts).forEach(k => { ghosts[k].remove(); delete ghosts[k]; }); gKey = ""; };
+  const buildGhost = (tg, key) => {
+    const realApp = document.getElementById("app"); let html = "", y = 0;
+    const pinned = pinFor(key), rb = realApp.querySelector(".bbar"), barH = pinned && rb ? rb.offsetHeight : 0; /* 前後の移動では、本物の下ボタンはそのまま見せる */
+    const S = snap();
     const box = document.createElement("main");
     box.style.cssText = `position:fixed;left:-99999px;top:0;margin:0;width:${Math.min(SC.clientWidth || 390, 560)}px`;
     realApp.id = "app__real"; box.id = "app"; document.body.insertBefore(box, document.body.firstChild);
     GH.busy = true;
     try{
-      tab = tgTab; render();
-      html = box.innerHTML;
+      tg.run();
+      html = box.innerHTML; y = (tg.top || sub) ? 0 : (scrollPos[tab] || 0);
       if(!(box.firstElementChild && box.firstElementChild.classList.contains("stitle"))){ const t = screenTitle(); if(t) html = `<h2 class="stitle">${t}</h2>` + html; }
     }catch(_){ html = ""; }
-    finally{
-      tab = prevTab; GH.busy = false; realApp.id = "app"; box.remove();
-      document.querySelectorAll(".tabbar button").forEach(b => b.classList.toggle("on", b.dataset.tab === tab)); /* 描画で変わった下のタブ・歯車の見た目を戻す */
-      const hs = $("#hdSet"); if(hs) hs.classList.toggle("on", !sub && tab === "settings");
-    }
+    finally{ restore(S); GH.busy = false; realApp.id = "app"; box.remove(); }
     if(!html) return null;
     const r = SC.getBoundingClientRect(), g = document.createElement("div");
-    g.style.cssText = `position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;overflow:hidden;z-index:8;background:var(--bg);pointer-events:none;will-change:transform;transform:translateX(${offX(dir)}px)`;
+    g.style.cssText = `position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height - barH}px;overflow:hidden;z-index:8;background:var(--bg);pointer-events:none;will-change:transform;transform:translate3d(${offX(key)}px,0,0)`;
     const inner = document.createElement("div"), m = document.createElement("main");
-    m.innerHTML = html; inner.style.transform = `translateY(${-(scrollPos[tgTab] || 0)}px)`; inner.appendChild(m); g.appendChild(inner);
+    m.innerHTML = html;
+    const bars = [...m.querySelectorAll(".bbar")]; /* 下に固定したボタンは、位置がずれないよう、スクロール位置をずらす入れ物の外に出す */
+    inner.style.transform = `translateY(${-y}px)`;
+    inner.appendChild(m); g.appendChild(inner); bars.forEach(b => { if(pinned) b.remove(); else g.appendChild(b); });
     g.setAttribute("aria-hidden", "true");
     document.body.appendChild(g);
     return g;
   };
-  const canDrag = () => !sub && !bulk && !busy && $("#dial").hidden && !document.body.classList.contains("fs-lock");
-  /* いまの画面から見た隣の画面(スワイプで行ける先) */
-  const nextTarget = () => {
-    if(tab === "settings") return {tab: tabBeforeSettings || "list", dir: 1};
-    const i = TABS.indexOf(tab);
-    if(i === 0) return {tab: TABS[1], dir: -1};
-    if(i === 1) return {tab: TABS[0], dir: 1};
-    return null;
+  const canDrag = () => (sub ? (subKind === "detail" || subKind === "sdetail" || isForm()) : !bulk) && !busy && $("#dial").hidden && !document.body.classList.contains("fs-lock");
+  const keysNow = () => !sub ? ["L", "R"] : (subKind === "detail" || subKind === "sdetail") ? ["L", "R", "B"] : isForm() ? ["B"] : [];
+  let gTimer = 0, gIdle = 0, queue = [];
+  const step = () => {
+    gIdle = 0;
+    if(on || moving || busy || !canDrag()) return;
+    const ae = document.activeElement;
+    if(ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) return; /* 入力中は、画面に触らない(間に合わなければ、スワイプし始めたときに作る) */
+    const key = queue.shift(); if(!key) return;
+    if(!ghosts[key]){ const tg = swipeTarget(key); if(tg){ const g = buildGhost(tg, key); if(g) ghosts[key] = g; } }
+    if(queue.length) sched(0);
   };
-  let gTimer = 0, gIdle = 0;
+  const sched = ms => { gTimer = setTimeout(() => { if(window.requestIdleCallback) gIdle = requestIdleCallback(step, {timeout: 2500}); else step(); }, ms); };
   const prepare = () => {
-    killGhost(); clearTimeout(gTimer);
+    killGhosts(); clearTimeout(gTimer);
     if(gIdle && window.cancelIdleCallback){ try{ cancelIdleCallback(gIdle); }catch(_){} } gIdle = 0;
-    gTimer = setTimeout(() => {
-      const run = () => {
-        gIdle = 0;
-        if(ghost || on || moving || busy || !canDrag()) return;
-        const ae = document.activeElement;
-        if(ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) return; /* 入力中は、画面に触らない(間に合わなければ、スワイプし始めたときに作る) */
-        const n = nextTarget(); if(!n) return;
-        ghost = buildGhost(n.tab, n.dir); ghostDir = ghost ? n.dir : 0;
-      };
-      if(window.requestIdleCallback) gIdle = requestIdleCallback(run, {timeout: 2500}); else run();
-    }, 500);
+    queue = keysNow(); sched(500);
   };
   GH.onRender = prepare;
+  new MutationObserver(() => { if(!GH.busy) prepare(); }).observe(document.getElementById("app"), {childList: true}); /* 詳細・登録などを開いたときにも下準備をやり直す */
   window.addEventListener("resize", prepare);
   setTimeout(prepare, 0); /* 最初の画面でも下準備する */
-  /* 動きをなめらかにする: 動かし始めの数pxのずれを少しずつ詰める / 描画は1フレームに1回 / 指を離したあとは、指の速さに合わせて動かす */
+  /* 動きをなめらかにする: 動かし始めの数pxのずれを少しずつ詰める / 描画は1フレームに1回 / 指を離したあとは、離した瞬間の指の速さから動き出す */
   let ox = 0, curX = 0, vel = 0, lastX = 0, lastT = 0, raf = 0, gActive = false;
   /* 離したあとの動きは、離した瞬間の指の速さから動き出し(出だしの速さを指に合わせる)、止まり際はなめらかに減速する。
      v: 行き先へ向かう指の速さ(px/ms、逆向きや止まっているときは0) / dist: 残りの距離(px) / dur: 所要時間(ms) */
   const easeFor = (v, dist, dur) => { const s = Math.max(0, Math.min(3, v * dur / Math.max(dist, 1))); return `cubic-bezier(.3,${(0.3 * s).toFixed(3)},.2,1)`; };
   const apply = () => {
     raf = 0;
-    const a = app(); if(a){ a.style.transition = "none"; a.style.transform = `translate3d(${curX}px,0,0)`; }
-    if(ghost){ ghost.style.transition = "none"; ghost.style.transform = `translate3d(${offX(ghostDir) + (gActive ? curX : 0)}px,0,0)`; }
+    setT("none", `translate3d(${curX}px,0,0)`);
+    Object.keys(ghosts).forEach(k => { const g = ghosts[k]; g.style.transition = "none"; g.style.transform = `translate3d(${offX(k) + (gActive && k === gKey ? curX : 0)}px,0,0)`; });
   };
-  const settle = () => { if(raf){ cancelAnimationFrame(raf); raf = 0; } apply(); const a = app(); if(a) void a.offsetWidth; }; /* 指を離した位置で一度確定してから、アニメーションに入る */
+  const settle = () => { if(raf){ cancelAnimationFrame(raf); raf = 0; } apply(); if(els[0]) void els[0].offsetWidth; }; /* 指を離した位置で一度確定してから、アニメーションに入る */
   document.addEventListener("touchstart", e => {
     on = false; lock = null; moving = false; ox = 0; curX = 0; vel = 0; gActive = false;
     if(busy || e.touches.length !== 1) return;
@@ -1652,7 +1689,7 @@ function onSwipe(dx, edge){
     if(lock === null){
       if(Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
       lock = Math.abs(dx) > Math.abs(dy) * 1.2 ? "h" : "v";
-      if(lock === "h"){ ox = dx; lastX = dx; lastT = e.timeStamp; vel = 0; }
+      if(lock === "h"){ ox = dx; lastX = dx; lastT = e.timeStamp; vel = 0; els = [...app().children]; }
     }
     if(lock !== "h") return;
     if(e.cancelable) e.preventDefault(); /* 横に動かしている間は、縦スクロールさせない */
@@ -1660,57 +1697,56 @@ function onSwipe(dx, edge){
     ox *= 0.82; /* 動かし始めのずれは、数フレームかけて少しずつ詰める(急に画面が指へ飛びつかない) */
     const ed = dx - ox;
     if(e.timeStamp > lastT){ vel = vel * 0.6 + ((dx - lastX) / (e.timeStamp - lastT)) * 0.4; lastX = dx; lastT = e.timeStamp; } /* 指の速さ(px/ms) */
+    const key = swipeKey(ed), tg = key ? swipeTarget(key) : null, ok = !!tg;
+    pin = pinFor(key);
     /* 行き先がない向きは、少しだけ引っ張られて戻る */
-    const tg = listSwipeTarget(ed);
-    curX = tg ? ed : Math.max(-40, Math.min(40, ed * 0.2)); gActive = !!tg;
-    if(tg){
-      const d = ed < 0 ? -1 : 1;
-      if(!ghost || ghostDir !== d){ killGhost(); ghost = buildGhost(tg.tab, d); ghostDir = ghost ? d : 0; } /* 下準備が間に合っていないときだけ、ここで作る */
-    }
+    curX = ok ? ed : Math.max(-40, Math.min(40, ed * 0.2)); gActive = ok;
+    if(ok){
+      if(!ghosts[key]){ const g = buildGhost(tg, key); if(g) ghosts[key] = g; } /* 下準備が間に合っていないときだけ、ここで作る */
+      gKey = ghosts[key] ? key : "";
+    }else gKey = "";
     moving = true;
     if(!raf) raf = requestAnimationFrame(apply);
   }, {passive: false});
   const cancelDrag = () => {
     settle();
-    const a = app(), dist = Math.abs(curX), dur = Math.round(Math.max(200, Math.min(300, dist / 0.9)));
+    const dist = Math.abs(curX), dur = Math.round(Math.max(200, Math.min(300, dist / 0.9)));
     const ease = easeFor(vel * (curX > 0 ? -1 : 1), dist, dur); /* 元の位置へ向かう向きの速さ */
-    a.style.transition = `transform ${dur}ms ${ease}`; a.style.transform = "translate3d(0,0,0)";
-    if(ghost){ ghost.style.transition = `transform ${dur}ms ${ease}`; ghost.style.transform = `translate3d(${offX(ghostDir)}px,0,0)`; } /* 隣の画面は画面の外へ戻すだけ(次のスワイプのために残す) */
+    setT(`transform ${dur}ms ${ease}`, "translate3d(0,0,0)");
+    Object.keys(ghosts).forEach(k => { ghosts[k].style.transition = `transform ${dur}ms ${ease}`; ghosts[k].style.transform = `translate3d(${offX(k)}px,0,0)`; }); /* 隣の画面は画面の外へ戻すだけ(次のスワイプのために残す) */
     busy = true; setTimeout(() => { clearAnim(); busy = false; }, dur + 20);
   };
   const unfreeze = () => { SC.style.overflowY = ""; };
   document.addEventListener("touchend", unfreeze, {passive: true, capture: true});
   document.addEventListener("touchcancel", unfreeze, {passive: true, capture: true});
   document.addEventListener("touchcancel", () => { if(moving){ moving = false; on = false; cancelDrag(); } }, {passive: true});
+  /* 登録系の画面は、戻る前に確認を出す(onSwipe側では、確認済みなので出さない) */
+  const askLeave = () => subKind === "breg" ? bConfirmLeave() : confirm(subKind === "batch" ? "読み取った内容をすべて破棄して戻ります。よろしいですか?" : "入力中の内容は保存されません。戻りますか?");
   document.addEventListener("touchend", e => {
     if(!on) return; on = false;
     const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy, dt = Date.now() - t0;
     if(moving){
       moving = false;
       if(e.timeStamp - lastT > 80) vel = 0; /* 指を止めてから離したときは、勢いなし */
-      const tg = listSwipeTarget(dx), flick = Math.abs(dx) > 30 && Math.abs(vel) > 0.5 && vel * dx > 0; /* 素早く払った */
-      if(!tg || !(Math.abs(dx) > 70 || flick) || Math.abs(dx) < Math.abs(dy)){ cancelDrag(); return; }
-      /* 現在の画面を指の向きに送り出してから切り替え、新しい画面を反対側から滑り込ませる */
-      const W = window.innerWidth || 390, a = app(), out = dx < 0 ? -W : W;
-      busy = true; a.style.pointerEvents = "none";
-      if(ghost && ghostDir === (dx < 0 ? -1 : 1)){
+      const key = swipeKey(dx), tg = key ? swipeTarget(key) : null, flick = Math.abs(dx) > 30 && Math.abs(vel) > 0.5 && vel * dx > 0; /* 素早く払った */
+      const go2 = !!tg && (Math.abs(dx) > 70 || flick) && Math.abs(dx) >= Math.abs(dy);
+      if(!go2){ cancelDrag(); return; }
+      if(isForm() && !askLeave()){ cancelDrag(); return; } /* 確認で「キャンセル」なら、元の位置に戻る */
+      const W = window.innerWidth || 390, a = app(), out = dx < 0 ? -W : W, g = ghosts[key];
+      busy = true; a.style.pointerEvents = "none"; settle();
+      const commit = () => { swipeConfirmed = true; try{ onSwipe(dx, edge); }finally{ swipeConfirmed = false; } };
+      if(g && gKey === key){
         /* 隣の画面が見えている場合: 現在の画面を送り出しつつ、隣の画面を所定の位置まで寄せてから、実際の画面に切り替える。残りの距離と指の速さから所要時間を決める */
-        settle();
         const dist = W - Math.abs(curX), dur = Math.round(Math.max(180, Math.min(340, dist / Math.max(Math.abs(vel), 0.9))));
         const ease = easeFor(vel * (dx < 0 ? -1 : 1), dist, dur); /* 送り出す向きの速さ */
-        a.style.transition = `transform ${dur}ms ${ease}`; a.style.transform = `translate3d(${out}px,0,0)`;
-        ghost.style.transition = `transform ${dur}ms ${ease}`; ghost.style.transform = "translate3d(0,0,0)";
-        setTimeout(() => { setTab(tg.tab); killGhost(); clearAnim(); busy = false; }, dur + 20);
+        setT(`transform ${dur}ms ${ease}`, `translate3d(${out}px,0,0)`);
+        g.style.transition = `transform ${dur}ms ${ease}`; g.style.transform = "translate3d(0,0,0)";
+        setTimeout(() => { commit(); const b = app(); if(b) b.classList.remove("in-l", "in-r"); killGhosts(); clearAnim(); busy = false; }, dur + 20);
         return;
       }
-      killGhost(); settle();
-      a.style.transition = "transform .14s ease-in"; a.style.transform = `translateX(${out}px)`;
-      setTimeout(() => {
-        setTab(tg.tab);
-        const b = app(); b.style.transition = "none"; b.style.transform = `translateX(${-out}px)`; void b.offsetWidth;
-        b.style.transition = "transform .2s ease-out"; b.style.transform = "translateX(0)";
-        setTimeout(() => { clearAnim(); busy = false; }, 210);
-      }, 150);
+      /* 隣の画面がない場合: 送り出してから切り替える(切り替えは従来どおり、横から滑り込む) */
+      setT("transform .14s ease-in", `translate3d(${out}px,0,0)`);
+      setTimeout(() => { clearAnim(); commit(); busy = false; }, 150);
       return;
     }
     if(Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.8 && dt < 700) onSwipe(dx, edge);
@@ -2280,7 +2316,7 @@ function renderSDetail(){
     ${isA
       ? rank("よく一緒になる出演者(2回以上)", cnt(l => canonArtists(l).filter(a => a !== val)), "artist", 2) + rank("会場別", cnt(l => [...new Set(venueNamesOf(l).map(v => canon("venue", v)))]), "venue") + rank("エリア別", cnt(l => areasOf(l)), "area") + rank("都道府県別", cnt(l => prefsOf(l)), "pref")
       : rank("出演者別", cnt(l => canonArtists(l)), "artist")}
-    <div class="bbar"><div class="bbar-in"><div class="bnav"><button type="button" class="btn sec" id="sdPrev" aria-label="前の${isA ? "出演者" : "会場"}"${nbs.prev ? "" : " disabled"}>◀</button><button type="button" class="btn sec" id="sdNext" aria-label="次の${isA ? "出演者" : "会場"}"${nbs.next ? "" : " disabled"}>▶</button></div><button class="btn" id="sdList">一覧</button></div></div>`;
+    <div class="bbar"><div class="bbar-in"><div class="bnav"><button type="button" class="btn sec" id="sdPrev" aria-label="前の${isA ? "出演者" : "会場"}" data-t="${esc(nbs.prev)}"${nbs.prev ? "" : " disabled"}>◀</button><button type="button" class="btn sec" id="sdNext" aria-label="次の${isA ? "出演者" : "会場"}" data-t="${esc(nbs.next)}"${nbs.next ? "" : " disabled"}>▶</button></div><button class="btn" id="sdList">一覧</button></div></div>`;
   $("#sdPrev").onclick = () => { if(nbs.prev){ openSDetail(k, nbs.prev, cur.prev); slideIn("r"); } };
   $("#sdNext").onclick = () => { if(nbs.next){ openSDetail(k, nbs.next, cur.prev); slideIn("l"); } };
   $("#sdList").onclick = () => { resetDd(); exact = {kind: k, value: val}; query = ""; qLinked = false; linkDim = ""; linkVal = ""; setTab("list", {top: true}); };
@@ -2354,7 +2390,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.24.19</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.24.21</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -2508,7 +2544,7 @@ function openDetail(id, from){
     <div class="field"><small>ジャンル</small><div>${lkBtn("genre", genreOf(l))}</div></div>
     ${(() => { const t = String(l.setlist || "").trim(); return t ? `<div class="field"><small>詳細</small><div>${linkify(t)}</div></div>` : ""; })()}
     ${(() => { const g = tagsOf(l); return g.length ? `<div class="field"><small>タグ</small><div>${g.map(n => lkBtn("tag", n)).join("、")}</div></div>` : ""; })()}
-    <div class="bbar"><div class="bbar-in"><div class="bnav"><button type="button" class="btn sec" id="prevEv" aria-label="前のイベント"${nb.prev ? "" : " disabled"}>◀</button><button type="button" class="btn sec" id="nextEv" aria-label="次のイベント"${nb.next ? "" : " disabled"}>▶</button></div><button class="btn" id="edit">編集</button></div></div>
+    <div class="bbar"><div class="bbar-in"><div class="bnav"><button type="button" class="btn sec" id="prevEv" aria-label="前のイベント" data-t="${esc(nb.prev)}"${nb.prev ? "" : " disabled"}>◀</button><button type="button" class="btn sec" id="nextEv" aria-label="次のイベント" data-t="${esc(nb.next)}"${nb.next ? "" : " disabled"}>▶</button></div><button class="btn" id="edit">編集</button></div></div>
   `;
   bindPhotoGallery(l);
   $("#prevEv").onclick = () => { if(nb.prev){ openDetail(nb.prev, detailFrom); slideIn("r"); } };
