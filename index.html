@@ -461,7 +461,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.24.24</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.24.25</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1578,7 +1578,18 @@ function onSwipe(dx, edge){
   const setT = (tr, x) => els.forEach(e => { e.style.transition = tr; e.style.transform = pin && e.classList.contains("bbar") ? "" : x; });
   const pinFor = key => sub && (subKind === "detail" || subKind === "sdetail") && !!key && key !== "B";
   const isForm = () => sub && (subKind === "form" || subKind === "batch" || subKind === "breg"); /* 登録系: 離したときに確認を出して戻る */
-  const clearAnim = () => { els.forEach(e => { e.style.transition = ""; e.style.transform = ""; }); els = []; const a = app(); if(a) a.style.pointerEvents = ""; };
+  /* 集計のように子要素が多い画面は、1つずつ動かすと重い(レイヤーが100個以上になる)ので、固定でない要素を1つの入れ物にまとめて動かす */
+  const quiet = () => { GH.wrapping = true; OBS_SKIP = true; setTimeout(() => { GH.wrapping = false; OBS_SKIP = false; }, 0); };
+  const unwrap = () => { const a = app(), w = a && a.querySelector(":scope > .swrap"); if(!w) return; quiet(); while(w.firstChild) a.insertBefore(w.firstChild, w); w.remove(); };
+  const wrapKids = () => {
+    const a = app(); let kids = [...a.children];
+    if(kids.length > 12){
+      const nb = kids.filter(k => !k.classList.contains("stitle") && !k.classList.contains("bbar") && getComputedStyle(k).position !== "fixed");
+      if(nb.length > 8){ quiet(); const w = document.createElement("div"); w.className = "swrap"; a.insertBefore(w, nb[0]); nb.forEach(k => w.appendChild(k)); kids = [...a.children]; }
+    }
+    return kids;
+  };
+  const clearAnim = () => { unwrap(); els.forEach(e => { e.style.transition = ""; e.style.transform = ""; }); els = []; const a = app(); if(a) a.style.pointerEvents = ""; };
   /* スワイプの向き: "L"=左へ(次へ) / "R"=右へ(前へ) / "B"=戻る(詳細は左端からの右スワイプ、登録画面は右スワイプ) */
   const swipeKey = dx => {
     if(!sub) return bulk ? null : (dx < 0 ? "L" : "R");
@@ -1695,7 +1706,7 @@ function onSwipe(dx, edge){
     sched(back ? 120 : 500);
   };
   GH.onRender = prepare;
-  new MutationObserver(() => { if(!GH.busy) prepare(); }).observe(document.getElementById("app"), {childList: true}); /* 詳細・登録などを開いたときにも下準備をやり直す */
+  new MutationObserver(() => { if(!GH.busy && !GH.wrapping) prepare(); }).observe(document.getElementById("app"), {childList: true}); /* 詳細・登録などを開いたときにも下準備をやり直す */
   window.addEventListener("resize", () => { VW = window.innerWidth || 390; prepare(); });
   setTimeout(prepare, 0); /* 最初の画面でも下準備する */
   /* 動きをなめらかにする: 動かし始めの数pxのずれを少しずつ詰める / 描画は1フレームに1回 / 指を離したあとは、離した瞬間の指の速さから動き出す */
@@ -1722,7 +1733,7 @@ function onSwipe(dx, edge){
     if(lock === null){
       if(Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
       lock = Math.abs(dx) > Math.abs(dy) * 1.2 ? "h" : "v";
-      if(lock === "h"){ ox = dx; lastX = dx; lastT = e.timeStamp; vel = 0; els = [...app().children]; }
+      if(lock === "h"){ ox = dx; lastX = dx; lastT = e.timeStamp; vel = 0; els = wrapKids(); }
     }
     if(lock !== "h") return;
     if(e.cancelable) e.preventDefault(); /* 横に動かしている間は、縦スクロールさせない */
@@ -1767,7 +1778,7 @@ function onSwipe(dx, edge){
       if(isForm() && !askLeave()){ cancelDrag(); return; } /* 確認で「キャンセル」なら、元の位置に戻る */
       const W = VW, a = app(), out = dx < 0 ? -W : W, g = ghosts[key];
       busy = true; a.style.pointerEvents = "none"; settle();
-      const commit = () => { swipeConfirmed = true; GH.keep = true; try{ onSwipe(dx, edge); }finally{ swipeConfirmed = false; GH.keep = false; } };
+      const commit = () => { unwrap(); swipeConfirmed = true; GH.keep = true; try{ onSwipe(dx, edge); }finally{ swipeConfirmed = false; GH.keep = false; } };
       if(g && gKey === key){
         /* 隣の画面が見えている場合: 現在の画面を送り出しつつ、隣の画面を所定の位置まで寄せてから、実際の画面に切り替える。残りの距離と指の速さから所要時間を決める */
         const dist = W - Math.abs(curX), dur = Math.round(Math.max(180, Math.min(340, dist / Math.max(Math.abs(vel), 0.9))));
@@ -2448,7 +2459,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.24.24</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.24.25</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
