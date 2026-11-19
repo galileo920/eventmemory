@@ -461,7 +461,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.24.21</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.24.22</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -537,6 +537,7 @@ function setSet(o){
 
 /* ========== ユーティリティ ========== */
 const $ = (s, r=document) => r.querySelector(s);
+function inGhostBox(n){ const e = n && (n.nodeType === 1 ? n : n.parentElement); return !!(e && e.closest && e.closest("[data-gh]")); } /* スワイプ中に見せる隣の画面の入れ物か */
 const SC = document.getElementById("scroller"); /* スクロールするのは本文だけ */
 const GH = {busy: false, onRender: null}; /* スワイプ中に見せる隣の画面の下準備(busyの間は、描画しても下準備をやり直さない) */
 /* 画面の上(ヘッダーの空いている所・上の余白)をタップしたら、本文を一番上までスクロールする。戻る・設定ボタンは従来どおり */
@@ -1615,19 +1616,46 @@ function onSwipe(dx, edge){
      作るときは、本物の画面には触らず、仮の入れ物に描画する(スワイプし始めたときに待たされない) */
   const ghosts = {}; /* "L" / "R" / "B" → 隣の画面 */
   let gKey = ""; /* いま指に合わせて動かしている隣の画面 */
-  const offX = k => (k === "L" ? 1 : -1) * (window.innerWidth || 390); /* 左へのスワイプでは右から、右へのスワイプ・戻るでは左から来る */
+  let VW = window.innerWidth || 390; /* 画面の幅。毎フレーム読むと、画面全体のレイアウト計算が強制されて重くなるので、最初と向きが変わったときだけ測る */
+  const offX = k => (k === "L" ? 1 : -1) * VW; /* 左へのスワイプでは右から、右へのスワイプ・戻るでは左から来る */
   const killGhosts = () => { Object.keys(ghosts).forEach(k => { ghosts[k].remove(); delete ghosts[k]; }); gKey = ""; };
+  /* 長い一覧の見本は、見える範囲の前後だけ中身を残し、ほかは同じ高さの空の入れ物にする(1000件あっても、見本の描画・文字の置き換えは数十件分で済む) */
+  const trimList = (box, lb, y, H) => {
+    const base = box.getBoundingClientRect().top;
+    const kids = [...lb.children].filter(c => !c.classList.contains("yhead") && c.id !== "listMore");
+    const info = kids.map(c => { const r = c.getBoundingClientRect(); return {c, t: r.top - base, h: r.height}; }); /* 先に全部測ってから、まとめて置き換える */
+    info.forEach(o => {
+      if(o.t + o.h >= y - 150 && o.t <= y + H + 150) return;
+      const sp = document.createElement("div"); sp.style.height = Math.round(o.h) + "px"; sp.style.margin = getComputedStyle(o.c).margin; sp.setAttribute("aria-hidden", "true");
+      o.c.replaceWith(sp);
+    });
+  };
+  /* 見本のサムネイルは、すでに作ってある分だけ使う(見本のために、写真の読み込み・縮小をやり直さない) */
+  const ghostPics = g => {
+    try{
+      if(typeof thumbCache === "undefined") return;
+      g.querySelectorAll(".pic[data-pid]").forEach(el => {
+        const l = lives.find(x => x.id === el.dataset.pid), src = l && photoList(l)[0]; if(!src) return;
+        const t = thumbCache.get(el.dataset.pid + ":" + src.length + (el.closest(".tile") ? ":g" : "")); if(!t) return;
+        const bl = el.querySelector(".bl"), fg = el.querySelector(".fg"); if(bl) bl.src = t.bl; if(fg) fg.src = t.fg; el.classList.add("ready");
+      });
+      g.querySelectorAll(".pic.noimg").forEach(el => { const st = el.closest(".stub"); el.style.background = `rgb(${genreTone(st ? st.dataset.g : "").join(",")})`; runIcon(el); });
+    }catch(_){}
+  };
   const buildGhost = (tg, key) => {
     const realApp = document.getElementById("app"); let html = "", y = 0;
     const pinned = pinFor(key), rb = realApp.querySelector(".bbar"), barH = pinned && rb ? rb.offsetHeight : 0; /* 前後の移動では、本物の下ボタンはそのまま見せる */
     const S = snap();
     const box = document.createElement("main");
     box.style.cssText = `position:fixed;left:-99999px;top:0;margin:0;width:${Math.min(SC.clientWidth || 390, 560)}px`;
+    box.setAttribute("data-gh", "1"); /* 文字の置き換えの監視は、この入れ物の中は見ない */
     realApp.id = "app__real"; box.id = "app"; document.body.insertBefore(box, document.body.firstChild);
     GH.busy = true;
     try{
       tg.run();
-      html = box.innerHTML; y = (tg.top || sub) ? 0 : (scrollPos[tab] || 0);
+      y = (tg.top || sub) ? 0 : (scrollPos[tab] || 0);
+      { const lb = box.querySelector("#listBody"); if(lb) trimList(box, lb, y, SC.clientHeight || 700); }
+      html = box.innerHTML;
       if(!(box.firstElementChild && box.firstElementChild.classList.contains("stitle"))){ const t = screenTitle(); if(t) html = `<h2 class="stitle">${t}</h2>` + html; }
     }catch(_){ html = ""; }
     finally{ restore(S); GH.busy = false; realApp.id = "app"; box.remove(); }
@@ -1641,6 +1669,7 @@ function onSwipe(dx, edge){
     inner.appendChild(m); g.appendChild(inner); bars.forEach(b => { if(pinned) b.remove(); else g.appendChild(b); });
     g.setAttribute("aria-hidden", "true");
     document.body.appendChild(g);
+    ghostPics(g);
     return g;
   };
   const canDrag = () => (sub ? (subKind === "detail" || subKind === "sdetail" || isForm()) : !bulk) && !busy && $("#dial").hidden && !document.body.classList.contains("fs-lock");
@@ -1663,7 +1692,7 @@ function onSwipe(dx, edge){
   };
   GH.onRender = prepare;
   new MutationObserver(() => { if(!GH.busy) prepare(); }).observe(document.getElementById("app"), {childList: true}); /* 詳細・登録などを開いたときにも下準備をやり直す */
-  window.addEventListener("resize", prepare);
+  window.addEventListener("resize", () => { VW = window.innerWidth || 390; prepare(); });
   setTimeout(prepare, 0); /* 最初の画面でも下準備する */
   /* 動きをなめらかにする: 動かし始めの数pxのずれを少しずつ詰める / 描画は1フレームに1回 / 指を離したあとは、離した瞬間の指の速さから動き出す */
   let ox = 0, curX = 0, vel = 0, lastX = 0, lastT = 0, raf = 0, gActive = false;
@@ -1732,16 +1761,16 @@ function onSwipe(dx, edge){
       const go2 = !!tg && (Math.abs(dx) > 70 || flick) && Math.abs(dx) >= Math.abs(dy);
       if(!go2){ cancelDrag(); return; }
       if(isForm() && !askLeave()){ cancelDrag(); return; } /* 確認で「キャンセル」なら、元の位置に戻る */
-      const W = window.innerWidth || 390, a = app(), out = dx < 0 ? -W : W, g = ghosts[key];
+      const W = VW, a = app(), out = dx < 0 ? -W : W, g = ghosts[key];
       busy = true; a.style.pointerEvents = "none"; settle();
-      const commit = () => { swipeConfirmed = true; try{ onSwipe(dx, edge); }finally{ swipeConfirmed = false; } };
+      const commit = () => { swipeConfirmed = true; GH.keep = true; try{ onSwipe(dx, edge); }finally{ swipeConfirmed = false; GH.keep = false; } };
       if(g && gKey === key){
         /* 隣の画面が見えている場合: 現在の画面を送り出しつつ、隣の画面を所定の位置まで寄せてから、実際の画面に切り替える。残りの距離と指の速さから所要時間を決める */
         const dist = W - Math.abs(curX), dur = Math.round(Math.max(180, Math.min(340, dist / Math.max(Math.abs(vel), 0.9))));
         const ease = easeFor(vel * (dx < 0 ? -1 : 1), dist, dur); /* 送り出す向きの速さ */
         setT(`transform ${dur}ms ${ease}`, `translate3d(${out}px,0,0)`);
         g.style.transition = `transform ${dur}ms ${ease}`; g.style.transform = "translate3d(0,0,0)";
-        setTimeout(() => { commit(); const b = app(); if(b) b.classList.remove("in-l", "in-r"); killGhosts(); clearAnim(); busy = false; }, dur + 20);
+        setTimeout(() => { killGhosts(); commit(); const b = app(); if(b) b.classList.remove("in-l", "in-r"); clearAnim(); busy = false; }, dur + 20);
         return;
       }
       /* 隣の画面がない場合: 送り出してから切り替える(切り替えは従来どおり、横から滑り込む) */
@@ -1789,10 +1818,33 @@ function syncHeader(){
 }
 new MutationObserver(syncHeader).observe(document.getElementById("app"), {childList: true});
 new MutationObserver(syncHeader).observe(document.querySelector(".tabbar"), {attributes: true, attributeFilter: ["hidden"]});
+/* スワイプで一覧→集計→一覧と行き来するときだけ、一覧のDOMを取っておいて作り直さない(件数が多くても重くならない) */
+let listStash = null;
 function render(){
   if(!GH.busy && GH.onRender) GH.onRender();
   if(tab !== "list" && tab !== "stats") fOpen = false; /* 絞り込みシートは、一覧・集計以外の画面では閉じる */
   document.body.classList.toggle("fs-lock", fOpen);
+  const ap = document.getElementById("app");
+  if(GH.busy){
+    if(tab === "list" && listStash && ap){ ap.replaceChildren(listStash.cloneNode(true)); return; }
+  }else{
+    const had = ap && ap.querySelector("#listBody") && ap.querySelector("#q");
+    if(tab === "list" && listStash && GH.keep && !bulk && ap){
+      const fr = listStash; listStash = null;
+      ap.replaceChildren(fr);
+      $("#fab").style.display = ""; document.querySelector(".tabbar").hidden = false;
+      ap.querySelectorAll(".pic[data-pid]:not(.ready)").forEach(e => { delete e.dataset.q; });
+      try { fillIcons(); } catch(e){}
+      try { fillPics(); } catch(e){}
+      return;
+    }
+    listStash = null;
+    if(GH.keep && tab === "stats" && had && !bulk && !fOpen){
+      const fr = document.createDocumentFragment();
+      while(ap.firstChild) fr.appendChild(ap.firstChild);
+      listStash = fr;
+    }
+  }
   if(tab === "list") renderList();
   else if(tab === "stats") renderStats();
   else renderSettings();
@@ -2016,7 +2068,8 @@ function thumbOf(key, src, cb, fail, maxW){
   }));
 }
 function fillPics(){
-  const els = [...document.querySelectorAll("#listBody .pic[data-pid], #listBody .pic.noimg")].filter(e => !e.dataset.q);
+  if(typeof GH !== "undefined" && GH.busy) return; /* スワイプ中に見せる隣の画面を作っている間は、写真の読み込み・縮小をしない */
+  const els = [...document.querySelectorAll("#app #listBody .pic[data-pid], #app #listBody .pic.noimg")].filter(e => !e.dataset.q);
   const run = el => { el.dataset.q = "1";
     if(el.classList.contains("noimg")) return runIcon(el);
     const l = lives.find(x => x.id === el.dataset.pid), src = l && photoList(l)[0]; if(!src) return;
@@ -2056,7 +2109,7 @@ function iconOf(tone, size){
   return iconCache[key];
 }
 function fillIcons(){
-  document.querySelectorAll("#listBody .pic.noimg").forEach(el => {
+  document.querySelectorAll("#app #listBody .pic.noimg").forEach(el => {
     const st = el.closest(".stub"); el.style.background = `rgb(${genreTone(st ? st.dataset.g : "").join(",")})`;
   });
 }
@@ -2390,7 +2443,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.24.21</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.24.22</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -3382,7 +3435,7 @@ input[data-dw]{-webkit-appearance:none;appearance:none;height:46px;display:block
   }
   const scan = root => { if(root.nodeType !== 1) return; if(root.matches("input[data-dw]")) patch(root); root.querySelectorAll("input[data-dw]").forEach(patch); };
   scan(document.body);
-  new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(scan))).observe(document.body, {childList: true, subtree: true});
+  new MutationObserver(ms => ms.forEach(m => { if(inGhostBox(m.target)) return; m.addedNodes.forEach(scan); })).observe(document.body, {childList: true, subtree: true});
 
   let sheet = null, tgt = null, cur = null, years = [], timer = 0, prevOverflow = "";
   const effD = () => Math.min(cur.d, dim(cur.y, cur.m));
@@ -3505,7 +3558,7 @@ input[data-dw]{-webkit-appearance:none;appearance:none;height:46px;display:block
     list.forEach(fix);
   }
   fix(document.body);
-  new MutationObserver(ms => ms.forEach(m => { if(m.type === "characterData") fix(m.target); else m.addedNodes.forEach(fix); })).observe(document.body, {childList: true, subtree: true, characterData: true});
+  new MutationObserver(ms => ms.forEach(m => { if(inGhostBox(m.target)) return; if(m.type === "characterData") fix(m.target); else m.addedNodes.forEach(fix); })).observe(document.body, {childList: true, subtree: true, characterData: true});
 })();
 </script>
 <style>
@@ -3538,7 +3591,7 @@ input[data-dw]{-webkit-appearance:none;appearance:none;height:46px;display:block
     list.forEach(wrap);
   }
   fix(document.body);
-  new MutationObserver(ms => ms.forEach(m => { if(m.type === "characterData") wrap(m.target); else m.addedNodes.forEach(fix); })).observe(document.body, {childList: true, subtree: true, characterData: true});
+  new MutationObserver(ms => ms.forEach(m => { if(inGhostBox(m.target)) return; if(m.type === "characterData") wrap(m.target); else m.addedNodes.forEach(fix); })).observe(document.body, {childList: true, subtree: true, characterData: true});
 })();
 </script>
 </body>
