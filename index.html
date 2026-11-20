@@ -461,7 +461,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.3</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.4</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1300,7 +1300,8 @@ const priceOk = l => {
 let fKw = [], kwMode = {a: "in", v: "in", t: "in"}, kwDraft = {a: "", v: "", t: ""}, kwFocus = "";
 const KW_FIELDS = [{f: "a", t: "出演者"}, {f: "v", t: "会場"}, {f: "t", t: "タグ"}];
 const kwLabel = f => (KW_FIELDS.find(x => x.f === f) || {}).t || "";
-const kwKey = k => k.f + "|" + k.m + (k.x ? "=" : "|") + k.t; /* x: 完全一致(詳細集計の行から来たとき) */
+const kwKey = k => k.f + "|" + k.m + (k.x ? "=" : "|") + k.t; /* x: 完全一致(詳細・集計のリンクから来たとき) */
+const kwEx = (kind, name) => ({f: kind === "venue" ? "v" : kind === "tag" ? "t" : "a", m: "in", t: String(name), x: true}); /* 詳細・集計のリンクで使う、完全一致の条件(絞り込みの「一致」) */
 const kwNorm = s => wfold(kata2hira(String(s == null ? "" : s))).toLowerCase().replace(/\s+/g, "");
 const kwNames = (l, f) => f === "a" ? artistsOf(l).flatMap(n => aliasNames("artist", n)) : f === "v" ? venueNamesOf(l).flatMap(n => aliasNames("venue", n)) : tagsOf(l);
 const kwOk = l => {
@@ -2294,7 +2295,7 @@ function fillList(){
   const emptyHtml = `<div class="empty">${!loaded ? "読み込み中…" : lives.length ? "該当するイベントがありません" : "まだイベントがありません。<br>下の＋から、最初のイベントを追加しましょう"}</div>`;
   /* 一覧のカードは、最初に一部だけ作り、スクロールに合わせて続きを足す(1000件でも軽く開ける) */
   const lvNow = listView(), base = lvNow === "grid" ? 90 : lvNow === "thumb" ? 36 : 60;
-  const sig = [tab, query, fGenre, fArea, fPref, fYear, fFrom, fTo, fPrice, fPMin, fPMax, exact ? exact.kind + exact.value : "", lvNow, sortAsc, rows.length].join("|");
+  const sig = [tab, query, fGenre, fArea, fPref, fYear, fFrom, fTo, fPrice, fPMin, fPMax, exact ? exact.kind + exact.value : "", JSON.stringify(fKw), lvNow, sortAsc, rows.length].join("|");
   if(sig !== listSig){ listSig = sig; listShown = base; }
   if(!("IntersectionObserver" in window)) listShown = items.length;
   const MORE = '<div id="listMore" style="height:1px;grid-column:1/-1"></div>';
@@ -2373,7 +2374,7 @@ function renderStats(){
   bindFilter();
   $("#dirToggle").onclick = () => { if(statMetric === "s"){ if(statDir === "desc") statDir = "asc"; else { statDir = "desc"; statAvg = !statAvg; } } else statDir = statDir === "asc" ? "desc" : "asc"; /* チケット代は 高い(合計)→安い(合計)→高い(平均)→安い(平均) の順に切り替わる */ renderStats(); };
   $("#metricToggle").onclick = () => { statMetric = statMetric === "n" ? "p" : statMetric === "p" ? "s" : "n"; renderStats(); };
-  const bindLines = () => document.querySelectorAll("#app .line[data-q]:not([data-b])").forEach(b => { b.dataset.b = "1"; b.onclick = () => { const k = b.dataset.k, q = b.dataset.q; if((k === "artist" || k === "venue") && q !== NONE_KEY){ openSDetail(k, q, null); slideIn("l"); return; } /* 出演者・会場は、詳細集計の画面へ(一覧への絞り込みは、その画面のボタンから) */ exact = null; query = ""; if(k === "year") fYear = [q]; else if(k === "genre") fGenre = [q]; else if(q === NONE_KEY) exact = {kind: k, value: q}; else if(k === "area"){ fArea = [q]; fPref = []; } else if(k === "pref") fPref = [q]; else if(k === "venue" || k === "artist" || k === "tag") exact = {kind: k, value: q}; else query = q; qLinked = false; linkDim = ""; linkVal = ""; /* 集計の行から移ったときも、クリアボタンを出す(タグ・未入力の完全一致は出さない) */ setTab("list", {top: true}); }; });
+  const bindLines = () => document.querySelectorAll("#app .line[data-q]:not([data-b])").forEach(b => { b.dataset.b = "1"; b.onclick = () => { const k = b.dataset.k, q = b.dataset.q; if((k === "artist" || k === "venue") && q !== NONE_KEY){ openSDetail(k, q, null); slideIn("l"); return; } /* 出演者・会場は、詳細集計の画面へ(一覧への絞り込みは、その画面のボタンから) */ exact = null; query = ""; if(k === "year") fYear = [q]; else if(k === "genre") fGenre = [q]; else if(q === NONE_KEY) exact = {kind: k, value: q}; else if(k === "area"){ fArea = [q]; fPref = []; } else if(k === "pref") fPref = [q]; else if(k === "venue" || k === "artist" || k === "tag"){ const e = kwEx(k, q); fKw = fKw.filter(x => !(x.x && x.f === e.f)).concat([e]); } else query = q; qLinked = false; linkDim = ""; linkVal = ""; /* 集計の行から移ったときも、クリアボタンを出す(タグ・未入力の完全一致は出さない) */ setTab("list", {top: true}); }; });
   bindLines();
   const watchStat = () => {
     if(GH.busy) return;
@@ -2445,16 +2446,16 @@ function renderSDetail(){
     <div class="bbar"><div class="bbar-in"><div class="bnav"><button type="button" class="btn sec" id="sdPrev" aria-label="前の${isA ? "出演者" : "会場"}" data-t="${esc(nbs.prev)}"${nbs.prev ? "" : " disabled"}>◀</button><button type="button" class="btn sec" id="sdNext" aria-label="次の${isA ? "出演者" : "会場"}" data-t="${esc(nbs.next)}"${nbs.next ? "" : " disabled"}>▶</button></div><button class="btn" id="sdList">一覧</button></div></div>`;
   $("#sdPrev").onclick = () => { if(nbs.prev){ openSDetail(k, nbs.prev, cur.prev); slideIn("r"); } };
   $("#sdNext").onclick = () => { if(nbs.next){ openSDetail(k, nbs.next, cur.prev); slideIn("l"); } };
-  $("#sdList").onclick = () => { resetDd(); exact = {kind: k, value: val}; query = ""; qLinked = false; linkDim = ""; linkVal = ""; setTab("list", {top: true}); };
+  $("#sdList").onclick = () => { resetDd(); exact = null; fKw = [kwEx(k, val)]; query = ""; qLinked = false; linkDim = ""; linkVal = ""; setTab("list", {top: true}); };
   /* 年・エリア・都道府県を押すと、開いている出演者・会場と、その年・エリア・都道府県で絞り込んだ一覧へ */
   document.querySelectorAll("#app [data-sf]").forEach(b => b.onclick = () => {
     const d = b.dataset.sf, q = b.dataset.sq;
     resetDd(); if(d === "year") fYear = [q]; else if(d === "area") fArea = [q]; else fPref = [q];
-    exact = {kind: k, value: val}; query = ""; qLinked = false; linkDim = ""; linkVal = ""; 
+    exact = null; fKw = [kwEx(k, val)]; query = ""; qLinked = false; linkDim = ""; linkVal = ""; 
     setTab("list", {top: true});
   });
   document.querySelectorAll("#app [data-ev]").forEach(b => b.onclick = () => { openDetail(b.dataset.ev, cur); slideIn("l"); });
-  document.querySelectorAll("#app [data-sk]").forEach(b => b.onclick = () => { /* 共演者・会場別・出演者別の行は、開いている出演者・会場で絞り込み+押した名前を、検索ボックスではなく絞り込み(出演者・会場の完全一致)に入れた一覧へ */ resetDd(); exact = {kind: k, value: val}; fKw = [{f: b.dataset.sk === "venue" ? "v" : "a", m: "in", t: b.dataset.sq, x: true}]; query = ""; qLinked = false; linkDim = ""; linkVal = ""; setTab("list", {top: true}); });
+  document.querySelectorAll("#app [data-sk]").forEach(b => b.onclick = () => { /* 共演者・会場別・出演者別の行は、開いている出演者・会場で絞り込み+押した名前を、検索ボックスではなく絞り込み(出演者・会場の完全一致)に入れた一覧へ */ resetDd(); exact = null; fKw = [kwEx(k, val), kwEx(b.dataset.sk, b.dataset.sq)]; query = ""; qLinked = false; linkDim = ""; linkVal = ""; setTab("list", {top: true}); });
 }
 
 
@@ -2516,7 +2517,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.3</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.4</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -2676,7 +2677,7 @@ function openDetail(id, from){
   $("#prevEv").onclick = () => { if(nb.prev){ openDetail(nb.prev, detailFrom); slideIn("r"); } };
   $("#nextEv").onclick = () => { if(nb.next){ openDetail(nb.next, detailFrom); slideIn("l"); } };
   $("#edit").onclick = () => openForm(l);
-  document.querySelectorAll("#app .lk").forEach(b => b.onclick = () => { const k = b.dataset.lk, q = b.dataset.q; fGenre = k === "genre" ? [q] : []; fYear = []; fArea = k === "area" ? [q] : []; fPref = k === "pref" ? [q] : []; fFrom = ""; fTo = ""; fPrice = []; fPMin = ""; fPMax = ""; exact = k === "venue" || k === "artist" ? {kind: k, value: canon(k, q)} : k === "tag" ? {kind: k, value: q} : null; query = ""; qLinked = false; linkDim = (k === "genre" || k === "area" || k === "pref") ? k : ""; linkVal = linkDim ? JSON.stringify(linkDim === "genre" ? fGenre : linkDim === "area" ? fArea : fPref) : ""; setTab("list", {top: true}); });
+  document.querySelectorAll("#app .lk").forEach(b => b.onclick = () => { const k = b.dataset.lk, q = b.dataset.q; fGenre = k === "genre" ? [q] : []; fYear = []; fArea = k === "area" ? [q] : []; fPref = k === "pref" ? [q] : []; fFrom = ""; fTo = ""; fPrice = []; fPMin = ""; fPMax = ""; exact = null; fKw = k === "venue" || k === "artist" ? [kwEx(k, canon(k, q))] : k === "tag" ? [kwEx(k, q)] : []; kwDraft = {a: "", v: "", t: ""}; query = ""; /* 出演者・会場・タグは、検索ボックスではなく絞り込みの「一致」に入れる */ qLinked = false; linkDim = (k === "genre" || k === "area" || k === "pref") ? k : ""; linkVal = linkDim ? JSON.stringify(linkDim === "genre" ? fGenre : linkDim === "area" ? fArea : fPref) : ""; setTab("list", {top: true}); });
 }
 
 /* 抽出結果(オブジェクト)をフォームに反映 */
