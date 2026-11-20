@@ -461,7 +461,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.1</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.3</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1559,14 +1559,7 @@ function onSwipe(dx, edge){
     if(b && !b.disabled) b.click();
     return;
   }
-  if(dx < 0) return;
-  if(subKind === "batch"){
-    if(swipeConfirmed || confirm("読み取った内容をすべて破棄して戻ります。よろしいですか?")){ bCtl && bCtl.abort(); bNoteState = null; setTab("list", {dir: "r", top: true}); }
-    return;
-  }
-  if(subKind === "form"){
-    if(swipeConfirmed || confirm("入力中の内容は保存されません。戻りますか?")){ subBack(); slideIn("r"); }
-  }
+  /* 登録・一括登録の画面は、スワイプでは戻れない(戻るのは画面のボタンから) */
 }
 (() => {
   let sx = 0, sy = 0, t0 = 0, on = false, edge = false;
@@ -1590,12 +1583,11 @@ function onSwipe(dx, edge){
     }
     return kids;
   };
-  const clearAnim = () => { unwrap(); els.forEach(e => { e.style.transition = ""; e.style.transform = ""; }); els = []; const a = app(); if(a) a.style.pointerEvents = ""; };
+  const clearAnim = () => { bbHide = false; { const a0 = app(); if(a0) a0.querySelectorAll(":scope > .bbar").forEach(b => { b.style.transition = ""; b.style.opacity = ""; }); } unwrap(); els.forEach(e => { e.style.transition = ""; e.style.transform = ""; }); els = []; const a = app(); if(a) a.style.pointerEvents = ""; };
   /* スワイプの向き: "L"=左へ(次へ) / "R"=右へ(前へ) / "B"=戻る(詳細は左端からの右スワイプ、登録画面は右スワイプ) */
   const swipeKey = dx => {
     if(!sub) return bulk ? null : (dx < 0 ? "L" : "R");
     if(subKind === "detail" || subKind === "sdetail") return dx > 0 && edge ? "B" : (dx < 0 ? "L" : "R");
-    if(isForm()) return dx > 0 ? "B" : null;
     return null;
   };
   /* その向きの行き先。run()は、行き先の画面を描画する処理(隣の画面を作るときに、仮の入れ物に対して実行する)。なければnull */
@@ -1607,11 +1599,6 @@ function onSwipe(dx, edge){
       if(!b || b.disabled || !b.dataset.t) return null;
       const id = b.dataset.t;
       return subKind === "detail" ? {run: () => openDetail(id, detailFrom)} : {run: () => openSDetail(sdCur.kind, id, sdCur.prev)};
-    }
-    if(isForm()){
-      if(key !== "B") return null;
-      if(subKind === "breg") return {run: () => { sub = false; tab = "list"; render(); }, top: true};
-      return subBack ? {run: () => subBack(), top: subKind === "batch"} : null;
     }
     return null;
   };
@@ -1628,6 +1615,13 @@ function onSwipe(dx, edge){
   /* 動かしている間に隣の画面を見せる(押せない見本)。画面を描画し終えてしばらくしたあとの空き時間に、隣の画面を画面の外にあらかじめ作っておく。
      作るときは、本物の画面には触らず、仮の入れ物に描画する(スワイプし始めたときに待たされない) */
   const ghosts = {}; /* "L" / "R" / "B" → 隣の画面 */
+  /* 詳細から戻るスワイプを始めたら、詳細の下のボタン(◀▶・編集)は薄くして消す(タブは画面が戻ってから出る)。向きを変えたら、また出す */
+  let bbHide = false;
+  const bbarFade = hide => {
+    if(bbHide === hide) return; bbHide = hide;
+    const a = app(); if(!a) return;
+    a.querySelectorAll(":scope > .bbar").forEach(b => { b.style.transition = "opacity .12s ease"; b.style.opacity = hide ? "0" : ""; });
+  };
   let gKey = "", gTab = null; /* いま指に合わせて動かしている隣の画面(と、その画面のタブ) */
   /* タブの上の線を、画面の動きに合わせる。f: 動いた割合(0〜1)。行き先のタブがあれば、その位置へ向かって動く(設定へは薄くなる) */
   const lineTo = (f, tr) => {
@@ -1696,8 +1690,8 @@ function onSwipe(dx, edge){
     ghostPics(g);
     return g;
   };
-  const canDrag = () => (sub ? (subKind === "detail" || subKind === "sdetail" || isForm()) : !bulk) && !busy && $("#dial").hidden && !document.body.classList.contains("fs-lock");
-  const keysNow = () => !sub ? ["L", "R"] : (subKind === "detail" || subKind === "sdetail") ? ["L", "R", "B"] : isForm() ? ["B"] : [];
+  const canDrag = () => (sub ? (subKind === "detail" || subKind === "sdetail") : !bulk) && !busy && $("#dial").hidden && !document.body.classList.contains("fs-lock");
+  const keysNow = () => !sub ? ["L", "R"] : (subKind === "detail" || subKind === "sdetail") ? ["L", "R", "B"] : [];
   let gTimer = 0, gIdle = 0, queue = [];
   const step = () => {
     gIdle = 0;
@@ -1762,10 +1756,12 @@ function onSwipe(dx, edge){
       if(!ghosts[key]){ const g = buildGhost(tg, key); if(g) ghosts[key] = g; } /* 下準備が間に合っていないときだけ、ここで作る */
       gKey = ghosts[key] ? key : ""; gTab = tg.tab || tab;
     }else gKey = "";
+    bbarFade(ok && key === "B" && sub && (subKind === "detail" || subKind === "sdetail"));
     moving = true;
     if(!raf) raf = requestAnimationFrame(apply);
   }, {passive: false});
   const cancelDrag = () => {
+    bbarFade(false);
     settle();
     const dist = Math.abs(curX), dur = Math.round(Math.max(200, Math.min(300, dist / 0.9)));
     const ease = easeFor(vel * (curX > 0 ? -1 : 1), dist, dur); /* 元の位置へ向かう向きの速さ */
@@ -2520,7 +2516,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.1</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.3</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
