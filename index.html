@@ -1580,7 +1580,7 @@ function onSwipe(dx, edge){
   const isForm = () => sub && (subKind === "form" || subKind === "batch" || subKind === "breg"); /* 登録系: 離したときに確認を出して戻る */
   /* 集計のように子要素が多い画面は、1つずつ動かすと重い(レイヤーが100個以上になる)ので、固定でない要素を1つの入れ物にまとめて動かす */
   const quiet = () => { GH.wrapping = true; OBS_SKIP = true; setTimeout(() => { GH.wrapping = false; OBS_SKIP = false; }, 0); };
-  const unwrap = () => { const a = app(), w = a && a.querySelector(":scope > .swrap"); if(!w) return; quiet(); while(w.firstChild) a.insertBefore(w.firstChild, w); w.remove(); };
+  const unwrap = () => { const a = app(), w = a && a.querySelector(":scope > .swrap:not(.perm)"); if(!w) return; quiet(); while(w.firstChild) a.insertBefore(w.firstChild, w); w.remove(); };
   const wrapKids = () => {
     const a = app(); let kids = [...a.children];
     if(kids.length > 12){
@@ -1862,8 +1862,16 @@ function render(){
     }
   }
   if(tab === "list") renderList();
-  else if(tab === "stats") renderStats();
+  else if(tab === "stats"){ renderStats(); permWrap(); }
   else renderSettings();
+}
+/* 集計のように要素が多い画面は、最初から1つの入れ物(.swrap)に入れておく(スワイプのたびに数千個の要素を入れ替えると、動き出しが遅れる) */
+function permWrap(){
+  const a = document.getElementById("app"); if(!a) return;
+  const kids = [...a.children]; if(kids.length <= 12) return;
+  const nb = kids.filter(k => !k.classList.contains("stitle") && !k.classList.contains("bbar") && !k.classList.contains("swrap") && getComputedStyle(k).position !== "fixed");
+  if(nb.length <= 8) return;
+  const w = document.createElement("div"); w.className = "swrap perm"; a.insertBefore(w, nb[0]); nb.forEach(k => w.appendChild(k));
 }
 
 function dateParts(d){
