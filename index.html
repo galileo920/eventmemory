@@ -461,7 +461,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.7</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.10</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -2355,6 +2355,17 @@ function renderStats(){
   });
   fl.forEach(l => prefsOf(l).forEach(p => { const e = prefs[p] || (prefs[p] = {n: 0, s: 0}); e.n++; e.s += Number(l.price) || 0; if(hasPrice(l)) e.pn = (e.pn || 0) + 1; }));
   fl.forEach(l => areasOf(l).forEach(a => { const e = areas[a] || (areas[a] = {n: 0, s: 0}); e.n++; e.s += Number(l.price) || 0; if(hasPrice(l)) e.pn = (e.pn || 0) + 1; }));
+  /* 出演者・会場・タグで「含む」「一致」の絞り込みをしているときは、集計の行も、その絞り込みに使った名前だけにする(共演者・同じイベントの別の会場・別のタグは出さない)。
+     旧名の紐付けを適用しているときは、旧名・現在の名前のどちらで絞っても、同じ名前の行が残る。未入力の行は出さない */
+  const kwOnly = (o, f, kind) => {
+    const ins = fKw.filter(k => k.f === f && k.m === "in" && kwNorm(k.t));
+    if(!ins.length) return;
+    Object.keys(o).forEach(key => {
+      const ns = key === NONE_KEY ? [] : (kind ? aliasNames(kind, key) : [key]).map(kwNorm);
+      if(!ins.some(k => { const w = kwNorm(k.t); return ns.some(n => k.x ? n === w : n.includes(w)); })) delete o[key];
+    });
+  };
+  kwOnly(artists, "a", "artist"); kwOnly(venues, "v", "venue"); kwOnly(tags, "t", "");
   pctBase = total; /* 割合の分母: 絞り込み後のイベント総数。出演者・会場・タグは1イベントに複数付くので、合計が100%を超えることがある */
   const mv = e => statMetric === "s" ? (statAvg ? (avgOf(e) ?? (dr > 0 ? -Infinity : Infinity)) : (e.s ?? e.spend)) : e.n, dr = statDir === "asc" ? -1 : 1; /* 参加割合は参加数と同じ並び順。平均は、チケット代の入ったイベントがない行をいちばん下にする */
   const dirCur = (statMetric === "s" ? (statAvg ? 6 : 4) : statMetric === "p" ? 2 : 0) + (statDir === "asc" ? 1 : 0), dirTg = DIR_LABELS.map((t, i) => `<span${i === dirCur ? "" : ' class="off"'}>${t} ⇅</span>`).join("");
@@ -2521,7 +2532,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.7</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.10</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -2648,6 +2659,18 @@ function linkify(text){
     return `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(url)}</a>${esc(tail)}`;
   }).join("");
 }
+/* 詳細のリンク(出演者・会場・タグ・ジャンル・エリア・都道府県)を押したときは、いまかかっている絞り込み(年・期間・チケット代・検索語・キーワードなど)は残し、押した条件を足す。
+   出演者・会場・タグは、絞り込みの「一致」に足す(同じ条件がすでにあれば足さない)。ジャンル・エリア・都道府県は、その項目の選択を押した値だけにする
+   (押した値はいま見ているイベントのもので、その項目にすでに選択があっても、その中に入っているため、選択を狭める形になる) */
+function addDetailLinkFilter(k, q){
+  if(k === "genre") fGenre = [q];
+  else if(k === "area"){ fArea = [q]; fPref = fPref.filter(x => areaOf(x) === q); }
+  else if(k === "pref") fPref = [q];
+  else if(k === "venue" || k === "artist" || k === "tag"){ const e = kwEx(k, k === "tag" ? q : canon(k, q)); if(!fKw.some(x => kwKey(x) === kwKey(e))) fKw.push(e); }
+  qLinked = false;
+  linkDim = (k === "genre" || k === "area" || k === "pref") ? k : "";
+  linkVal = linkDim ? JSON.stringify(linkDim === "genre" ? fGenre : linkDim === "area" ? fArea : fPref) : "";
+}
 const lkBtn = (k, v) => `<button type="button" class="lk" data-lk="${k}" data-q="${esc(v)}">${esc(v)}</button>`;
 const venueLinks = l => venueNamesOf(l).map(n => lkBtn("venue", n)).join("、") + (l.pref ? (venueNamesOf(l).length ? `<span style="white-space:nowrap">(${lkBtn("pref", l.pref)})</span>` : lkBtn("pref", l.pref)) : "");
 function openDetail(id, from){
@@ -2680,7 +2703,7 @@ function openDetail(id, from){
   $("#prevEv").onclick = () => { if(nb.prev){ openDetail(nb.prev, detailFrom); slideIn("r"); } };
   $("#nextEv").onclick = () => { if(nb.next){ openDetail(nb.next, detailFrom); slideIn("l"); } };
   $("#edit").onclick = () => openForm(l);
-  document.querySelectorAll("#app .lk").forEach(b => b.onclick = () => { const k = b.dataset.lk, q = b.dataset.q; fGenre = k === "genre" ? [q] : []; fYear = []; fArea = k === "area" ? [q] : []; fPref = k === "pref" ? [q] : []; fFrom = ""; fTo = ""; fPrice = []; fPMin = ""; fPMax = ""; exact = null; fKw = k === "venue" || k === "artist" ? [kwEx(k, canon(k, q))] : k === "tag" ? [kwEx(k, q)] : []; kwDraft = {a: "", v: "", t: ""}; query = ""; /* 出演者・会場・タグは、検索ボックスではなく絞り込みの「一致」に入れる */ qLinked = false; linkDim = (k === "genre" || k === "area" || k === "pref") ? k : ""; linkVal = linkDim ? JSON.stringify(linkDim === "genre" ? fGenre : linkDim === "area" ? fArea : fPref) : ""; setTab("list", {top: true}); });
+  document.querySelectorAll("#app .lk").forEach(b => b.onclick = () => { addDetailLinkFilter(b.dataset.lk, b.dataset.q); setTab("list", {top: true}); });
 }
 
 /* 抽出結果(オブジェクト)をフォームに反映 */
