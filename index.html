@@ -288,11 +288,11 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .pdots{display:flex;justify-content:center;gap:6px;margin:8px 0 4px}
 .pdots i{width:7px;height:7px;border-radius:50%;background:var(--line)}
 .pdots i.on{background:var(--ink)}
-.plbx{position:fixed;inset:0;background:rgba(10,12,18,.88);display:grid;place-items:center;z-index:50;padding:16px}
+.plbx{position:fixed;inset:0;background:rgba(10,12,18,.88);overflow:hidden;z-index:50}
 .plbx{touch-action:none}
 .plbx .lba{position:fixed;left:50%;bottom:max(28px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);border:0;border-radius:999px;padding:12px 22px;font-size:15px;font-weight:700;background:#fff;color:#15171f;cursor:pointer;max-width:90vw}
 .plbx .lba:disabled{opacity:.75;cursor:default}
-.plbx img{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px}
+.plbx img{position:absolute;left:50%;top:50%;max-width:none;max-height:none;object-fit:contain;border-radius:6px;transform-origin:50% 50%;will-change:transform;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .plbx span{position:fixed;top:max(14px,env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px));color:#fff;font-size:13px;background:rgba(255,255,255,.18);padding:6px 12px;border-radius:999px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
 .card h2{margin:0 0 4px;font-size:15px}
@@ -461,7 +461,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.11</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.13</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1088,9 +1088,50 @@ function openLightbox(src, list, idx, act){
   const arr = Array.isArray(list) && list.length ? list : [src];
   let i = Number.isInteger(idx) ? idx : Math.max(0, arr.indexOf(src));
   const o = document.createElement("div"); o.className = "plbx";
-  o.innerHTML = `<img alt="" src=""><span class="lbn" style="right:auto;left:max(16px,env(safe-area-inset-left,0px))"></span><span>タップで閉じる</span>`;
-  const im = o.querySelector("img"), n = o.querySelector(".lbn");
+  /* 前・今・次の3枚を横に並べておき、スワイプに合わせて一緒に動かす */
+  o.innerHTML = `<img alt="" style="visibility:hidden"><img alt="" style="visibility:hidden"><img alt="" style="visibility:hidden"><span class="lbn" style="right:auto;left:max(16px,env(safe-area-inset-left,0px))"></span><span>タップで閉じる</span>`;
+  const ims = [...o.querySelectorAll("img")], n = o.querySelector(".lbn");
   let ab = null;
+  /* 表示サイズ: 画面(上の表示と下のボタンを避けた範囲)に必ず収まる大きさに合わせる(縦長でも切れない)。
+     ピンチで拡大縮小、拡大中は1本指で動かせる */
+  let s = 1, tx = 0, ty = 0, off = 0, W = 0, H = 0, fw = 0, fh = 0, aw = 0, ah = 0, by = 0, anim = false;
+  const SP = () => W + 24;
+  const apply = () => {
+    ims.forEach((el, q) => {
+      const k = q - 1, c = k === 0, x = c ? tx + off : off + k * SP();
+      el.style.transform = `translate(calc(-50% + ${x}px),calc(-50% + ${(c ? ty : 0) + by}px)) scale(${c ? s : 1})`;
+    });
+  };
+  const clamp = () => {
+    const mx = Math.max(0, (fw * s - aw) / 2), my = Math.max(0, (fh * s - ah) / 2);
+    tx = Math.min(mx, Math.max(-mx, tx)); ty = Math.min(my, Math.max(-my, ty));
+  };
+  const fitAll = () => {
+    W = o.clientWidth; H = o.clientHeight;
+    const top = 52, bot = ab ? 96 : 16;
+    aw = Math.max(40, W - 32); ah = Math.max(40, H - top - bot); by = (top - bot) / 2;
+    ims.forEach((el, q) => {
+      if(!(el.getAttribute("src") && el.complete && el.naturalWidth)) return;
+      const f = Math.min(aw / el.naturalWidth, ah / el.naturalHeight, 1);
+      el.style.width = el.naturalWidth * f + "px"; el.style.height = el.naturalHeight * f + "px";
+      if(q === 1){ fw = el.naturalWidth * f; fh = el.naturalHeight * f; }
+      el.style.visibility = "visible";
+    });
+    clamp(); apply();
+  };
+  ims.forEach(el => { el.onload = fitAll; });
+  const assign = () => {
+    ims.forEach((el, q) => {
+      const j = i + q - 1;
+      if(j < 0 || j >= arr.length){ el.removeAttribute("src"); el.style.visibility = "hidden"; return; }
+      if(el.getAttribute("src") !== arr[j]){ el.style.visibility = "hidden"; el.src = arr[j]; }
+    });
+    fitAll();
+  };
+  const ui = () => {
+    n.textContent = `${i + 1} / ${arr.length}`; n.hidden = arr.length < 2;
+    if(ab){ const d = act.isDone(i); ab.disabled = d; ab.textContent = d ? "追加済み" : act.label; }
+  };
   if(act){
     ab = document.createElement("button"); ab.type = "button"; ab.className = "lba"; o.appendChild(ab);
     ab.onclick = async ev => {
@@ -1099,21 +1140,82 @@ function openLightbox(src, list, idx, act){
       let r = "err"; try { r = await act.run(i); } catch(e){}
       if(r === "ok"){ ab.textContent = "追加しました"; return; }
       ab.textContent = r === "full" ? `イベント画像は${MAXPHOTO}枚までです` : "追加できませんでした";
-      setTimeout(() => { if(o.isConnected) show(); }, 2000);
+      setTimeout(() => { if(o.isConnected) ui(); }, 2000);
     };
   }
-  const show = () => { im.src = arr[i]; n.textContent = `${i + 1} / ${arr.length}`; n.hidden = arr.length < 2; if(ab){ const d = act.isDone(i); ab.disabled = d; ab.textContent = d ? "追加済み" : act.label; } };
-  show();
-  /* 左右にスワイプすると、前後の画像に移る */
-  let x0 = null, y0 = 0, swiped = false;
-  o.addEventListener("touchstart", e => { if(e.touches.length !== 1){ x0 = null; return; } x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; swiped = false; }, {passive: true});
-  o.addEventListener("touchend", e => {
-    if(x0 === null) return;
-    const t = e.changedTouches[0], dx = t.clientX - x0, dy = t.clientY - y0; x0 = null;
-    if(arr.length > 1 && Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5){ swiped = true; setTimeout(() => { swiped = false; }, 400); i = Math.min(arr.length - 1, Math.max(0, i + (dx < 0 ? 1 : -1))); show(); }
+  const onResize = () => { if(!o.isConnected){ window.removeEventListener("resize", onResize); return; } fitAll(); };
+  window.addEventListener("resize", onResize);
+  /* 動かす: 指を離したあとは、前後の画像へ移る(または元に戻る)動きを付ける */
+  const slide = (target, done) => {
+    anim = true; ims.forEach(e => { e.style.transition = "transform .22s ease-out"; });
+    off = target; apply();
+    setTimeout(() => { ims.forEach(e => { e.style.transition = "none"; }); anim = false; if(done) done(); }, 230);
+  };
+  const commit = d => { /* d=+1: 次へ / -1: 前へ。3枚を入れ替えて、動き終わった位置のまま次の画像にする */
+    i += d; if(d > 0) ims.push(ims.shift()); else ims.unshift(ims.pop());
+    off = 0; s = 1; tx = 0; ty = 0;
+    assign(); ui();
+  };
+  /* 1本指: 拡大していなければ左右に指と一緒に動く、拡大中は画像を動かす。2本指: ピンチ(指の中心を基準に拡大縮小) */
+  let mode = 0, moved = false, noClick = false, lock = "", p0 = [0, 0], m0 = [0, 0], s0 = 1, tx0 = 0, ty0 = 0, d0 = 1, lt = 0, lx = 0, vx = 0;
+  const dist = t => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+  const mid = t => [(t[0].clientX + t[1].clientX) / 2, (t[0].clientY + t[1].clientY) / 2];
+  o.addEventListener("touchstart", e => {
+    if(anim) return;
+    const t = e.touches;
+    if(t.length === 1){ moved = false; noClick = false; lock = ""; p0 = [t[0].clientX, t[0].clientY]; s0 = s; tx0 = tx; ty0 = ty; mode = 1; lt = e.timeStamp; lx = t[0].clientX; vx = 0; }
+    else if(t.length === 2){ mode = 2; moved = true; lock = "y"; if(off){ off = 0; apply(); } d0 = dist(t) || 1; m0 = mid(t); s0 = s; tx0 = tx; ty0 = ty; }
+    else { mode = 3; moved = true; lock = "y"; }
   }, {passive: true});
-  o.onclick = () => { if(swiped){ swiped = false; return; } o.remove(); };
+  o.addEventListener("touchmove", e => {
+    if(anim) return;
+    const t = e.touches;
+    if(mode === 2 && t.length === 2){
+      const m = mid(t), ns = Math.min(6, Math.max(1, s0 * dist(t) / d0)), cx = W / 2, cy = H / 2 + by;
+      const px = (m0[0] - cx - tx0) / s0, py = (m0[1] - cy - ty0) / s0;
+      s = ns; tx = m[0] - cx - ns * px; ty = m[1] - cy - ns * py; clamp(); apply();
+    } else if(mode === 1 && t.length === 1){
+      const dx = t[0].clientX - p0[0], dy = t[0].clientY - p0[1];
+      if(s > 1){
+        if(Math.abs(dx) + Math.abs(dy) > 6) moved = true;
+        tx = tx0 + dx; ty = ty0 + dy; clamp(); apply();
+      } else {
+        if(!lock && Math.abs(dx) + Math.abs(dy) > 8) lock = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+        if(lock === "x"){
+          moved = true;
+          const dt = e.timeStamp - lt; if(dt > 0) vx = (t[0].clientX - lx) / dt; lt = e.timeStamp; lx = t[0].clientX;
+          const edge = (dx > 0 && i === 0) || (dx < 0 && i === arr.length - 1);
+          off = edge ? dx * 0.3 : dx; apply();
+        }
+      }
+    }
+  }, {passive: true});
+  o.addEventListener("touchend", e => {
+    if(anim) return;
+    const t = e.touches;
+    if(t.length === 1){ /* ピンチのあと指が1本残ったら、そのまま動かせる状態に */
+      mode = 1; moved = true; lock = "y"; p0 = [t[0].clientX, t[0].clientY]; s0 = s; tx0 = tx; ty0 = ty; return;
+    }
+    if(t.length > 1) return;
+    const was = moved;
+    if(s < 1.02){ s = 1; tx = 0; ty = 0; apply(); }
+    if(lock === "x" && s === 1){
+      const dir = off < 0 ? 1 : -1, can = dir > 0 ? i < arr.length - 1 : i > 0;
+      const go = can && (Math.abs(off) > W * 0.2 || (Math.abs(vx) > 0.4 && (vx < 0) === (dir > 0)));
+      if(go) slide(-dir * SP(), () => commit(dir)); else slide(0);
+    }
+    if(was){ noClick = true; setTimeout(() => { noClick = false; }, 400); }
+    lock = ""; mode = 0;
+  }, {passive: true});
+  o.addEventListener("touchcancel", () => { if(off && !anim) slide(0); lock = ""; mode = 0; }, {passive: true});
+  /* タップ: 拡大中なら元の大きさに戻す、等倍なら閉じる */
+  o.onclick = () => {
+    if(noClick){ noClick = false; return; }
+    if(s > 1){ s = 1; tx = 0; ty = 0; apply(); return; }
+    o.remove();
+  };
   document.body.appendChild(o);
+  assign(); ui();
 }
 function bindPhotoGallery(l){
   const ps = photoList(l);
@@ -2532,7 +2634,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.11</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.13</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
