@@ -461,7 +461,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.4</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.5</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -2011,17 +2011,20 @@ function renderList(){
   if($("#bulkGo")) $("#bulkGo").onclick = () => openBulkEdit();
   fillList();
   const qi = $("#q");
-  let comp = false;
-  qi.addEventListener("compositionstart", () => { comp = true; });
-  qi.addEventListener("compositionend", () => { comp = false; onQuery(qi.value); });
-  qi.addEventListener("input", () => { if(comp) return; onQuery(qi.value); });
+  /* 変換中(未確定)の文字は、確定するまで絞り込みに反映しない。ただし「変換中かどうか」は、変換の開始・終了イベントで覚えずに、入力イベントごとの判定(isComposing)で見る
+     (iPhoneでは変換の終了イベントが届かないことがあり、覚えておく方式だと、その後の入力・削除がすべて無視されて、文字を消しても絞り込みが解除されなかった)。
+     文字が空になったときは、変換中でも必ず反映する */
+  qi.addEventListener("compositionend", () => onQuery(qi.value));
+  qi.addEventListener("input", e => { if(e.isComposing && qi.value !== "") return; onQuery(qi.value); });
+  qi.addEventListener("change", () => { if(qi.value !== query) onQuery(qi.value); });
+  qi.addEventListener("blur", () => { if(qi.value !== query) onQuery(qi.value); }); /* 検索語と入力欄がずれたまま残らないよう、フォーカスが外れたときにも合わせる */
   { /* 候補: 変換中も出す。候補を押すと、その文字を検索ボックスに入れて検索 */
     const qb = $("#qsug"), upd = () => qShowSugg(qb, qi.value);
     qi.addEventListener("input", upd);
     qi.addEventListener("focus", upd);
     qi.addEventListener("blur", () => setTimeout(() => { if(document.activeElement !== qi) qb.innerHTML = ""; }, 0));
     qb.addEventListener("pointerdown", e => e.preventDefault()); /* 候補を押しても、入力欄のフォーカスは外さない */
-    qb.addEventListener("click", e => { const b = e.target.closest("[data-qi]"); if(!b) return; e.preventDefault(); const v = qb._c && qb._c[Number(b.dataset.qi)]; if(v == null) return; qi.value = v; qb.innerHTML = ""; qi.blur(); onQuery(v); });
+    qb.addEventListener("click", e => { const b = e.target.closest("[data-qi]"); if(!b) return; e.preventDefault(); const v = qb._c && qb._c[Number(b.dataset.qi)]; if(v == null) return; qi.value = v; qb.innerHTML = ""; onQuery(v); qi.blur(); });
   }
 }
 /* 検索欄は作り直さず、結果の部分だけ更新する(日本語入力を妨げないため) */
@@ -2517,7 +2520,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.4</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.5</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
