@@ -464,7 +464,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.18</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.21</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -2647,7 +2647,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.18</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.21</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -2821,8 +2821,24 @@ function openDetail(id, from){
 }
 
 /* 抽出結果(オブジェクト)をフォームに反映 */
+/* 読み取り結果の日付・時刻を、実在するものだけにそろえる。読み取れなかった項目は、キー("date"・"open"・"start")を bad で返す */
+function normDT(r){
+  const s = v => v == null ? "" : String(v).trim(), bad = [];
+  let date = "";
+  const raw = s(r && r.date);
+  if(raw){
+    const m = /^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/.exec(raw);
+    if(m){ const y = +m[1], mo = +m[2], d = +m[3]; if(y >= 1900 && mo >= 1 && mo <= 12 && d >= 1 && d <= new Date(y, mo, 0).getDate()) date = `${m[1]}-${String(mo).padStart(2, "0")}-${String(d).padStart(2, "0")}`; }
+    if(!date) bad.push("date");
+  }
+  const tm = (v, k) => { const x = s(v); if(!x) return ""; const m = /^(\d{1,2}):(\d{2})/.exec(x); if(m && +m[1] < 24 && +m[2] < 60) return `${String(+m[1]).padStart(2, "0")}:${m[2]}`; bad.push(k); return ""; };
+  return {date, open: tm(r && r.open, "open"), start: tm(r && r.start, "start"), bad};
+}
+const dtLabel = (k, genre) => k === "date" ? "日付" : k === "open" ? (gCfg(genre).openLabel || "開場") : (gCfg(genre).startLabel || "開演");
+/* 戻り値: 読み取れなかった日付・時刻の項目名(入力欄がまだ空のものだけ) */
 function applyResult(r){
   r = r || {};
+  const dt0 = normDT(r); r = {...r, date: dt0.date, open: dt0.open, start: dt0.start};
   const gSel = document.getElementById("f_genre");
   /* 入力済みの項目は上書きしない(空欄だけ埋める)。ジャンルは、編集中の記録・手で選んだとき・読み取り済みのときは変えない */
   const gLocked = !!(gSel && gSel.dataset.touched === "1");
@@ -2850,6 +2866,7 @@ function applyResult(r){
   });
   /* タグ: 登録済みのタグだけを、入力欄に足す(すでに入っているタグは残す) */
   { const te = $("#f_tags"), add = pickKnownTags(r.tags); if(te && add.length) te.value = splitTags(te.value).concat(add).filter((x, i, a) => a.indexOf(x) === i).join("、"); }
+  return dt0.bad.filter(k => !(k === "open" && gCfg(genre).skipOpen) && !(k === "start" && gCfg(genre).skipStart) && (() => { const el = $("#f_" + k); return el && !String(el.value || "").trim(); })()).map(k => dtLabel(k, genre));
 }
 
 /* ========== 入力フォーム ========== */
@@ -2980,6 +2997,35 @@ function dragArtist(ev, grip, isTouch){
   else { grip.addEventListener("pointermove", move); grip.addEventListener("pointerup", end); grip.addEventListener("pointercancel", end); }
 }
 
+/* ---------- 保存前の確認(開場・開演の逆転、イベントの重複) ---------- */
+const evNorm = x => wfold(kata2hira(String(x == null ? "" : x))).toLowerCase().replace(/\s+/g, "");
+const evWho = r => evNorm(String(r.title || "").trim() || artistsOf(r).join("、"));
+/* 同じイベントとみなす条件: 日付とイベント名(なければ出演者)が同じで、会場・開演は両方に入力があるときだけ同じであること(昼夜2回公演などを重複にしない) */
+function sameEv(a, b){
+  const wa = evWho(a), va = evNorm(a.venue), sa = String(a.start || ""), da = String(a.date || "");
+  if(!da || !wa || da !== String(b.date || "") || wa !== evWho(b)) return false;
+  const vb = evNorm(b.venue), sb = String(b.start || "");
+  return (!va || !vb || va === vb) && (!sa || !sb || sa === sb);
+}
+/* 確認が必要な内容の一覧を返す。others=登録済みの記録、batch=同じ一括登録の中の前の行、dup=重複も調べるか */
+function evWarns(r, others, batch, dup = true){
+  const w = [], c = gCfg(r.genre);
+  if(r.open && r.start && String(r.open) > String(r.start)) w.push(`${c.openLabel || "開場"}(${r.open})が${c.startLabel || "開演"}(${r.start})より遅くなっています。`);
+  if(dup){
+    const d = (others || []).find(x => sameEv(x, r));
+    if(d) w.push(`同じ日付・イベント名・会場のイベントが登録済みです(${fmtDate(d.date)})。`);
+    else if((batch || []).some(x => sameEv(x, r))) w.push("この一括登録の中に、同じ日付・イベント名・会場のイベントがあります。");
+  }
+  return w;
+}
+/* 確認ダイアログ。buttons は [キー, 文言, "sec"か""] の並びで、押したキーを返す */
+const askWarn = (title, lines, buttons) => new Promise(res => {
+  const ov = document.createElement("div");
+  ov.style.cssText = "position:fixed;inset:0;z-index:60;background:rgba(15,17,24,.5);display:grid;place-items:center;padding:20px";
+  ov.innerHTML = `<div role="alertdialog" aria-modal="true" style="width:100%;max-width:360px;max-height:86vh;overflow:auto;background:var(--surface);color:var(--ink);border-radius:16px;padding:18px;box-shadow:0 8px 28px rgba(0,0,0,.35)"><b style="font-size:16px">${esc(title)}</b>${lines.map(x => `<p style="margin:8px 0 0;font-size:14px;color:var(--sub)">${esc(x)}</p>`).join("")}${buttons.map(([k, t, c]) => `<button type="button" class="btn ${c}" data-a="${k}">${esc(t)}</button>`).join("")}</div>`;
+  ov.addEventListener("click", ev => { const b = ev.target.closest("[data-a]"); if(!b) return; ev.stopPropagation(); ov.remove(); res(b.dataset.a); });
+  document.body.appendChild(ov);
+});
 function openForm(existing){
   closeDial();
   saveScroll(); sub = true; subKind = "form"; subEdit = !!existing; subBack = () => existing ? openDetail(existing.id) : setTab("list");
@@ -3223,9 +3269,9 @@ ${RULES}`;
       const bigs = [];
       for(const f of files) bigs.push(await resizeImage(f, 1600, 0.85));
       const r = await extractFromImage(bigs, scanCtl.signal);
-      applyResult(r);
+      const bad = applyResult(r);
       if(window.__inferPref) window.__inferPref();
-      st.className = "status ok"; st.textContent = "読み取り完了。内容を確認してください。";
+      st.className = bad.length ? "status err" : "status ok"; st.textContent = "読み取り完了。内容を確認してください。" + (bad.length ? `${bad.join("・")}は読み取れなかったため、入力してください。` : "");
     } catch(err){
       if(err && err.name === "AbortError") st.textContent = "";
       else { st.className = "status err"; st.textContent = err.message; }
@@ -3242,7 +3288,7 @@ ${RULES}`;
       const j = await extractFromSite(u.href);
       const obj = Array.isArray(j) ? j[0] : j;
       if(!obj || typeof obj !== "object" || !["title", "artist", "date", "venue"].some(k => obj[k] && (!Array.isArray(obj[k]) || obj[k].length))){ st.className = "status err"; st.textContent = "イベントの情報を読み取れませんでした。"; }
-      else { applyResult(obj); if(window.__inferPref) window.__inferPref(); st.className = "status ok"; st.textContent = "読み取り完了。内容を確認してください。"; }
+      else { const bad = applyResult(obj); if(window.__inferPref) window.__inferPref(); st.className = bad.length ? "status err" : "status ok"; st.textContent = "読み取り完了。内容を確認してください。" + (bad.length ? `${bad.join("・")}は読み取れなかったため、入力してください。` : ""); }
     } catch(err){ st.className = "status err"; st.textContent = (typeof fetchErr === "function" ? fetchErr(err) : err.message); }
     btn.disabled = false;
   };
@@ -3259,6 +3305,13 @@ ${RULES}`;
     if($("#artIn") && $("#artIn").value.trim()){
       if(!confirm("「出演者をまとめて追加」に入力した名前が、まだ出演者の入力欄に追加されていません。\n\nOK:入力欄に追加して保存\nキャンセル:保存せずに戻る")) return;
       $("#artApply").onclick();
+    }
+    { /* 開場が開演より遅い・同じイベントが登録済みのときは、確認してから保存する(編集では、日付・イベント名・会場・開演を変えたときだけ重複を調べる) */
+      const probe = {id: l.id, title: $("#f_title").value.trim().replace(/\s*\n\s*/g, " "), venue: $("#f_venue").value.trim(), date: $("#f_date").value, open: $("#f_open").value, start: $("#f_start").value, genre: $("#f_genre").value || GENRES[0], artists: readArtists().filter(Boolean)};
+      if(probe.title || probe.artists.length){
+        const w = evWarns(probe, lives.filter(x => x.id !== l.id), null, !existing || !sameEv(existing, probe));
+        if(w.length){ const a = await askWarn("確認してください", w, [["go", "このまま保存", ""], ["back", "戻る", "sec"]]); if(a !== "go") return; }
+      }
     }
     FIELDS.forEach(k => { if(k !== "genre") l[k] = $("#f_" + k).value.trim(); });
     { const mv = window.__readMoreVenues ? window.__readMoreVenues().filter(v => v.venue) : []; if(mv.length) l.moreVenues = mv; else delete l.moreVenues; }
@@ -3313,15 +3366,14 @@ function bNormalize(r){
   f.artists = Array.isArray(r.artist) ? r.artist.map(s).filter(Boolean) : null;
   f.venue = s(r.venue);
   f.pref = normPref(s(r.pref));
-  const d = /^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/.exec(s(r.date)); f.date = d ? `${d[1]}-${d[2].padStart(2, "0")}-${d[3].padStart(2, "0")}` : "";
-  const tm = v => { const m = /^(\d{1,2}):(\d{2})/.exec(s(v)); return m ? `${m[1].padStart(2, "0")}:${m[2]}` : ""; };
-  f.open = tm(r.open); f.start = tm(r.start);
-  if(f.genre){ const gc = gCfg(f.genre); if(gc.skipOpen) f.open = ""; if(gc.skipStart) f.start = ""; if(gc.skipArtist){ f.artist = ""; f.artists = null; } }
+  { const dt = normDT(r); f.date = dt.date; f.open = dt.open; f.start = dt.start; if(dt.bad.length) f._bad = dt.bad; } /* 実在しない日付・時刻は空にして、読み取れなかった項目を覚えておく */
+  if(f.genre){ const gc = gCfg(f.genre); if(gc.skipOpen){ f.open = ""; if(f._bad) f._bad = f._bad.filter(k => k !== "open"); } if(gc.skipStart){ f.start = ""; if(f._bad) f._bad = f._bad.filter(k => k !== "start"); } if(gc.skipArtist){ f.artist = ""; f.artists = null; } if(f._bad && !f._bad.length) delete f._bad; }
   f.seatType = s(r.seatType); f.seat = s(r.seat);
   f.price = String(s(r.price)).replace(/[^\d]/g, "");
   f.tags = pickKnownTags(r.tags).join("、");
   return f;
 }
+const bBadText = f => (f._bad || []).map(k => dtLabel(k, f.genre)).join("・") + "を読み取れませんでした。入力してください。";
 const B_PILL = {wait: ["待機中", ""], run: ["読み取り中", "run"], ok: ["読み取り済み", "ok"], err: ["失敗", "err"]};
 function bSummary(it){
   const f = it.f;
@@ -3468,6 +3520,7 @@ function renderBatch(){
     const t = e.target; if(!t.dataset || !t.dataset.k) return;
     const it = bItems.find(i => i.id === t.dataset.bid); if(!it) return;
     it.f[t.dataset.k] = t.type === "number" ? String(t.value).replace(/[^\d]/g, "") : t.value;
+    if(it.status === "ok" && it.err){ it.err = ""; const bm = t.closest(".bedit") && t.closest(".bedit").querySelector(".bmsg"); if(bm) bm.remove(); } /* 直したら、注意の表示は消す */
     bPersist();
     const row = t.closest(".bitem").querySelector(".bsum"), s = bSummary(it);
     row.querySelector(".t").textContent = s.t;
@@ -3534,7 +3587,7 @@ function bDropDerived(srcId){
 async function bRunAll(only){
   if(bRunning || !getSet().apiKey) return;
   bRunning = true; bCtl = new AbortController(); bSetNote("", "");
-  let n = 0, fail = 0, stopped = "";
+  let n = 0, fail = 0, nbad = 0, stopped = "";
   const queue = bItems.filter(i => (only ? only.includes(i.id) : (i.status === "wait" || i.status === "err")) && bMedia[i.id]).map(i => i.id);
   for(const id of queue){
     if(bCtl.signal.aborted) break;
@@ -3545,9 +3598,11 @@ async function bRunAll(only){
       AUTO_FIELDS.forEach(k => { if(prev[k]) f[k] = prev[k]; }); /* 手で直した内容は上書きしない */
       if(prev.tags) f.tags = prev.tags;
       bDropDerived(it.id); /* 再読み取りのときは、前回追加した分を作り直す */
+      f._bad = (f._bad || []).filter(k => !f[k]); if(!f._bad.length) delete f._bad; /* 手で直した分は読み取れなかった扱いにしない */
       it.f = f; it.status = "ok"; n++;
+      if(f._bad){ it.err = bBadText(f); it.open = true; nbad++; }
       const m0 = bMedia[it.id];
-      const extra = list.slice(1).map(g => { const nid = uid(); bMedia[nid] = {blob: m0.blob, url: URL.createObjectURL(m0.blob)}; return {id: nid, status: "ok", err: "", open: false, f: g, src: it.id}; });
+      const extra = list.slice(1).map(g => { const nid = uid(); bMedia[nid] = {blob: m0.blob, url: URL.createObjectURL(m0.blob)}; const eb = !!(g._bad && g._bad.length); if(eb) nbad++; return {id: nid, status: "ok", err: eb ? bBadText(g) : "", open: eb, f: g, src: it.id}; });
       if(extra.length){ bItems.splice(bItems.indexOf(it) + 1, 0, ...extra); n += extra.length; }
     } catch(e){
       if(bCtl.signal.aborted || (e && e.name === "AbortError")){ it.status = "wait"; break; }
@@ -3562,14 +3617,31 @@ async function bRunAll(only){
   bRunning = false; bCtl = null; bPersist();
   if(!(sub && subKind === "batch")) return;
   bRefresh();
-  bSetNote(stopped || fail ? "err" : "ok", stopped || (n || fail ? `${n}件を読み取りました${fail ? `(失敗${fail}件)` : ""}。内容を確認してから登録してください。` : ""));
+  bSetNote(stopped || fail || nbad ? "err" : "ok", stopped || (n || fail ? `${n}件を読み取りました${fail ? `(失敗${fail}件)` : ""}。${nbad ? `日付・時刻を読み取れなかった${nbad}件があります。` : ""}内容を確認してから登録してください。` : ""));
 }
 /* 読み取り済みの内容を、履歴にそのまま登録する */
 async function bRegister(){
-  const targets = bItems.filter(i => i.status === "ok");
+  let targets = bItems.filter(i => i.status === "ok");
   if(!targets.length || bRunning) return null;
+  let held = 0;
+  { /* 開場が開演より遅い・同じイベントが登録済み(または一括登録の中に2件ある)ときは、登録前に確認する */
+    const probe = f => ({title: f.title, venue: f.venue, date: f.date, open: f.open, start: f.start, genre: f.genre || GENRES[0], artists: Array.isArray(f.artists) && f.artists.join("、") === f.artist ? f.artists : splitBulkNames(f.artist)});
+    const seen = [], ws = [];
+    targets.forEach(it => { const p = probe(it.f), w = evWarns(p, lives, seen); seen.push(p); if(w.length) ws.push({it, w}); });
+    if(ws.length){
+      const lines = ws.slice(0, 6).map(o => `${bSummary(o.it).t}: ${o.w.join(" ")}`); if(ws.length > 6) lines.push(`ほか${ws.length - 6}件`);
+      const a = await askWarn(`${ws.length}件に確認事項があります`, lines, [["go", `すべて登録(${targets.length}件)`, ""], ["skip", `確認事項のある${ws.length}件を除いて登録`, "sec"], ["back", "戻る", "sec"]]);
+      if(a !== "go"){
+        ws.forEach(o => { o.it.err = o.w.join(" "); o.it.open = true; });
+        bPersist(); bRefresh();
+        if(a !== "skip"){ bSetNote("err", "確認事項のある件を開きました。内容を確認してください。"); return null; }
+        held = ws.length; const hs = new Set(ws.map(o => o.it)); targets = targets.filter(it => !hs.has(it));
+        if(!targets.length){ bSetNote("err", `登録できなかった${held}件は、内容を確認してください。`); return {n: 0, fail: held}; }
+      }
+    }
+  }
   const btn = $("#bReg"); btn.disabled = true; bSetNote("", "登録しています…");
-  let n = 0, fail = 0;
+  let n = 0, fail = held;
   for(const it of targets){
     const f = it.f, now = Date.now();
     const rec = {id: uid(), genre: GENRES.includes(f.genre) ? f.genre : GENRES[0], title: f.title, venue: f.venue, pref: f.pref, date: f.date, open: f.open, start: f.start, seatType: f.seatType, seat: f.seat, price: f.price === "" ? "" : Number(f.price), setlist: "", artistRoles: {}, tags: splitTags(f.tags), createdAt: now, updatedAt: now};
