@@ -464,7 +464,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.24</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.25</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1379,11 +1379,15 @@ let lives = [], loaded = false; /* 起動時に保存データを読み込み終
 let query = "", exact = null;
 let sortAsc = false;
 try { sortAsc = localStorage.getItem("livelog_sort") === "asc"; } catch(e){}
-let fArea = [], fPref = [], fGenre = [], fYear = [], fFrom = "", fTo = "", statTab = "artist", statMetric = "n", statDir = "desc", statAvg = false;
+let fArea = [], fPref = [], fGenre = [], fYear = [], fFrom = "", fTo = "", fDays = [], statTab = "artist", statMetric = "n", statDir = "desc", statAvg = false;
 const yearOf = l => (l.date || "").slice(0, 4);
 /* 年の欄で「期間指定」(RANGE)を選ぶと、開始日〜終了日で絞り込む(どちらか片方だけでもよい) */
 const RANGE = "range";
-const inYear = l => !fYear.length || (fYear.includes(RANGE) ? (!fFrom && !fTo) || (!!l.date && (!fFrom || l.date >= fFrom) && (!fTo || l.date <= fTo)) : fYear.includes(yearOf(l)));
+/* 年の欄で「日付指定」(DAYS)を選ぶと、年は問わず、選んだ月日("MM-DD"、複数可)のイベントだけに絞り込む(大晦日・誕生日など。何も選んでいなければ絞り込まない) */
+const DAYS = "days";
+const isSpYear = v => v === RANGE || v === DAYS;
+const inYear = l => !fYear.length || (fYear.includes(RANGE) ? (!fFrom && !fTo) || (!!l.date && (!fFrom || l.date >= fFrom) && (!fTo || l.date <= fTo)) : fYear.includes(DAYS) ? !fDays.length || (!!l.date && fDays.includes(l.date.slice(5, 10))) : fYear.includes(yearOf(l)));
+const mdLabel = s => { const m = /^(\d{2})-(\d{2})$/.exec(String(s || "")); return m ? `${+m[1]}月${+m[2]}日` : ""; };
 const genreOk = l => !fGenre.length || fGenre.includes(genreOf(l));
 const locOk = (l, skipArea, skipPref) => (skipArea || !fArea.length || areasOf(l).some(a => fArea.includes(a))) && (skipPref || !fPref.length || prefsOf(l).some(p => fPref.includes(p)));
 /* チケット代の絞り込み: 「範囲指定」(下限〜上限の金額)と「未入力」を選べ、両方選ぶと、範囲内のイベントと未入力のイベントをまとめて出す */
@@ -1436,7 +1440,7 @@ let linkDim = "", linkVal = "", qLinked = false; /* リンクで付いたプル�
 function clearPulls(){
   linkDim = ""; linkVal = "";
   fGenre = []; fArea = []; fPref = [];
-  fYear = []; fFrom = ""; fTo = "";
+  fYear = []; fFrom = ""; fTo = ""; fDays = [];
   fPrice = []; fPMin = ""; fPMax = "";
   fKw = []; kwDraft = {a: "", v: "", t: ""};
   render();
@@ -1460,7 +1464,11 @@ const fDate = d => String(d || "").replace(/^(\d+)-0?(\d+)-0?(\d+)$/, "$1/$2/$3"
 function activeChips(){
   const c = [];
   fGenre.forEach(v => c.push({id: "fg", v, t: v}));
-  fYear.forEach(v => c.push(v === RANGE ? {id: "fy", v, t: (fFrom || fTo) ? `${fDate(fFrom)}〜${fDate(fTo)}` : "期間指定"} : {id: "fy", v, t: v + "年"}));
+  fYear.forEach(v => {
+    if(v === RANGE) c.push({id: "fy", v, t: (fFrom || fTo) ? `${fDate(fFrom)}〜${fDate(fTo)}` : "期間指定"});
+    else if(v === DAYS){ if(fDays.length) fDays.forEach(d => c.push({id: "fy", v: DAYS + ":" + d, t: mdLabel(d)})); else c.push({id: "fy", v, t: "日付指定"}); } /* 日付は1つずつチップにして、×で個別に外せる */
+    else c.push({id: "fy", v, t: v + "年"});
+  });
   fArea.forEach(v => c.push({id: "far", v, t: v}));
   fPref.forEach(v => c.push({id: "fpr", v, t: v}));
   fPrice.forEach(v => c.push(v === RANGE ? {id: "fpc", v, t: "チケット代 " + ((fPMin || fPMax) ? `${fPMin ? yen(fPMin) : ""}〜${fPMax ? yen(fPMax) : ""}` : "範囲指定")} : {id: "fpc", v, t: "チケット代 未入力"}));
@@ -1511,13 +1519,18 @@ function bindKw(){
   });
   if(kwFocus){ const f = kwFocus; kwFocus = ""; const i = $("#kwi_" + f); if(i && fOpen){ i.focus(); kwShowSugg(f, i.value); } }
 }
+/* 日付指定(年を問わず、月日だけで絞り込む)の入力欄: 選んだ月日をチップで見せ、「日付を追加」で月・日のホイールを開く */
+function daysUI(){
+  if(!fYear.includes(DAYS)) return "";
+  return `<div class="fsec dsec" id="drange">${fDays.length ? `<div class="kwlist">${fDays.map(d => `<span class="chip"><span>${esc(mdLabel(d))}</span><button type="button" data-dday="${esc(d)}" aria-label="${esc(mdLabel(d))}を解除">×</button></span>`).join("")}</div>` : ""}<button type="button" class="btn sec dadd" id="dAdd">日付を追加</button><p class="bhint">年は問わず、選んだ月日のイベントだけを出します(複数可)</p></div>`;
+}
 function filterBar(withBtn){
   const chips = activeChips();
-  const ys = [...new Set(lives.map(yearOf).filter(Boolean).concat(fYear.filter(x => x !== RANGE)))].sort().reverse();
-  const yo = [{v: RANGE, t: "期間指定"}].concat(ys.map(y => ({v: y, t: y + "年", s: y})));
+  const ys = [...new Set(lives.map(yearOf).filter(Boolean).concat(fYear.filter(x => !isSpYear(x))))].sort().reverse();
+  const yo = [{v: RANGE, t: "期間指定"}, {v: DAYS, t: "日付指定"}].concat(ys.map(y => ({v: y, t: y + "年", s: y})));
   const cnt = !loaded ? 0 : tab === "list" ? listRows().length : filtered().length;
   const chipRow = (withBtn || chips.length) ? `<div class="chips">${withBtn ? fBtn() : ""}${chips.map(c => `<span class="chip"><span>${esc(c.t)}</span><button type="button" data-chip="${c.id}" data-v="${esc(c.v)}" aria-label="${esc(c.t)}を解除">×</button></span>`).join("")}</div>` : "";
-  return chipRow + `<div class="fsheet" id="fsheet" role="dialog" aria-label="絞り込み"${fOpen ? "" : " hidden"}><div class="fsheet-scrim" id="fsScrim"></div><div class="fsheet-box"><div class="fsheet-hd"><b>絞り込み<span class="fsn">(<span id="fsCnt">${cnt}</span>件)</span></b><button type="button" id="fsClose" aria-label="閉じる">×</button></div><div class="fsheet-body"><div class="fsec fq">${msel("fg", "ジャンル", "ジャンルで絞り込み", GENRES.map(g => ({v: g, t: g})), fGenre)}</div><div class="fsec fq">${msel("fy", "年", "年で絞り込み", yo, fYear)}</div>${fYear.includes(RANGE) ? `<div class="filters" id="frange"><div class="fcol"><label for="fFrom">開始日</label><input type="text" data-dw readonly inputmode="none" id="fFrom" aria-label="開始日" value="${esc(fFrom)}"></div><div class="fcol"><label for="fTo">終了日</label><input type="text" data-dw readonly inputmode="none" id="fTo" aria-label="終了日" value="${esc(fTo)}"></div></div>` : ""}<div class="fsec fq">${locCols()}</div><div class="fsec fq">${msel("fpc", "チケット代", "チケット代で絞り込み", PRICE_OPTS, fPrice)}</div>${fPrice.includes(RANGE) ? `<div class="filters" id="prange"><div class="fcol"><label for="pMin">下限(円)</label><input type="text" inputmode="numeric" autocomplete="off" id="pMin" aria-label="チケット代の下限" placeholder="0" value="${esc(fPMin)}"></div><div class="fcol"><label for="pMax">上限(円)</label><input type="text" inputmode="numeric" autocomplete="off" id="pMax" aria-label="チケット代の上限" placeholder="上限なし" value="${esc(fPMax)}"></div></div>` : ""}${kwSection()}</div><div class="fsheet-ft"><button type="button" class="btn sec" id="fsClear"${chips.length ? "" : " disabled"}>クリア</button><button type="button" class="btn" id="fsDone">完了</button></div></div></div>`;
+  return chipRow + `<div class="fsheet" id="fsheet" role="dialog" aria-label="絞り込み"${fOpen ? "" : " hidden"}><div class="fsheet-scrim" id="fsScrim"></div><div class="fsheet-box"><div class="fsheet-hd"><b>絞り込み<span class="fsn">(<span id="fsCnt">${cnt}</span>件)</span></b><button type="button" id="fsClose" aria-label="閉じる">×</button></div><div class="fsheet-body"><div class="fsec fq">${msel("fg", "ジャンル", "ジャンルで絞り込み", GENRES.map(g => ({v: g, t: g})), fGenre)}</div><div class="fsec fq">${msel("fy", "年", "年で絞り込み", yo, fYear)}</div>${fYear.includes(RANGE) ? `<div class="filters" id="frange"><div class="fcol"><label for="fFrom">開始日</label><input type="text" data-dw readonly inputmode="none" id="fFrom" aria-label="開始日" value="${esc(fFrom)}"></div><div class="fcol"><label for="fTo">終了日</label><input type="text" data-dw readonly inputmode="none" id="fTo" aria-label="終了日" value="${esc(fTo)}"></div></div>` : ""}${daysUI()}<div class="fsec fq">${locCols()}</div><div class="fsec fq">${msel("fpc", "チケット代", "チケット代で絞り込み", PRICE_OPTS, fPrice)}</div>${fPrice.includes(RANGE) ? `<div class="filters" id="prange"><div class="fcol"><label for="pMin">下限(円)</label><input type="text" inputmode="numeric" autocomplete="off" id="pMin" aria-label="チケット代の下限" placeholder="0" value="${esc(fPMin)}"></div><div class="fcol"><label for="pMax">上限(円)</label><input type="text" inputmode="numeric" autocomplete="off" id="pMax" aria-label="チケット代の上限" placeholder="上限なし" value="${esc(fPMax)}"></div></div>` : ""}${kwSection()}</div><div class="fsheet-ft"><button type="button" class="btn sec" id="fsClear"${chips.length ? "" : " disabled"}>クリア</button><button type="button" class="btn" id="fsDone">完了</button></div></div></div>`;
 }
 function msApply(id, vals, changed){
   { const dm = {fg: "genre", fy: "year", far: "area", fpr: "pref"}[id]; if(dm === linkDim) linkDim = ""; }
@@ -1526,8 +1539,8 @@ function msApply(id, vals, changed){
   else if(id === "fpr") fPref = vals;
   else if(id === "fpc") fPrice = vals;
   else if(id === "fy"){
-    if(changed && changed.value === RANGE && changed.checked) fYear = [RANGE]; /* 期間指定は、年とは同時に選べない */
-    else fYear = fYear.includes(RANGE) || vals.includes(RANGE) ? vals.filter(v => v !== RANGE) : vals;
+    if(changed && isSpYear(changed.value) && changed.checked) fYear = [changed.value]; /* 期間指定・日付指定は、年や互いと同時に選べない */
+    else fYear = fYear.some(isSpYear) || vals.some(isSpYear) ? vals.filter(v => !isSpYear(v)) : vals;
   }
 }
 /* 開いたパネルが画面の左右にはみ出さないよう、ボタンの位置から横にずらして画面内に収める */
@@ -1550,8 +1563,8 @@ function bindMs(){
     if(id === "fst"){ statTab = vals[0]; msOpen = ""; render(); return; } /* 集計項目は1つだけ選ぶ。選んだらパネルを閉じる */
     msApply(id, vals, i); redo(id);
   });
-  document.querySelectorAll("#app [data-mall]").forEach(b => b.onclick = () => { const id = b.dataset.mall; const vals = [...$("#" + id + "P").querySelectorAll("input[data-ms]")].map(x => x.value).filter(v => v !== RANGE); msApply(id, vals, null); redo(id); }); /* すべて選択(年は期間指定を除く) */
-  document.querySelectorAll("#app [data-mclr]").forEach(b => b.onclick = () => { const id = b.dataset.mclr; msApply(id, [], null); if(id === "fy") fYear = []; redo(id); });
+  document.querySelectorAll("#app [data-mall]").forEach(b => b.onclick = () => { const id = b.dataset.mall; const vals = [...$("#" + id + "P").querySelectorAll("input[data-ms]")].map(x => x.value).filter(v => !isSpYear(v)); msApply(id, vals, null); redo(id); }); /* すべて選択(年は期間指定を除く) */
+  document.querySelectorAll("#app [data-mclr]").forEach(b => b.onclick = () => { const id = b.dataset.mclr; msApply(id, [], null); if(id === "fy"){ fYear = []; fFrom = ""; fTo = ""; fDays = []; } redo(id); });
   document.querySelectorAll("#app [data-mclose]").forEach(b => b.onclick = () => closeAll());
   if(msOpen && msOpenTab === tab) fitPanel($("#" + msOpen + "P"));
 }
@@ -1571,7 +1584,9 @@ function bindFilter(){
     document.querySelectorAll("#app [data-chip]").forEach(b => b.onclick = () => {
       const id = b.dataset.chip, v = b.dataset.v;
       if(id === "fkw"){ fKw = fKw.filter(k => kwKey(k) !== v); render(); return; }
+      if(id === "fy" && v.startsWith(DAYS + ":")){ const d = v.slice(DAYS.length + 1); fDays = fDays.filter(x => x !== d); if(!fDays.length) fYear = fYear.filter(x => x !== DAYS); render(); return; } /* 日付のチップを1つ外す(最後の1つなら日付指定も外す) */
       if(id === "fy" && v === RANGE){ fFrom = ""; fTo = ""; }
+      if(id === "fy" && v === DAYS) fDays = [];
       if(id === "fpc" && v === RANGE){ fPMin = ""; fPMax = ""; }
       const cur = {fg: fGenre, fy: fYear, far: fArea, fpr: fPref, fpc: fPrice}[id];
       msApply(id, cur.filter(x => x !== v), null); render();
@@ -1579,6 +1594,12 @@ function bindFilter(){
   }
   bindMs();
   bindKw();
+  { /* 日付指定: 「日付を追加」で月・日のホイールを開き、選んだ月日を足す。シートは開いたまま・スクロール位置そのままにする */
+    const keep = () => { const fb = $("#fsheet .fsheet-body"); if(fb) fsScroll = fb.scrollTop; KW_FIELDS.forEach(F => { const x = $("#kwi_" + F.f); if(x) kwDraft[F.f] = x.value; }); msOpen = ""; };
+    const add = $("#dAdd");
+    if(add) add.onclick = () => { const last = fDays[fDays.length - 1] || ""; window.pickMonthDay && window.pickMonthDay(last, md => { if(!fDays.includes(md)) fDays = fDays.concat(md).sort(); keep(); render(); }); };
+    document.querySelectorAll("#fsheet [data-dday]").forEach(b => b.onclick = () => { fDays = fDays.filter(x => x !== b.dataset.dday); if(!fDays.length) fYear = fYear.filter(x => x !== DAYS); keep(); render(); });
+  }
   { /* 日付を選んでいる途中で画面を作り直すと、カレンダーが閉じてしまう。一覧は一覧だけを更新し、集計は入力が終わってから(フォーカスが外れたとき)反映する */
     const a = $("#fFrom"), b = $("#fTo"); let pend = false;
     const apply = () => { if(tab === "list") fillList(); else pend = true; };
@@ -2409,7 +2430,7 @@ function fillList(){
   const emptyHtml = `<div class="empty">${!loaded ? "読み込み中…" : lives.length ? "該当するイベントがありません" : "まだイベントがありません。<br>下の＋から、最初のイベントを追加しましょう"}</div>`;
   /* 一覧のカードは、最初に一部だけ作り、スクロールに合わせて続きを足す(1000件でも軽く開ける) */
   const lvNow = listView(), base = lvNow === "grid" ? 90 : lvNow === "thumb" ? 36 : 60;
-  const sig = [tab, query, fGenre, fArea, fPref, fYear, fFrom, fTo, fPrice, fPMin, fPMax, exact ? exact.kind + exact.value : "", JSON.stringify(fKw), lvNow, sortAsc, rows.length].join("|");
+  const sig = [tab, query, fGenre, fArea, fPref, fYear, fFrom, fTo, fDays, fPrice, fPMin, fPMax, exact ? exact.kind + exact.value : "", JSON.stringify(fKw), lvNow, sortAsc, rows.length].join("|");
   if(sig !== listSig){ listSig = sig; listShown = base; }
   if(!("IntersectionObserver" in window)) listShown = items.length;
   const MORE = '<div id="listMore" style="height:1px;grid-column:1/-1"></div>';
@@ -2483,7 +2504,7 @@ function renderStats(){
   statKeys = {artist: sorted(artists).map(e => e[0]).filter(x => x !== NONE_KEY), venue: sorted(venues).map(e => e[0]).filter(x => x !== NONE_KEY)};
   const list = (arr, kind) => arr.length ? arr.map(([k, v]) => `<button type="button" class="line" data-k="${kind}" data-q="${esc(k)}"><span>${k === NONE_KEY ? "未入力" : esc(k)}</span>${spLine(v)}</button>`) : [`<div class="hint">データなし</div>`];
   const statRows = statTab === "tag" ? list(sorted(tags), "tag") : statTab === "venue" ? list(sorted(venues), "venue") : statTab === "genre" ? (GENRES.some(g => genres[g]) ? GENRES.filter(g => genres[g]).sort((a, b) => (mv(genres[b]) - mv(genres[a])) * dr || GENRES.indexOf(a) - GENRES.indexOf(b)).map(g => `<button type="button" class="line" data-k="genre" data-q="${g}"><span>${g}</span>${spLine(genres[g])}</button>`) : [`<div class="hint">データなし</div>`]) : statTab === "year" ? (Object.keys(years).length ? Object.keys(years).sort((a, b) => (mv(years[b]) - mv(years[a])) * dr || b.localeCompare(a)).map(y => `<button type="button" class="line" data-k="year" data-q="${y}"><span>${y}年</span>${spLine(years[y])}</button>`) : [`<div class="hint">データなし</div>`]) : statTab === "area" ? list(Object.entries(areas).sort((a, b) => (mv(b[1]) - mv(a[1])) * dr || b[1].n - a[1].n || AREAS.indexOf(a[0]) - AREAS.indexOf(b[0])), "area") : statTab === "pref" ? list(Object.entries(prefs).sort((a, b) => (mv(b[1]) - mv(a[1])) * dr || b[1].n - a[1].n || PREFS.indexOf(a[0]) - PREFS.indexOf(b[0])), "pref") : list(sorted(artists), "artist"); /* 集計の行は、最初に一部だけ作り、スクロールに合わせて続きを足す(一覧と同じ。何千行あっても軽く開ける) */
-  const sBase = 80, sSig = [statTab, statMetric, statDir, statAvg, fGenre, fArea, fPref, fYear, fFrom, fTo, fPrice, fPMin, fPMax, JSON.stringify(fKw), total, statRows.length].join("|");
+  const sBase = 80, sSig = [statTab, statMetric, statDir, statAvg, fGenre, fArea, fPref, fYear, fFrom, fTo, fDays, fPrice, fPMin, fPMax, JSON.stringify(fKw), total, statRows.length].join("|");
   if(!GH.busy){ if(statObs){ statObs.disconnect(); statObs = null; } if(sSig !== statSig){ statSig = sSig; statShown = sBase; } }
   if(!("IntersectionObserver" in window)) statShown = statRows.length;
   $("#app").innerHTML = `
@@ -2552,7 +2573,7 @@ function renderSDetail(){
     return `<div class="sdsec">${title}</div>` + (rows.length ? rows.map(([name, c]) => kind ? `<button type="button" class="line" data-${kind === "area" || kind === "pref" ? "sf" : "sk"}="${kind}" data-sq="${esc(name)}"><span>${esc(name)}</span><b>${c}回 ›</b></button>` : `<div class="line"><span>${esc(name)}</span><b>${c}回</b></div>`).join("") : `<div class="hint">${min > 1 ? "2回以上はありません" : "データなし"}</div>`);
   };
   const nbs = (() => { const ks = statKeys[k] || [], i = ks.indexOf(val); return {prev: i > 0 ? ks[i - 1] : "", next: i >= 0 && i < ks.length - 1 ? ks[i + 1] : ""}; })(); /* 集計画面と同じ並び順での、前後の出演者・会場 */
-  const resetDd = () => { fGenre = []; fYear = []; fArea = []; fPref = []; fFrom = ""; fTo = ""; fPrice = []; fPMin = ""; fPMax = ""; fKw = []; kwDraft = {a: "", v: "", t: ""}; }; /* 一覧へ移るときは、集計のプルダウンの絞り込みを外す */
+  const resetDd = () => { fGenre = []; fYear = []; fArea = []; fPref = []; fFrom = ""; fTo = ""; fDays = []; fPrice = []; fPMin = ""; fPMax = ""; fKw = []; kwDraft = {a: "", v: "", t: ""}; }; /* 一覧へ移るときは、集計のプルダウンの絞り込みを外す */
   $("#app").innerHTML = `
     <div class="sdh"><small>${isA ? "出演者" : "会場"}</small><div class="nm">${esc(val)}</div></div>
     <div class="stats">
@@ -2642,7 +2663,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.24</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.25</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -3685,6 +3706,10 @@ async function bRegister(){
 input[data-dw]{-webkit-appearance:none;appearance:none;height:46px;display:block;max-width:100%;cursor:pointer;caret-color:transparent;text-overflow:ellipsis}
 .filters input[data-dw]{min-width:0;margin-top:0;width:100%;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);text-align:left}
 /* 期間指定の開始日・終了日は、ジャンル・年のプルダウンより小さくする */
+.dsec{margin-top:10px}
+.dsec .kwlist{margin:0 0 8px}
+.dsec .dadd{margin-top:0}
+.dsec .bhint{margin:6px 0 0}
 #frange{gap:6px;margin-top:-2px}
 #frange label{font-size:12px;margin:0 0 2px}
 #frange input[data-dw]{height:34px;padding:0 10px;font-size:12px;border-radius:8px}
@@ -3812,6 +3837,30 @@ input[data-dw]{-webkit-appearance:none;appearance:none;height:46px;display:block
     sheet.querySelector(".dw-reset").onclick = () => commit("");
     sheet.querySelector(".dw-ok").onclick = () => commit(`${pad(cur.h)}:${pad(cur.n)}`);
   }
+  /* 月日だけを選ぶホイール(年は問わない絞り込み用)。決定すると "MM-DD" をコールバックへ渡す。2月は29日まで選べる */
+  function openMD(init, cb){
+    if(sheet) return; tgt = null;
+    const p = /^(\d{2})-(\d{2})$/.exec(init || ""), now = new Date();
+    cur = {m: p ? +p[1] : now.getMonth() + 1, d: p ? +p[2] : now.getDate()};
+    sheet = document.createElement("div"); sheet.className = "dw";
+    sheet.innerHTML = `<div class="dw-scrim"></div><div class="dw-panel" role="dialog" aria-modal="true" aria-label="月日を選択"><div class="dw-head"></div><div class="dw-wheels two"><div class="dw-hl"></div><div class="dw-col" data-c="m"></div><div class="dw-col" data-c="d"></div></div><div class="dw-foot"><button type="button" class="dw-reset">キャンセル</button><button type="button" class="dw-ok" aria-label="決定">${OKSVG}</button></div></div>`;
+    document.body.appendChild(sheet);
+    prevOverflow = document.body.style.overflow; document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", onKey, true);
+    const c = {m: sheet.querySelector('[data-c="m"]'), d: sheet.querySelector('[data-c="d"]')}, hd = sheet.querySelector(".dw-head");
+    const L = () => dim(2000, cur.m), dd = () => Math.min(cur.d, L());
+    const label = () => { hd.textContent = `${cur.m}月${dd()}日`; };
+    const buildD = () => { const n = L(); if(c.d._L === n) return; cur.d = Math.min(cur.d, n); setLoop(c.d, n, 1, v => v + "日"); loopTo(c.d, cur.d - 1); mark(c.d, midIdx(c.d, cur.d - 1)); paint(c.d); };
+    setLoop(c.m, 12, 1, v => v + "月"); loopTo(c.m, cur.m - 1); mark(c.m, midIdx(c.m, cur.m - 1)); paint(c.m);
+    buildD(); label();
+    c.m.addEventListener("scroll", () => { paint(c.m); const i = loopIdx(c.m); cur.m = i % 12 + 1; mark(c.m, i); label(); clearTimeout(c.m._t); c.m._t = setTimeout(() => { if(!sheet || !sheet.contains(c.m)) return; fix(c.m); buildD(); label(); }, 140); }, {passive: true});
+    c.d.addEventListener("scroll", () => { paint(c.d); const i = loopIdx(c.d); cur.d = i % c.d._L + 1; mark(c.d, i); label(); clearTimeout(c.d._t); c.d._t = setTimeout(() => { if(sheet && sheet.contains(c.d)) fix(c.d); }, 140); }, {passive: true});
+    ["m", "d"].forEach(k => c[k].addEventListener("click", e => { const it = e.target.closest(".dw-i"); if(it) c[k].scrollTo({top: Number(it.dataset.i) * H, behavior: "smooth"}); }));
+    sheet.querySelector(".dw-scrim").onclick = close;
+    sheet.querySelector(".dw-reset").onclick = close;
+    sheet.querySelector(".dw-ok").onclick = () => { const md = `${pad(cur.m)}-${pad(dd())}`; close(); cb(md); };
+  }
+  window.pickMonthDay = openMD;
   function open(el){
     if(sheet) return; tgt = el;
     const now = new Date(), p = parse(el.value) || {y: now.getFullYear(), m: now.getMonth() + 1, d: now.getDate()};
