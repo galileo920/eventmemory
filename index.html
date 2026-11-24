@@ -467,7 +467,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.26</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.27</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -2397,18 +2397,6 @@ function fillList(){
   const items = bulk || listView() !== "tour" ? rows.map(l => ({l})) : groupItems(rows); /* 「ツアーごと」のときだけまとめる(選択モードは全件) */
   const box = $("#listBody");
   if(!box) return;
-  const cn = $("#listCnt");
-  if(cn){ /* 全体の合計件数を押すと、すべての年をまとめて開閉する(1つでも開いていればすべて閉じ、すべて閉じていればすべて開く)。選択モード中は全件表示なので押せない */
-    const can = loaded && !bulk && listYears.length > 0, allCol = can && listYears.every(y => yCollapsed.has(y));
-    cn.innerHTML = loaded ? esc(rows.length + "件") + (can ? `<span class="ya" aria-hidden="true">›</span>` : "") : "読み込み中…";
-    cn.classList.toggle("tap", can); cn.classList.toggle("col", allCol);
-    if(can){ cn.setAttribute("role", "button"); cn.tabIndex = 0; cn.setAttribute("aria-expanded", String(!allCol)); cn.setAttribute("aria-label", rows.length + "件。押すとすべての年を" + (allCol ? "開く" : "閉じる")); }
-    else { cn.removeAttribute("role"); cn.removeAttribute("tabindex"); cn.removeAttribute("aria-expanded"); cn.removeAttribute("aria-label"); }
-    if(!cn.dataset.b){ cn.dataset.b = "1";
-      cn.onclick = () => { if(!cn.classList.contains("tap")) return; if(listYears.every(y => yCollapsed.has(y))) yCollapsed.clear(); else listYears.forEach(y => yCollapsed.add(y)); if(SC) SC.scrollTo(0, 0); fillList(); };
-      cn.onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); cn.click(); } };
-    }
-  }
   { const fc = $("#fsCnt"); if(fc) fc.textContent = loaded ? rows.length : 0; }
   bulkVisible = rows.map(l => l.id);
   if(bulk) [...bulkSel].forEach(i => { if(!bulkVisible.includes(i)) bulkSel.delete(i); }); /* 絞り込みで見えなくなったものは選択から外す */
@@ -2442,6 +2430,18 @@ function fillList(){
       if(!hide) out.push(it);
     });
     items.length = 0; out.forEach(x => items.push(x));
+  }
+  const cn = $("#listCnt");
+  if(cn){ /* 全体の合計件数を押すと、すべての年をまとめて開閉する(1つでも開いていればすべて閉じ、すべて閉じていればすべて開く)。選択モード中は全件表示なので押せない */
+    const can = loaded && !bulk && listYears.length > 0, allCol = can && listYears.every(y => yCollapsed.has(y));
+    cn.innerHTML = loaded ? esc(rows.length + "件") + (can ? `<span class="ya" aria-hidden="true">›</span>` : "") : "読み込み中…";
+    cn.classList.toggle("tap", can); cn.classList.toggle("col", allCol);
+    if(can){ cn.setAttribute("role", "button"); cn.tabIndex = 0; cn.setAttribute("aria-expanded", String(!allCol)); cn.setAttribute("aria-label", rows.length + "件。押すとすべての年を" + (allCol ? "開く" : "閉じる")); }
+    else { cn.removeAttribute("role"); cn.removeAttribute("tabindex"); cn.removeAttribute("aria-expanded"); cn.removeAttribute("aria-label"); }
+    if(!cn.dataset.b){ cn.dataset.b = "1";
+      cn.onclick = () => { if(!cn.classList.contains("tap")) return; if(listYears.every(y => yCollapsed.has(y))) yCollapsed.clear(); else listYears.forEach(y => yCollapsed.add(y)); if(SC) SC.scrollTo(0, 0); fillList(); };
+      cn.onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); cn.click(); } };
+    }
   }
   const emptyHtml = `<div class="empty">${!loaded ? "読み込み中…" : lives.length ? "該当するイベントがありません" : "まだイベントがありません。<br>下の＋から、最初のイベントを追加しましょう"}</div>`;
   /* 一覧のカードは、最初に一部だけ作り、スクロールに合わせて続きを足す(1000件でも軽く開ける) */
@@ -2679,7 +2679,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.26</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.27</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
