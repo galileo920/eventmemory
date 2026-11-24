@@ -467,7 +467,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.27</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.30</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -2167,12 +2167,16 @@ function renderList(){
 const NONE_KEY = "__none__";
 /* 波ダッシュは、手入力(〜)・自動入力(～や~)で文字が違うことがある。検索では、どれも同じ「〜」として扱う(保存データは変えない) */
 const wfold = s => String(s == null ? "" : s).replace(/[~～〜∼˜〰]/g, "〜");
+/* 一覧の並び順(日付→開演・開場の時刻。日付なしは最後)。sortAsc で新しい順/古い順を切り替える */
+const orderBy = asc => (a, b) => { const x = a.date || "", y = b.date || ""; if(!x || !y) return (x ? 0 : 1) - (y ? 0 : 1); if(x !== y) return asc ? x.localeCompare(y) : y.localeCompare(x); const s = a.start || a.open || "", t = b.start || b.open || ""; if(s === t) return 0; if(!s || !t) return s ? -1 : 1; return asc ? s.localeCompare(t) : t.localeCompare(s); };
+const byListOrder = (a, b) => orderBy(sortAsc)(a, b);
+const byOldToNew = orderBy(true); /* 詳細集計から開いたイベント詳細の前後は、一覧の並び順の設定に関わらず、古い→新しいの順に固定 */
 function listRows(){
   const qs = wfold(query).toLowerCase().split(/[\s\u3000]+/).filter(Boolean); /* スペース区切りの全ワードを含むものだけ(AND検索) */
   return filtered()
     .filter(l => !exact || (exact.value === NONE_KEY ? (exact.kind === "venue" ? !venueNamesOf(l).length : exact.kind === "tag" ? !tagsOf(l).length : !artistsOf(l).length) : exact.kind === "venue" ? venueNamesOf(l).some(v => canon("venue", v) === exact.value) : exact.kind === "tag" ? tagsOf(l).includes(exact.value) : canonArtists(l).includes(exact.value)))
     .filter(l => { if(!qs.length) return true; const hay = wfold(["title","artist","venue","tags"].map(f => String(f === "tags" ? tagsOf(l).join("\n") : f === "artist" ? artistsOf(l).join("\n") : f === "venue" ? venueNamesOf(l).join("\n") : l[f] ?? "")).join("\n").toLowerCase() + (aliasOn() ? "\n" + aliasHay(l) : "")); /* 紐付けを適用するときだけ、旧名・現在の名前でもヒットする */ return qs.every(w => hay.includes(w)); })
-    .sort((a, b) => { const x = a.date || "", y = b.date || ""; if(!x || !y) return (x ? 0 : 1) - (y ? 0 : 1); if(x !== y) return sortAsc ? x.localeCompare(y) : y.localeCompare(x); const s = a.start || a.open || "", t = b.start || b.open || ""; if(s === t) return 0; if(!s || !t) return s ? -1 : 1; return sortAsc ? s.localeCompare(t) : t.localeCompare(s); });
+    .sort(byListOrder);
 }
 /* 一覧の見た目(サムネイル/従来)。この端末の表示設定として覚えておく */
 /* アプリを開いたときは、いつも「サムネイルなし」から始める(切り替えは、開いている間だけ有効) */
@@ -2679,7 +2683,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.27</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.30</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -2828,7 +2832,7 @@ function openDetail(id, from){
   saveScroll(); sub = true; subKind = "detail";
   SC.scrollTo(0, 0);
   $("#fab").style.display = "none";
-  const nb = (() => { const r = listRows(), i = r.findIndex(x => x.id === l.id); return {prev: i > 0 ? r[i - 1].id : "", next: i >= 0 && i < r.length - 1 ? r[i + 1].id : ""}; })(); /* いまの一覧(絞り込み・並び順)での前後のイベント */
+  const nb = (() => { const r = view.from && view.from.name === "sdetail" ? lives.filter(x => view.from.kind === "artist" ? canonArtists(x).includes(view.from.value) : venueNamesOf(x).some(v => canon("venue", v) === view.from.value)).sort(byOldToNew) : listRows(), i = r.findIndex(x => x.id === l.id); return {prev: i > 0 ? r[i - 1].id : "", next: i >= 0 && i < r.length - 1 ? r[i + 1].id : ""}; })(); /* いまの一覧(絞り込み・並び順)での前後のイベント。詳細集計の「初めて・直近の参加イベント」から開いたときは、その出演者・会場のイベントだけを古い→新しいの順に固定した並び(◀が古い、▶が新しい)での前後 */
   const row = (k, v) => v ? `<div class="field"><small>${k}</small><div>${esc(v)}</div></div>` : "";
   $("#app").innerHTML = `
     <div class="ticket" data-g="${esc(genreOf(l))}">
