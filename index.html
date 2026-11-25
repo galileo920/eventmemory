@@ -467,7 +467,7 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.31</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.32</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -1695,6 +1695,23 @@ function onSwipe(dx, edge){
   const app = () => document.getElementById("app");
   /* 動かす要素は、#appの直下の要素。#app自体を動かすと、下に固定した◀▶・保存ボタンの位置がずれるため、固定ボタンも一緒に1つずつ動かす */
   let els = [], pin = false; /* pin: 詳細↔詳細(前後)の移動中は、下の固定ボタン(◀▶・編集)を動かさない */
+  /* 詳細から戻るスワイプは、詳細が一覧・集計の上に重なって動く(下の画面は少し左にずれたまま動かず、だんだん元の位置・明るさに戻る)。
+     front: いま指に合わせて動かしている詳細(本物の画面の見た目を複製した、不透明で左に影のある面)。動かしている間、本物の画面は隠しておく */
+  let front = null;
+  const PAR = 0.3, DIM = 0.14; /* 下の画面のずれ(画面幅の割合)と、暗さの最大 */
+  const rmFront = () => { if(front){ front.remove(); front = null; } els.forEach(e => { e.style.visibility = ""; }); };
+  const mkFront = () => {
+    const realApp = app(); if(!realApp || front) return;
+    const r = SC.getBoundingClientRect(), f = document.createElement("div"), inner = document.createElement("div"), m = document.createElement("main");
+    f.style.cssText = `position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;overflow:hidden;z-index:9;background:var(--bg);pointer-events:none;will-change:transform;box-shadow:-8px 0 22px rgba(0,0,0,.22)`;
+    f.setAttribute("data-gh", "1"); /* 文字の置き換えの監視は、この複製の中は見ない(本物の画面で処理済み) */
+    m.className = realApp.className;
+    m.innerHTML = [...realApp.children].filter(c => !c.classList.contains("bbar")).map(c => c.outerHTML).join(""); /* 下の固定ボタンは複製しない(薄くして消す) */
+    inner.style.transform = `translateY(${-SC.scrollTop}px)`;
+    inner.appendChild(m); f.appendChild(inner); f.setAttribute("aria-hidden", "true");
+    document.body.appendChild(f); front = f;
+    els.forEach(e => { if(!e.classList.contains("bbar")) e.style.visibility = "hidden"; });
+  };
   const setT = (tr, x) => els.forEach(e => { e.style.transition = tr; e.style.transform = pin && e.classList.contains("bbar") ? "" : x; });
   const pinFor = key => sub && (subKind === "detail" || subKind === "sdetail") && !!key && key !== "B";
   const isForm = () => sub && (subKind === "form" || subKind === "batch" || subKind === "breg"); /* 登録系: 離したときに確認を出して戻る */
@@ -1709,7 +1726,7 @@ function onSwipe(dx, edge){
     }
     return kids;
   };
-  const clearAnim = () => { bbHide = false; { const a0 = app(); if(a0) a0.querySelectorAll(":scope > .bbar").forEach(b => { b.style.transition = ""; b.style.opacity = ""; }); } unwrap(); els.forEach(e => { e.style.transition = ""; e.style.transform = ""; }); els = []; const a = app(); if(a) a.style.pointerEvents = ""; };
+  const clearAnim = () => { rmFront(); bbHide = false; { const a0 = app(); if(a0) a0.querySelectorAll(":scope > .bbar").forEach(b => { b.style.transition = ""; b.style.opacity = ""; }); } unwrap(); els.forEach(e => { e.style.transition = ""; e.style.transform = ""; }); els = []; const a = app(); if(a) a.style.pointerEvents = ""; };
   /* スワイプの向き: "L"=左へ(次へ) / "R"=右へ(前へ) / "B"=戻る(詳細は左端からの右スワイプ、登録画面は右スワイプ) */
   const swipeKey = dx => {
     if(!sub) return bulk ? null : (dx < 0 ? "L" : "R");
@@ -1812,6 +1829,7 @@ function onSwipe(dx, edge){
     inner.style.transform = `translateY(${-y}px)`;
     inner.appendChild(m); g.appendChild(inner); bars.forEach(b => { if(pinned) b.remove(); else g.appendChild(b); });
     g.setAttribute("aria-hidden", "true");
+    if(key === "B"){ const d = document.createElement("div"); d.className = "gdim"; d.style.cssText = "position:absolute;inset:0;background:#000;opacity:0;pointer-events:none"; g.appendChild(d); } /* 戻る側の下の画面は、重なっている間だけ少し暗くする */
     document.body.appendChild(g);
     ghostPics(g);
     return g;
@@ -1848,11 +1866,18 @@ function onSwipe(dx, edge){
   const easeFor = (v, dist, dur) => { const s = Math.max(0, Math.min(3, v * dur / Math.max(dist, 1))); return `cubic-bezier(.3,${(0.3 * s).toFixed(3)},.2,1)`; };
   const apply = () => {
     raf = 0;
-    setT("none", `translate3d(${curX}px,0,0)`);
-    Object.keys(ghosts).forEach(k => { const g = ghosts[k]; g.style.transition = "none"; g.style.transform = `translate3d(${offX(k) + (gActive && k === gKey ? curX : 0)}px,0,0)`; });
+    const ov = !!front && gActive && gKey === "B";
+    if(ov){ front.style.transition = "none"; front.style.transform = `translate3d(${curX}px,0,0)`; }
+    else setT("none", `translate3d(${curX}px,0,0)`);
+    Object.keys(ghosts).forEach(k => {
+      const g = ghosts[k]; g.style.transition = "none";
+      const dm = k === "B" ? g.querySelector(".gdim") : null;
+      if(k === "B" && ov){ const f = Math.min(1, Math.max(0, curX) / VW); g.style.transform = `translate3d(${-PAR * VW * (1 - f)}px,0,0)`; if(dm){ dm.style.transition = "none"; dm.style.opacity = (DIM * (1 - f)).toFixed(3); } }
+      else{ g.style.transform = `translate3d(${offX(k) + (gActive && k === gKey ? curX : 0)}px,0,0)`; if(dm){ dm.style.transition = "none"; dm.style.opacity = "0"; } }
+    });
     lineTo(Math.min(1, Math.abs(curX) / TL.vw), "none");
   };
-  const settle = () => { if(raf){ cancelAnimationFrame(raf); raf = 0; } apply(); if(els[0]) void els[0].offsetWidth; }; /* 指を離した位置で一度確定してから、アニメーションに入る */
+  const settle = () => { if(raf){ cancelAnimationFrame(raf); raf = 0; } apply(); if(front) void front.offsetWidth; else if(els[0]) void els[0].offsetWidth; }; /* 指を離した位置で一度確定してから、アニメーションに入る */
   document.addEventListener("touchstart", e => {
     on = false; lock = null; moving = false; ox = 0; curX = 0; vel = 0; gActive = false;
     if(busy || e.touches.length !== 1) return;
@@ -1883,6 +1908,7 @@ function onSwipe(dx, edge){
       gKey = ghosts[key] ? key : ""; gTab = tg.tab || tab;
     }else gKey = "";
     bbarFade(ok && key === "B" && sub && (subKind === "detail" || subKind === "sdetail"));
+    if(gKey === "B") mkFront(); else rmFront(); /* 戻るスワイプのときだけ、詳細を上に重ねて動かす */
     moving = true;
     if(!raf) raf = requestAnimationFrame(apply);
   }, {passive: false});
@@ -1891,9 +1917,17 @@ function onSwipe(dx, edge){
     settle();
     const dist = Math.abs(curX), dur = Math.round(Math.max(200, Math.min(300, dist / 0.9)));
     const ease = easeFor(vel * (curX > 0 ? -1 : 1), dist, dur); /* 元の位置へ向かう向きの速さ */
-    setT(`transform ${dur}ms ${ease}`, "translate3d(0,0,0)"); lineTo(0, `transform ${dur}ms ${ease}, opacity ${dur}ms ${ease}`);
-    Object.keys(ghosts).forEach(k => { ghosts[k].style.transition = `transform ${dur}ms ${ease}`; ghosts[k].style.transform = `translate3d(${offX(k)}px,0,0)`; }); /* 隣の画面は画面の外へ戻すだけ(次のスワイプのために残す) */
-    busy = true; setTimeout(() => { clearAnim(); busy = false; }, dur + 20);
+    const ov = !!front && gActive && gKey === "B";
+    if(ov){ front.style.transition = `transform ${dur}ms ${ease}`; front.style.transform = "translate3d(0,0,0)"; }
+    else setT(`transform ${dur}ms ${ease}`, "translate3d(0,0,0)");
+    lineTo(0, `transform ${dur}ms ${ease}, opacity ${dur}ms ${ease}`);
+    Object.keys(ghosts).forEach(k => {
+      const g = ghosts[k], dm = k === "B" ? g.querySelector(".gdim") : null;
+      g.style.transition = `transform ${dur}ms ${ease}`;
+      if(k === "B" && ov){ g.style.transform = `translate3d(${-PAR * VW}px,0,0)`; if(dm){ dm.style.transition = `opacity ${dur}ms ${ease}`; dm.style.opacity = String(DIM); } } /* 詳細が元の位置へ戻るのに合わせて、下の画面も元のずれ・暗さへ */
+      else g.style.transform = `translate3d(${offX(k)}px,0,0)`; /* 隣の画面は画面の外へ戻すだけ(次のスワイプのために残す) */
+    });
+    busy = true; setTimeout(() => { const gb = ghosts.B; if(gb){ gb.style.transition = "none"; gb.style.transform = `translate3d(${offX("B")}px,0,0)`; const dm = gb.querySelector(".gdim"); if(dm){ dm.style.transition = "none"; dm.style.opacity = "0"; } } clearAnim(); busy = false; }, dur + 20);
   };
   const unfreeze = () => { SC.style.overflowY = ""; };
   document.addEventListener("touchend", unfreeze, {passive: true, capture: true});
@@ -1918,7 +1952,9 @@ function onSwipe(dx, edge){
         /* 隣の画面が見えている場合: 現在の画面を送り出しつつ、隣の画面を所定の位置まで寄せてから、実際の画面に切り替える。残りの距離と指の速さから所要時間を決める */
         const dist = W - Math.abs(curX), dur = Math.round(Math.max(180, Math.min(340, dist / Math.max(Math.abs(vel), 0.9))));
         const ease = easeFor(vel * (dx < 0 ? -1 : 1), dist, dur); /* 送り出す向きの速さ */
-        setT(`transform ${dur}ms ${ease}`, `translate3d(${out}px,0,0)`);
+        const ovc = !!front && key === "B";
+        if(ovc){ front.style.transition = `transform ${dur}ms ${ease}`; front.style.transform = `translate3d(${out}px,0,0)`; const dm = g.querySelector(".gdim"); if(dm){ dm.style.transition = `opacity ${dur}ms ${ease}`; dm.style.opacity = "0"; } } /* 詳細が右へ抜けるのに合わせて、下の画面が元の位置・明るさに戻る */
+        else setT(`transform ${dur}ms ${ease}`, `translate3d(${out}px,0,0)`);
         g.style.transition = `transform ${dur}ms ${ease}`; g.style.transform = "translate3d(0,0,0)"; lineTo(1, `transform ${dur}ms ${ease}, opacity ${dur}ms ${ease}`);
         setTimeout(() => { killGhosts(); commit(); const b = app(); if(b) b.classList.remove("in-l", "in-r"); clearAnim(); busy = false; }, dur + 20);
         return;
@@ -2683,7 +2719,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.31</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.32</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
