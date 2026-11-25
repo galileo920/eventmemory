@@ -463,11 +463,12 @@ select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:1
 .bbar{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));padding-left:var(--gutter-l);padding-right:var(--gutter-r)}
 .bbar-in{max-width:none;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .bbar .btn{margin:0}
+.bbar .btn svg{width:22px;height:22px;display:block;margin:0 auto}
 .bnav{display:grid;grid-template-columns:1fr 1fr;gap:10px;min-width:0}
 </style>
 </head>
 <body>
-<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.32</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
+<div class="bar"><div class="bar-in"><button type="button" class="hdback" id="hdBack" aria-label="戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4.5L7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>イベント参加記録<span style="font-size:11px;font-weight:400;color:var(--sub);margin-left:8px">Ver:1.25.36</span></h1><button type="button" class="hdset" id="hdSet" aria-label="設定"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div></div>
 <div id="scroller"><main id="app"></main></div>
 <div class="dial" id="dial" hidden>
   <div class="dial-scrim" id="dialScrim"></div>
@@ -2170,7 +2171,7 @@ function renderList(){
     ${filterBar()}
     <div class="sortrow"><span class="cl"><span class="cnt" id="listCnt"></span></span><span class="grp">${bulk ? `<button type="button" id="bulkAll"><span class="tg"><span>全選択</span><span class="off">選択解除</span></span></button>` : `<button type="button" id="bulkBtn"><span class="tg"><span>一括編集</span><span class="off">選択解除</span></span></button>`}<button type="button" id="viewToggle" aria-label="${lvAria()}">${lvIcon()}</button><button type="button" id="sortToggle" aria-label="並び順を切り替え"><span class="tg"><span${sortAsc ? ' class="off"' : ""}>新しい順 ⇅</span><span${sortAsc ? "" : ' class="off"'}>古い順 ⇅</span></span></button></span></div>
     ${exact ? `<div class="exact"><span>${exact.kind === "venue" ? "会場" : exact.kind === "tag" ? "タグ" : "出演者"}${exact.value === NONE_KEY ? "が未入力のイベント" : `「${esc(exact.value)}」と完全一致`}${exact.value !== NONE_KEY && exact.kind !== "tag" && aliasNames(exact.kind, exact.value).length > 1 ? "(旧名を含む)" : ""}</span><button type="button" id="exOff">解除</button></div>` : ""}
-    <div id="listBody"></div>${bulk ? `<div class="bbar"><div class="bbar-in"><button type="button" class="btn sec" id="bulkCancel">キャンセル</button><button type="button" class="btn" id="bulkGo">編集</button></div></div>` : ""}
+    <div id="listBody"></div>${bulk ? `<div class="bbar"><div class="bbar-in"><button type="button" class="btn sec" id="bulkCancel">キャンセル</button><button type="button" class="btn sec" id="bulkGo">編集</button></div></div>` : ""}
   `;
   bindFilter();
   $("#viewToggle").onclick = e => { cycleLv(); e.currentTarget.innerHTML = lvIcon(); e.currentTarget.setAttribute("aria-label", lvAria()); fillList(); };
@@ -2645,7 +2646,7 @@ function renderSDetail(){
     ${isA
       ? rank("よく一緒になる出演者(2回以上)", cnt(l => canonArtists(l).filter(a => a !== val)), "artist", 2) + rank("会場別", cnt(l => [...new Set(venueNamesOf(l).map(v => canon("venue", v)))]), "venue") + rank("エリア別", cnt(l => areasOf(l)), "area") + rank("都道府県別", cnt(l => prefsOf(l)), "pref")
       : rank("出演者別", cnt(l => canonArtists(l)), "artist")}
-    <div class="bbar"><div class="bbar-in"><div class="bnav"><button type="button" class="btn sec" id="sdPrev" aria-label="前の${isA ? "出演者" : "会場"}" data-t="${esc(nbs.prev)}"${nbs.prev ? "" : " disabled"}>◀</button><button type="button" class="btn sec" id="sdNext" aria-label="次の${isA ? "出演者" : "会場"}" data-t="${esc(nbs.next)}"${nbs.next ? "" : " disabled"}>▶</button></div><button class="btn" id="sdList">一覧</button></div></div>`;
+    <div class="bbar"><div class="bbar-in"><div class="bnav"><button type="button" class="btn sec" id="sdPrev" aria-label="前の${isA ? "出演者" : "会場"}" data-t="${esc(nbs.prev)}"${nbs.prev ? "" : " disabled"}>◀</button><button type="button" class="btn sec" id="sdNext" aria-label="次の${isA ? "出演者" : "会場"}" data-t="${esc(nbs.next)}"${nbs.next ? "" : " disabled"}>▶</button></div><button class="btn sec" id="sdList" aria-label="一覧"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></button></div></div>`;
   $("#sdPrev").onclick = () => { if(nbs.prev){ openSDetail(k, nbs.prev, cur.prev); slideIn("r"); } };
   $("#sdNext").onclick = () => { if(nbs.next){ openSDetail(k, nbs.next, cur.prev); slideIn("l"); } };
   $("#sdList").onclick = () => { resetDd(); exact = null; fKw = [kwEx(k, val)]; query = ""; qLinked = false; linkDim = ""; linkVal = ""; setTab("list", {top: true}); };
@@ -2719,7 +2720,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.32</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.36</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
@@ -2883,7 +2884,7 @@ function openDetail(id, from){
     <div class="field"><small>ジャンル</small><div>${lkBtn("genre", genreOf(l))}</div></div>
     ${(() => { const t = String(l.setlist || "").trim(); return t ? `<div class="field"><small>詳細</small><div>${linkify(t)}</div></div>` : ""; })()}
     ${(() => { const g = tagsOf(l); return g.length ? `<div class="field"><small>タグ</small><div>${g.map(n => lkBtn("tag", n)).join("、")}</div></div>` : ""; })()}
-    <div class="bbar"><div class="bbar-in"><div class="bnav"><button type="button" class="btn sec" id="prevEv" aria-label="前のイベント" data-t="${esc(nb.prev)}"${nb.prev ? "" : " disabled"}>◀</button><button type="button" class="btn sec" id="nextEv" aria-label="次のイベント" data-t="${esc(nb.next)}"${nb.next ? "" : " disabled"}>▶</button></div><button class="btn" id="edit">編集</button></div></div>
+    <div class="bbar"><div class="bbar-in"><div class="bnav"><button type="button" class="btn sec" id="prevEv" aria-label="前のイベント" data-t="${esc(nb.prev)}"${nb.prev ? "" : " disabled"}>◀</button><button type="button" class="btn sec" id="nextEv" aria-label="次のイベント" data-t="${esc(nb.next)}"${nb.next ? "" : " disabled"}>▶</button></div><button class="btn sec" id="edit">編集</button></div></div>
   `;
   bindPhotoGallery(l);
   $("#prevEv").onclick = () => { if(nb.prev){ openDetail(nb.prev, detailFrom); slideIn("r"); } };
