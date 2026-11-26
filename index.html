@@ -1663,7 +1663,7 @@ document.querySelectorAll(".tabbar button[data-tab]").forEach(b => b.onclick = (
 /* 設定は、ヘッダーの歯車から開く。設定を開いているときにもう一度押すと、開く前のタブへ戻る */
 $("#hdSet").onclick = () => { if(!sub && tab === "settings") setTab(tabBeforeSettings || "list"); else setTab("settings"); };
 /* ヘッダーの＜: イベント詳細は元の画面(詳細集計から開いたときは詳細集計)へ、詳細集計は元の画面へ戻る */
-$("#hdBack").onclick = () => { if(subKind === "sdetail") sdBack(); else if(detailFrom) detailBack(); else setTab("list"); };
+$("#hdBack").onclick = () => { if(!sub && tab === "settings") setTab(tabBeforeSettings || "list", {dir: "r"}); /* 設定: 開く前のタブへ */ else if(subKind === "sdetail") sdBack(); else if(detailFrom) detailBack(); else setTab("list"); };
 let toastTimer = 0;
 function showToast(msg){ const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 3200); }
 /* スワイプ: 履歴↔集計↔設定、詳細→履歴、登録→戻る(入力中の誤操作を防ぐため確認ダイアログ) */
@@ -1733,7 +1733,7 @@ function onSwipe(dx, edge){
   const clearAnim = () => { rmFront(); bbHide = false; { const a0 = app(); if(a0) a0.querySelectorAll(":scope > .bbar").forEach(b => { b.style.transition = ""; b.style.opacity = ""; }); } unwrap(); els.forEach(e => { e.style.transition = ""; e.style.transform = ""; }); els = []; const a = app(); if(a) a.style.pointerEvents = ""; };
   /* スワイプの向き: "L"=左へ(次へ) / "R"=右へ(前へ) / "B"=戻る(詳細は左端からの右スワイプ、登録画面は右スワイプ) */
   const swipeKey = dx => {
-    if(!sub) return bulk ? null : (dx < 0 ? "L" : "R");
+    if(!sub) return bulk ? null : (tab === "settings" && dx > 0 ? "B" : (dx < 0 ? "L" : "R")); /* 設定から戻る右スワイプは「戻る」(詳細と同じく上に重なって動く) */
     if(subKind === "detail" || subKind === "sdetail") return dx > 0 && edge ? "B" : (dx < 0 ? "L" : "R");
     return null;
   };
@@ -1839,7 +1839,7 @@ function onSwipe(dx, edge){
     return g;
   };
   const canDrag = () => (sub ? (subKind === "detail" || subKind === "sdetail") : !bulk) && !busy && $("#dial").hidden && !document.body.classList.contains("fs-lock");
-  const keysNow = () => !sub ? ["L", "R"] : (subKind === "detail" || subKind === "sdetail") ? ["L", "R", "B"] : [];
+  const keysNow = () => !sub ? (tab === "settings" ? ["B"] : ["L", "R"]) : (subKind === "detail" || subKind === "sdetail") ? ["L", "R", "B"] : [];
   let gTimer = 0, gIdle = 0, queue = [];
   const step = () => {
     gIdle = 0;
@@ -2030,7 +2030,7 @@ window.addEventListener("resize", () => setTimeout(syncLine, 0));
 setTimeout(syncLine, 0);
 function syncHeader(){
   const tb = document.querySelector(".tabbar");
-  $("#hdBack").hidden = !(sub && (subKind === "detail" || subKind === "sdetail"));
+  $("#hdBack").hidden = !((sub && (subKind === "detail" || subKind === "sdetail")) || (!sub && tab === "settings")); /* 詳細・詳細集計・設定では、ヘッダーの＜で戻る */
   $("#hdSet").hidden = tb.hidden;
   $("#hdSet").classList.toggle("on", !sub && tab === "settings");
   syncLine();
@@ -2723,7 +2723,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.39</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.40</div>
   `;
   makeAccordion();
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
