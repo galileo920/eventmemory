@@ -646,7 +646,7 @@ function genreCardHtml(){
         <div class="gxp" role="group" aria-label="色">${PAL.map((c, k) => k === OTHER_COLOR ? "" : `<button type="button" class="gxsw${g.color === k ? " on" : ""}" data-gi="${i}" data-gc="${k}" style="background:var(${c.v})" aria-label="${c.n}" aria-pressed="${g.color === k}"></button>`).join("")}</div>
         <div class="gxk"><span>自動入力しない:</span>${ck("skipArtist", "出演者")}${ck("skipOpen", "開場")}${ck("skipStart", "開演")}</div>
         <div class="gxl"><label>開場の表示名<input data-gi="${i}" data-gk="openLabel" value="${esc(g.openLabel || "")}" placeholder="開場" maxlength="6"></label><label>開演の表示名<input data-gi="${i}" data-gk="startLabel" value="${esc(g.startLabel || "")}" placeholder="開演" maxlength="6"></label></div>
-        <div class="gxk"><label><input type="checkbox" data-gi="${i}" data-gk="noGroup"${g.noGroup ? " checked" : ""}>「ツアーごと」の表示でまとめない</label></div>
+        <div class="gxk"><label><input type="checkbox" data-gi="${i}" data-gk="noGroup"${g.noGroup ? " checked" : ""}>「イベントごと」の表示でまとめない</label></div>
         <div class="gxl one${g.noGroup ? " dis" : ""}"><label>まとめたときの数え方<span class="nb">(全○○)</span><input data-gi="${i}" data-gk="groupUnit" value="${esc(g.groupUnit || "")}" placeholder="公演" maxlength="4"${g.noGroup ? " disabled" : ""}></label></div>
         <div class="gxn">${g.orig ? (n ? `登録 ${n}件(イベントがあるため削除できません)` : "登録なし") : "新規"}</div>
       </div>
@@ -2186,12 +2186,12 @@ function renderList(){
   $("#app").innerHTML = `
     <div class="qrow"><div class="cw sw"><input class="search" id="q" type="search" placeholder="イベント名・出演者・会場・タグで検索" value="${esc(query)}"><button type="button" class="cx" data-clr="q" aria-label="クリア">×</button><div class="qsug" id="qsug"></div></div>${fBtn()}</div>
     ${filterBar()}
-    <div class="sortrow"><span class="cl"><span class="cnt" id="listCnt"></span></span><span class="grp">${bulk ? `<button type="button" id="bulkAll"><span class="tg"><span>全選択</span><span class="off">選択解除</span></span></button>` : `<button type="button" id="bulkBtn"><span class="tg"><span>一括編集</span><span class="off">選択解除</span></span></button>`}<button type="button" id="viewToggle" aria-label="${lvAria()}">${lvIcon()}</button><button type="button" id="sortToggle" aria-label="並び順を切り替え"><span class="tg"><span${sortAsc ? ' class="off"' : ""}>新しい順 ⇅</span><span${sortAsc ? "" : ' class="off"'}>古い順 ⇅</span></span></button></span></div>
+    <div class="sortrow"><span class="cl"><span class="cnt" id="listCnt"></span></span><span class="grp">${bulk ? `<button type="button" id="bulkAll"><span class="tg"><span>全選択</span><span class="off">選択解除</span></span></button>` : `<button type="button" id="bulkBtn"><span class="tg"><span>一括編集</span><span class="off">選択解除</span></span></button>`}${lvEnabled().length > 1 ? `<button type="button" id="viewToggle" aria-label="${lvAria()}">${lvIcon()}</button>` : ""}<button type="button" id="sortToggle" aria-label="並び順を切り替え"><span class="tg"><span${sortAsc ? ' class="off"' : ""}>新しい順 ⇅</span><span${sortAsc ? "" : ' class="off"'}>古い順 ⇅</span></span></button></span></div>
     ${exact ? `<div class="exact"><span>${exact.kind === "venue" ? "会場" : exact.kind === "tag" ? "タグ" : "出演者"}${exact.value === NONE_KEY ? "が未入力のイベント" : `「${esc(exact.value)}」と完全一致`}${exact.value !== NONE_KEY && exact.kind !== "tag" && aliasNames(exact.kind, exact.value).length > 1 ? "(旧名を含む)" : ""}</span><button type="button" id="exOff">解除</button></div>` : ""}
     <div id="listBody"></div>${bulk ? `<div class="bbar"><div class="bbar-in"><button type="button" class="btn sec" id="bulkCancel">キャンセル</button><button type="button" class="btn sec" id="bulkGo">編集</button></div></div>` : ""}
   `;
   bindFilter();
-  $("#viewToggle").onclick = e => { cycleLv(); e.currentTarget.innerHTML = lvIcon(); e.currentTarget.setAttribute("aria-label", lvAria()); fillList(); };
+  if($("#viewToggle")) $("#viewToggle").onclick = e => { cycleLv(); e.currentTarget.innerHTML = lvIcon(); e.currentTarget.setAttribute("aria-label", lvAria()); fillList(); };
   $("#sortToggle").onclick = e => { sortAsc = !sortAsc; try { localStorage.setItem("livelog_sort", sortAsc ? "asc" : "desc"); } catch(err){} { const sp = e.currentTarget.querySelectorAll(".tg>span"); sp[0].classList.toggle("off", sortAsc); sp[1].classList.toggle("off", !sortAsc); } fillList(); };
   if(exact) $("#exOff").onclick = () => { exact = null; renderList(); };
   if($("#bulkBtn")) $("#bulkBtn").onclick = () => { bulk = true; bulkSel.clear(); renderList(); };
@@ -2235,8 +2235,12 @@ function listRows(){
 /* 一覧の見た目(サムネイル/従来)。この端末の表示設定として覚えておく */
 /* アプリを開いたときは、いつも「サムネイルなし」から始める(切り替えは、開いている間だけ有効) */
 let lvMode = "old";
-const listView = () => lvMode;
-const LV_NAMES = {thumb: "サムネイルあり", grid: "サムネイルのみ", old: "サムネイルなし", tour: "ツアーごと"};
+/* 表示設定: 一覧の「表示切り替え」に出す種類(1種類だけなら切り替えボタンを出さない)と、一覧に出す内容(イベント名のみ/出演者と会場も)。この端末に保存 */
+const LV_ORDER = ["old", "tour", "thumb", "grid"], LV_LS = "livelog_lvmodes", LI_LS = "livelog_lvinfo";
+const lvEnabled = () => { let a = null; try { a = JSON.parse(localStorage.getItem(LV_LS) || "null"); } catch(e){} const r = Array.isArray(a) ? LV_ORDER.filter(k => a.includes(k)) : []; return r.length ? r : LV_ORDER.slice(); };
+const lvInfoAll = () => { try { return localStorage.getItem(LI_LS) !== "title"; } catch(e){ return true; } };
+const listView = () => { const en = lvEnabled(); return en.includes(lvMode) ? lvMode : en[0]; };
+const LV_NAMES = {thumb: "サムネイルあり", grid: "サムネイルのみ", old: "サムネイルなし", tour: "イベントごと"};
 const lvLabel = () => LV_NAMES[listView()];
 const lvAria = () => `一覧の見た目: ${lvLabel()}(押すと切り替え)`;
 const LV_ICONS = {
@@ -2246,8 +2250,8 @@ const LV_ICONS = {
   tour: '<rect x="3" y="3" width="18" height="5" rx="1.5"/><path d="M8 12.5h13M8 16.5h13M8 20.5h13M4.5 11v10"/>'
 };
 const lvIcon = () => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${LV_ICONS[listView()]}</svg>`;
-/* 切り替えの順番: サムネイルなし → ツアーごと → サムネイルあり → サムネイルのみ → サムネイルなし */
-const cycleLv = () => { const nx = {old: "tour", tour: "thumb", thumb: "grid", grid: "old"}[listView()]; lvMode = nx; };
+/* 切り替えの順番: サムネイルなし → イベントごと → サムネイルあり → サムネイルのみ → サムネイルなし */
+const cycleLv = () => { const en = lvEnabled(), i = en.indexOf(listView()); lvMode = en[(i + 1) % en.length]; }; /* 設定で選んだ種類だけを順に切り替える */
 /* 一覧の年見出しで折りたたんでいる年(アプリを開いている間だけ覚える) */
 const yCollapsed = new Set();
 let listYears = []; /* いま一覧に出ている年見出しの一覧(全体の件数を押して、まとめて開閉するときに使う) */
@@ -2446,13 +2450,13 @@ function grpCardHtml(it, head){
   const ar = [...new Set(mem.flatMap(l => artistsOf(l)))].join("、");
   return head + `<div class="stub old grp" role="button" tabindex="0" aria-expanded="${it.open}" data-g="${esc(genreOf(g.anchor))}" data-gid="${esc(g.id)}">
       <div class="when">${when}</div>
-      <div class="what"><div class="who">${esc(g.title)}</div>${ar ? `<div class="ttl">${LIC_P}${esc(ar)}</div>` : ""}${where ? `<div class="where">${LIC_V}${esc(where)}</div>` : ""}<div class="gm"><span class="gn">全${mem.length}${esc(gCfg(genreOf(g.anchor)).groupUnit || "公演")}</span><span class="ga" aria-hidden="true">›</span></div></div>
+      <div class="what"><div class="who">${esc(g.title)}</div>${lvInfoAll() && ar ? `<div class="ttl">${LIC_P}${esc(ar)}</div>` : ""}${lvInfoAll() && where ? `<div class="where">${LIC_V}${esc(where)}</div>` : ""}<div class="gm"><span class="gn">全${mem.length}${esc(gCfg(genreOf(g.anchor)).groupUnit || "公演")}</span><span class="ga" aria-hidden="true">›</span></div></div>
     </div>`;
 }
 let listShown = 0, listSig = "", moreObs = null;
 function fillList(){
   const rows = listRows(); listYears = [];
-  const items = bulk || listView() !== "tour" ? rows.map(l => ({l})) : groupItems(rows); /* 「ツアーごと」のときだけまとめる(選択モードは全件) */
+  const items = bulk || listView() !== "tour" ? rows.map(l => ({l})) : groupItems(rows); /* 「イベントごと」のときだけまとめる(選択モードは全件) */
   const box = $("#listBody");
   if(!box) return;
   { const fc = $("#fsCnt"); if(fc) fc.textContent = loaded ? rows.length : 0; }
@@ -2465,11 +2469,11 @@ function fillList(){
     if(lv === "grid") return head + `<div class="stub thumb tile${bulk && bulkSel.has(l.id) ? " sel" : ""}" role="button" tabindex="0" aria-label="${esc(l.title || artistLine(l) || "(未入力)")}" data-g="${esc(genreOf(l))}" data-id="${esc(l.id)}">${ph ? `<div class="pic" data-pid="${esc(l.id)}"><img class="bl" alt=""><img class="fg" alt=""></div>` : `<div class="pic noimg"><img class="ico" alt=""></div>`}${bulk ? `<span class="bchk"><i></i></span>` : ""}</div>`;
     if(lv === "old") return head + `<div class="stub old${bulk && bulkSel.has(l.id) ? " sel" : ""}" role="button" tabindex="0" data-g="${esc(genreOf(l))}" data-id="${esc(l.id)}">
       <div class="when">${p ? `<span class="y">${p.y}</span><b>${p.m}.${p.d}</b><span class="w">${p.w}</span>${l.start ? `<span class="t">${esc(fmtTime(l.start))}</span>` : ""}` : `<b>--</b>`}</div>
-      <div class="what"><div class="who">${esc(l.title || artistLine(l) || "(未入力)")}</div>${l.title && artistsOf(l).length ? `<div class="ttl">${LIC_P}${esc(artistLine(l))}</div>` : ""}<div class="where">${LIC_V}${esc(venueLabel(l))}</div></div>${bulk ? `<span class="bchk"><i></i></span>` : ""}
+      <div class="what"><div class="who">${esc(l.title || artistLine(l) || "(未入力)")}</div>${lvInfoAll() && l.title && artistsOf(l).length ? `<div class="ttl">${LIC_P}${esc(artistLine(l))}</div>` : ""}${lvInfoAll() ? `<div class="where">${LIC_V}${esc(venueLabel(l))}</div>` : ""}</div>${bulk ? `<span class="bchk"><i></i></span>` : ""}
     </div>`;
     return head + `<div class="stub thumb${bulk && bulkSel.has(l.id) ? " sel" : ""}" role="button" tabindex="0" data-g="${esc(genreOf(l))}" data-id="${esc(l.id)}">
       <div class="body">${ph ? `<div class="pic" data-pid="${esc(l.id)}"><img class="bl" alt=""><img class="fg" alt=""></div>` : `<div class="pic noimg"><img class="ico" alt=""></div>`}
-      <div class="what"><div class="trow"><div class="when">${p ? `<span class="y">${p.y}</span><b>${p.m}.${p.d}</b><span class="w">${p.w}</span>${l.start ? `<span class="t">${esc(fmtTime(l.start))}</span>` : ""}` : `<b>--</b>`}</div><div class="side"><div class="who sm">${esc(l.title || artistLine(l) || "(未入力)")}</div>${l.title && artistsOf(l).length ? `<div class="ttl">${LIC_P}${esc(artistLine(l))}</div>` : ""}<div class="where">${LIC_V}${esc(venueLabel(l))}</div></div></div></div></div>${bulk ? `<span class="bchk"><i></i></span>` : ""}
+      <div class="what"><div class="trow"><div class="when">${p ? `<span class="y">${p.y}</span><b>${p.m}.${p.d}</b><span class="w">${p.w}</span>${l.start ? `<span class="t">${esc(fmtTime(l.start))}</span>` : ""}` : `<b>--</b>`}</div><div class="side"><div class="who sm">${esc(l.title || artistLine(l) || "(未入力)")}</div>${lvInfoAll() && l.title && artistsOf(l).length ? `<div class="ttl">${LIC_P}${esc(artistLine(l))}</div>` : ""}${lvInfoAll() ? `<div class="where">${LIC_V}${esc(venueLabel(l))}</div>` : ""}</div></div></div></div>${bulk ? `<span class="bchk"><i></i></span>` : ""}
     </div>`;
   };
   card = it => {
@@ -2712,6 +2716,11 @@ function displayCardHtml(){
     <label style="margin-top:0">タブの表示位置</label>
     <div class="seg" id="tpSeg" role="tablist" style="margin:8px 0"><button type="button" data-tp="top" class="${p === "top" ? "on" : ""}">上</button><button type="button" data-tp="bottom" class="${p === "bottom" ? "on" : ""}">下</button></div>
     <div class="hint">一覧・集計・＋ボタンのタブを、画面の上または下に表示します。この端末に保存されます。</div>
+    <label>表示切り替えの種類</label>
+    <div class="hint" style="margin:2px 0 4px">一覧の切り替えボタンで切り替える表示です。1種類だけにすると、切り替えボタンは表示されません。</div>
+    ${LV_ORDER.map(k => `<label style="display:flex;align-items:center;gap:8px;margin:8px 0 0;font-size:15px;color:var(--ink)"><input type="checkbox" data-lvk="${k}" style="width:22px;height:22px;flex:none;margin:0"${lvEnabled().includes(k) ? " checked" : ""}><span>${LV_NAMES[k]}</span></label>`).join("")}
+    <label>一覧で表示する内容</label>
+    <div class="seg" id="liSeg" role="tablist" style="margin:8px 0"><button type="button" data-li="title" class="${lvInfoAll() ? "" : "on"}">イベント名のみ</button><button type="button" data-li="all" class="${lvInfoAll() ? "on" : ""}">出演者と会場も表示</button></div>
   </div>`;
 }
 function renderSettings(){
@@ -2747,7 +2756,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.41</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.43</div>
   `;
   makeAccordion();
   document.querySelectorAll("#app [data-tp]").forEach(b => b.onclick = () => {
@@ -2755,6 +2764,15 @@ function renderSettings(){
     applyTabPos(); closeDial();
     document.querySelectorAll("#app [data-tp]").forEach(x => x.classList.toggle("on", x === b));
     try { syncLine(); } catch(_){}
+  });
+  document.querySelectorAll("#app [data-lvk]").forEach(c => c.onchange = () => {
+    const on = [...document.querySelectorAll("#app [data-lvk]")].filter(x => x.checked).map(x => x.dataset.lvk);
+    if(!on.length){ c.checked = true; showToast("表示切り替えの種類は、1つ以上選んでください"); return; }
+    try { localStorage.setItem(LV_LS, JSON.stringify(on)); } catch(err){}
+  });
+  document.querySelectorAll("#app [data-li]").forEach(b => b.onclick = () => {
+    try { localStorage.setItem(LI_LS, b.dataset.li); } catch(err){}
+    document.querySelectorAll("#app [data-li]").forEach(x => x.classList.toggle("on", x === b));
   });
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
