@@ -416,6 +416,14 @@ button.line{width:100%;text-align:left;cursor:pointer}
 .btn.sec:disabled{opacity:.45;cursor:default}
 .mrow{display:flex;gap:8px;margin-top:8px}
 .mrow .btn{margin:0;flex:1}
+/* 表示設定: タブの位置を「上」にしたとき(ヘッダーの直下にタブバーを置き、線・区切りは下側に) */
+body.tabs-top .bar{order:-2}
+body.tabs-top .tabbar{order:-1;border-top:0;border-bottom:1px solid var(--line);padding-bottom:0}
+body.tabs-top .tabbar button[data-tab]{border-top:0;border-bottom:3px solid transparent}
+body.tabs-top .tabbar button[data-tab]::after{top:0;bottom:-3px}
+body.tabs-top .tabbar .tline{top:auto;bottom:0}
+body.tabs-top .tabbar .fabcell{border-top:0;border-bottom:3px solid transparent}
+body.tabs-top .dial-items{bottom:auto;top:var(--dial-top,120px)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .scan input{display:none}
 .thumb{width:100%;border-radius:10px;margin-top:8px}
@@ -545,6 +553,11 @@ const $ = (s, r=document) => r.querySelector(s);
 let OBS_SKIP = false; /* 取っておいた一覧を戻すときは、すでに処理済みなので文字の置き換え等の監視を飛ばす */
 function inGhostBox(n){ if(OBS_SKIP) return true; const e = n && (n.nodeType === 1 ? n : n.parentElement); return !!(e && e.closest && e.closest("[data-gh]")); } /* スワイプ中に見せる隣の画面の入れ物か */
 const SC = document.getElementById("scroller"); /* スクロールするのは本文だけ */
+/* 表示設定: タブの表示位置(上/下)。この端末のブラウザに保存。初期値は下 */
+const TABPOS_LS = "livelog_tabpos";
+const tabPos = () => { try { return localStorage.getItem(TABPOS_LS) === "top" ? "top" : "bottom"; } catch(e){ return "bottom"; } };
+const applyTabPos = () => document.body.classList.toggle("tabs-top", tabPos() === "top");
+applyTabPos();
 const GH = {busy: false, onRender: null}; /* スワイプ中に見せる隣の画面の下準備(busyの間は、描画しても下準備をやり直さない) */
 /* 画面の上(ヘッダーの空いている所・上の余白)をタップしたら、本文を一番上までスクロールする。戻る・設定ボタンは従来どおり */
 (function(){
@@ -1976,6 +1989,7 @@ $("#fab").onclick = () => {
   if(!getSet().apiKey){ openForm(); return; } /* APIキーが無いときは、ダイヤルを出さずに登録画面へ */
   const d = $("#dial");
   if(!d.hidden){ closeDial(); return; }
+  if(tabPos() === "top"){ const r = document.querySelector(".tabbar").getBoundingClientRect(); d.style.setProperty("--dial-top", Math.round(r.bottom + 12) + "px"); } /* タブが上のときは、タブバーの下にメニューを出す */
   d.hidden = false; $("#fab").classList.add("open"); $("#fab").setAttribute("aria-expanded", "true"); document.querySelector(".tabbar").classList.add("dialon"); /* ダイヤルを開いている間も、下のタブバー(＋)を暗くしない */
 };
 $("#dialScrim").onclick = closeDial;
@@ -2691,9 +2705,19 @@ function makeAccordion(){
   });
   syncAcc();
 }
+function displayCardHtml(){
+  const p = tabPos();
+  return `<div class="card">
+    <h2>表示設定</h2>
+    <label style="margin-top:0">タブの表示位置</label>
+    <div class="seg" id="tpSeg" role="tablist" style="margin:8px 0"><button type="button" data-tp="top" class="${p === "top" ? "on" : ""}">上</button><button type="button" data-tp="bottom" class="${p === "bottom" ? "on" : ""}">下</button></div>
+    <div class="hint">一覧・集計・＋ボタンのタブを、画面の上または下に表示します。この端末に保存されます。</div>
+  </div>`;
+}
 function renderSettings(){
   const s = getSet();
   $("#app").innerHTML = `
+    ${displayCardHtml()}
     ${genreCardHtml()}
     ${aliasCardHtml()}
     <div class="card">
@@ -2723,9 +2747,15 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.40</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.41</div>
   `;
   makeAccordion();
+  document.querySelectorAll("#app [data-tp]").forEach(b => b.onclick = () => {
+    try { localStorage.setItem(TABPOS_LS, b.dataset.tp); } catch(err){}
+    applyTabPos(); closeDial();
+    document.querySelectorAll("#app [data-tp]").forEach(x => x.classList.toggle("on", x === b));
+    try { syncLine(); } catch(_){}
+  });
   /* 保存したあとは入力欄をロックし、「編集」を押したときだけ変更できる */
   let setLocked = !!s.apiKey;
   const lockSet = on => { setLocked = on; $("#key").disabled = on; $("#model").disabled = on; $("#saveSet").textContent = on ? "編集" : "保存"; };
