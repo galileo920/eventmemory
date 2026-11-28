@@ -161,6 +161,7 @@ body.fs-lock #scroller{overflow:hidden} /* 絞り込みシートを開いてい�
 .fsheet .msel{position:relative}
 .fsheet .mpanel{position:static;left:auto;right:auto;min-width:0;width:auto;max-width:none;max-height:260px;margin-top:4px;box-shadow:none}
 .fsheet .filters{margin-bottom:10px}
+.fsheet.kb .fsheet-box{padding-bottom:0}
 .fsheet-ft{display:flex;gap:10px;padding:10px var(--gutter-r) 10px var(--gutter-l);border-top:1px solid var(--line)}
 .fsheet-ft .btn{margin:0;flex:1}
 .fsheet-hd .fsn{margin-left:6px;font-size:13px;font-weight:500;color:var(--sub)}
@@ -180,6 +181,7 @@ body.fs-lock #scroller{overflow:hidden} /* 絞り込みシートを開いてい�
 .kwlist{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
 .kwc.out{background:color-mix(in srgb,var(--danger) 16%,var(--surface))}
 .kwc b{font-weight:700;margin-right:4px}
+.chip>span.kwe{cursor:pointer;-webkit-user-select:none;user-select:none}
 .kwsug:empty{display:none}
 .kwcand{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px}
 .kwcand .kwcl{font-size:12px;color:var(--sub)}
@@ -1521,7 +1523,7 @@ function kwSection(){
   return KW_FIELDS.map(F => {
     const mode = kwMode[F.f], mine = fKw.filter(k => k.f === F.f);
     return `<div class="kwsec"><div class="kwhd"><label for="kwi_${F.f}">${F.t}</label><div class="kwmode" role="group" aria-label="${F.t}の条件"><button type="button" data-kwm="${F.f}:in" class="${mode === "in" ? "on" : ""}" aria-pressed="${mode === "in"}">含む</button><button type="button" data-kwm="${F.f}:out" class="${mode === "out" ? "on" : ""}" aria-pressed="${mode === "out"}">含まない</button><button type="button" data-kwm="${F.f}:eq" class="${mode === "eq" ? "on" : ""}" aria-pressed="${mode === "eq"}">一致</button></div></div>`
-      + (mine.length ? `<div class="kwlist">${mine.map(k => `<span class="chip kwc${k.m === "out" ? " out" : ""}"><span><b>${k.x ? "一致" : k.m === "out" ? "含まない" : "含む"}</b>${esc(k.t)}</span><button type="button" data-kwdel="${esc(kwKey(k))}" aria-label="${esc(k.t)}を解除">×</button></span>`).join("")}</div>` : "")
+      + (mine.length ? `<div class="kwlist">${mine.map(k => `<span class="chip kwc${k.m === "out" ? " out" : ""}"><span class="kwe" role="button" tabindex="0" data-kwe="${esc(kwKey(k))}" aria-label="${esc(k.t)}を入力欄に戻して編集"><b>${k.x ? "一致" : k.m === "out" ? "含まない" : "含む"}</b>${esc(k.t)}</span><button type="button" data-kwdel="${esc(kwKey(k))}" aria-label="${esc(k.t)}を解除">×</button></span>`).join("")}</div>` : "")
       + `<div class="kwrow"><div class="cw"><input type="text" id="kwi_${F.f}" data-kwi="${F.f}" autocomplete="off" autocapitalize="off" autocorrect="off" enterkeyhint="done" placeholder="${F.t}を入力" aria-label="${F.t}のキーワード" value="${esc(kwDraft[F.f])}"><button type="button" class="cx" data-clr="kwi_${F.f}" aria-label="クリア">×</button></div><button type="button" class="btn sec kwadd" data-kwa="${F.f}">追加</button></div><div class="kwsug" id="kwsug_${F.f}"></div></div>`;
   }).join("");
 }
@@ -1540,7 +1542,31 @@ function kwShowSugg(f, typed){
   box._c = c;
   if(c.length) box.scrollIntoView({block: "nearest"}); /* 候補が見えるところまでシートを送る */
 }
+/* 設定済みのキーワードのチップ(絞り込みシート・上のチップ行)を押すと、そのチップを外して入力欄に戻し、条件(含む/含まない/一致)もそのチップのものにする。入力欄に書きかけがあれば、先にチップとして追加して消えないようにする */
+function kwEdit(key){
+  const k = fKw.find(x => kwKey(x) === key); if(!k) return;
+  const f = k.f, fb = $("#fsheet .fsheet-body"); if(fb && fOpen) fsScroll = fb.scrollTop;
+  KW_FIELDS.forEach(F => { const i = $("#kwi_" + F.f); if(i) kwDraft[F.f] = i.value; });
+  if(String(kwDraft[f] || "").trim()) kwAdd(f, kwDraft[f]);
+  fKw = fKw.filter(x => kwKey(x) !== key);
+  kwMode[f] = k.x ? "eq" : k.m; kwDraft[f] = k.t; kwFocus = f;
+  if(!fOpen){ document.body.classList.add("fs-lock"); fOpen = true; fsScroll = 0; } /* 上のチップから押したときは、絞り込みシートを開いて入力欄へ */
+  render();
+}
+/* 出演者・会場・タグは絞り込みシートの下のほうにあり、キーボードが出ると入力欄が隠れやすい。入力欄が見える位置まで、必要な分だけスクロールする(余白は足さず、動かしすぎない)。キーボードが出て画面の高さが変わったあとにも合わせ直す */
+function kwReveal(f){
+  const go = () => {
+    const i = $("#kwi_" + f), fb = $("#fsheet .fsheet-body"); if(!i || !fb || !fOpen) return;
+    const r = i.getBoundingClientRect(), b = fb.getBoundingClientRect(), vv = window.visualViewport;
+    const bottom = Math.min(b.bottom, vv ? vv.offsetTop + vv.height : innerHeight);
+    if(r.bottom + 16 > bottom) fb.scrollTop += r.bottom + 16 - bottom; /* 下に隠れているぶんだけ上へ */
+    else if(r.top - 56 < b.top) fb.scrollTop -= b.top - (r.top - 56); /* 上に出すぎているときは、見出し(含む/含まない/一致)が見える位置まで戻す */
+    fsScroll = fb.scrollTop;
+  };
+  go(); setTimeout(go, 120); setTimeout(go, 380);
+}
 function bindKw(){
+  document.querySelectorAll("#app [data-kwe]").forEach(el => { el.onclick = () => kwEdit(el.dataset.kwe); el.onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); kwEdit(el.dataset.kwe); } }; });
   document.querySelectorAll("#fsheet [data-kwm]").forEach(b => b.onclick = () => { const [f, m] = b.dataset.kwm.split(":"); kwMode[f] = m; const fb = $("#fsheet .fsheet-body"); if(fb) fsScroll = fb.scrollTop; kwDraft[f] = ($("#kwi_" + f) || {}).value || ""; render(); });
   document.querySelectorAll("#fsheet [data-kwdel]").forEach(b => b.onclick = () => { const fb = $("#fsheet .fsheet-body"); if(fb) fsScroll = fb.scrollTop; KW_FIELDS.forEach(F => { const i = $("#kwi_" + F.f); if(i) kwDraft[F.f] = i.value; }); fKw = fKw.filter(k => kwKey(k) !== b.dataset.kwdel); render(); });
   const doAdd = f => { const i = $("#kwi_" + f), fb = $("#fsheet .fsheet-body"); if(fb) fsScroll = fb.scrollTop; KW_FIELDS.forEach(F => { const x = $("#kwi_" + F.f); if(x) kwDraft[F.f] = x.value; }); if(!kwAdd(f, i ? i.value : "")) return; kwFocus = f; render(); };
@@ -1554,9 +1580,9 @@ function bindKw(){
   });
   document.querySelectorAll("#fsheet .kwsug").forEach(box => {
     box.addEventListener("pointerdown", e => e.preventDefault()); /* 候補を押しても、入力欄のフォーカスは外さない */
-    box.addEventListener("click", e => { const b = e.target.closest("[data-kwc]"); if(!b) return; e.preventDefault(); const f = box.id.replace("kwsug_", ""), c = box._c && box._c[Number(b.dataset.kwc)]; if(!c) return; const fb = $("#fsheet .fsheet-body"); if(fb) fsScroll = fb.scrollTop; KW_FIELDS.forEach(F => { const x = $("#kwi_" + F.f); if(x) kwDraft[F.f] = x.value; }); kwAdd(f, c.name); kwFocus = f; render(); });
+    box.addEventListener("click", e => { const b = e.target.closest("[data-kwc]"); if(!b) return; e.preventDefault(); const f = box.id.replace("kwsug_", ""), c = box._c && box._c[Number(b.dataset.kwc)]; if(!c) return; const fb = $("#fsheet .fsheet-body"); if(fb) fsScroll = fb.scrollTop; const i = $("#kwi_" + f); if(!i) return; i.value = c.name; kwDraft[f] = c.name; /* 候補を選んだら、入力欄に入れるだけ(チップへの追加は「追加」ボタン・Enterで行う) */ i.focus(); try{ const n = i.value.length; i.setSelectionRange(n, n); }catch(e){} kwShowSugg(f, i.value); });
   });
-  if(kwFocus){ const f = kwFocus; kwFocus = ""; const i = $("#kwi_" + f); if(i && fOpen){ i.focus(); kwShowSugg(f, i.value); } }
+  if(kwFocus){ const f = kwFocus; kwFocus = ""; const i = $("#kwi_" + f); if(i && fOpen){ i.focus(); try{ const n = i.value.length; i.setSelectionRange(n, n); }catch(e){} kwShowSugg(f, i.value); kwReveal(f); } }
 }
 /* 日付指定(年を問わず、月日だけで絞り込む)の入力欄: 選んだ月日をチップで見せ、「日付を追加」で月・日のホイールを開く */
 function daysUI(){
@@ -1568,7 +1594,7 @@ function filterBar(withBtn){
   const ys = [...new Set(lives.map(yearOf).filter(Boolean).concat(fYear.filter(x => !isSpYear(x))))].sort().reverse();
   const yo = [{v: RANGE, t: "期間指定"}, {v: DAYS, t: "日付指定"}].concat(ys.map(y => ({v: y, t: y + "年", s: y})));
   const cnt = !loaded ? 0 : tab === "list" ? listRows().length : filtered().length;
-  const chipRow = (withBtn || chips.length) ? `<div class="chips">${withBtn ? fBtn() : ""}${chips.map(c => `<span class="chip"><span>${esc(c.t)}</span><button type="button" data-chip="${c.id}" data-v="${esc(c.v)}" aria-label="${esc(c.t)}を解除">×</button></span>`).join("")}</div>` : "";
+  const chipRow = (withBtn || chips.length) ? `<div class="chips">${withBtn ? fBtn() : ""}${chips.map(c => `<span class="chip"><span${c.id === "fkw" ? ` class="kwe" role="button" tabindex="0" data-kwe="${esc(c.v)}" aria-label="${esc(c.t)}を入力欄に戻して編集"` : ""}>${esc(c.t)}</span><button type="button" data-chip="${c.id}" data-v="${esc(c.v)}" aria-label="${esc(c.t)}を解除">×</button></span>`).join("")}</div>` : "";
   return chipRow + `<div class="fsheet" id="fsheet" role="dialog" aria-label="絞り込み"${fOpen ? "" : " hidden"}><div class="fsheet-scrim" id="fsScrim"></div><div class="fsheet-box"><div class="fsheet-hd"><b>絞り込み<span class="fsn">(<span id="fsCnt">${cnt}</span>件)</span></b><button type="button" id="fsClose" aria-label="閉じる">×</button></div><div class="fsheet-body"><div class="fsec fq">${msel("fg", "ジャンル", "ジャンルで絞り込み", GENRES.map(g => ({v: g, t: g})), fGenre)}</div><div class="fsec fq">${msel("fy", "年", "年で絞り込み", yo, fYear)}</div>${fYear.includes(RANGE) ? `<div class="filters" id="frange"><div class="fcol"><label for="fFrom">開始日</label><input type="text" data-dw readonly inputmode="none" id="fFrom" aria-label="開始日" value="${esc(fFrom)}"></div><div class="fcol"><label for="fTo">終了日</label><input type="text" data-dw readonly inputmode="none" id="fTo" aria-label="終了日" value="${esc(fTo)}"></div></div>` : ""}${daysUI()}<div class="fsec fq">${locCols()}</div><div class="fsec fq">${msel("fpc", "チケット代", "チケット代で絞り込み", PRICE_OPTS, fPrice)}</div>${fPrice.includes(RANGE) ? `<div class="filters" id="prange"><div class="fcol"><label for="pMin">下限(円)</label><input type="text" inputmode="numeric" autocomplete="off" id="pMin" aria-label="チケット代の下限" placeholder="0" value="${esc(fPMin)}"></div><div class="fcol"><label for="pMax">上限(円)</label><input type="text" inputmode="numeric" autocomplete="off" id="pMax" aria-label="チケット代の上限" placeholder="上限なし" value="${esc(fPMax)}"></div></div>` : ""}${kwSection()}</div><div class="fsheet-ft"><button type="button" class="btn sec" id="fsClear"${chips.length ? "" : " disabled"}>クリア</button><button type="button" class="btn" id="fsDone">完了</button></div></div></div>`;
 }
 function msApply(id, vals, changed){
@@ -1607,8 +1633,20 @@ function bindMs(){
   document.querySelectorAll("#app [data-mclose]").forEach(b => b.onclick = () => closeAll());
   if(msOpen && msOpenTab === tab) fitPanel($("#" + msOpen + "P"));
 }
-document.addEventListener("click", e => { if(!msOpen || !document.contains(e.target) || e.target.closest(".msel, .fsheet")) return; e.preventDefault(); e.stopPropagation(); msOpen = ""; document.querySelectorAll(".mpanel").forEach(p => { p.hidden = true; }); document.querySelectorAll(".msb").forEach(b => b.setAttribute("aria-expanded", "false")); }, true); /* プルダウンを開いているときは、外側のタップはプルダウンを閉じるだけで、後ろのリンク・ボタンは反応させない */
+document.addEventListener("click", e => { if(!msOpen || !document.contains(e.target) || e.target.closest(".msel, .fsheet, .dw")) return; e.preventDefault(); e.stopPropagation(); msOpen = ""; document.querySelectorAll(".mpanel").forEach(p => { p.hidden = true; }); document.querySelectorAll(".msb").forEach(b => b.setAttribute("aria-expanded", "false")); }, true); /* プルダウンを開いているときは、外側のタップはプルダウンを閉じるだけで、後ろのリンク・ボタンは反応させない */
 document.addEventListener("scroll", e => { const t = e.target; if(t && t.classList && t.classList.contains("fsheet-body")) fsScroll = t.scrollTop; }, true);
+/* 絞り込みシートをキーボードの上に乗せる: キーボードが出るとiPhoneは画面全体を押し上げたり、押し上げずにフッター(クリア・完了)をキーボードの裏に残したりする。
+   見えている範囲(visualViewport)にシートの位置と高さを合わせて、フッターと入力欄がいつも見えるようにする */
+function syncFsheet(){
+  const fs = $("#fsheet"); if(!fs) return;
+  const vv = window.visualViewport;
+  if(!fOpen || !vv){ fs.style.top = ""; fs.style.bottom = ""; fs.style.height = ""; fs.classList.remove("kb"); return; }
+  const kb = window.innerHeight - vv.height - vv.offsetTop > 120 || window.innerHeight - vv.height > 120; /* キーボードが出ているか */
+  if(kb){ fs.style.top = vv.offsetTop + "px"; fs.style.bottom = "auto"; fs.style.height = vv.height + "px"; }
+  else { fs.style.top = ""; fs.style.bottom = ""; fs.style.height = ""; }
+  fs.classList.toggle("kb", kb); /* キーボードの上に乗せるときは、下の安全領域の余白は要らない */
+}
+if(window.visualViewport){ visualViewport.addEventListener("resize", () => { syncFsheet(); }); visualViewport.addEventListener("scroll", () => { syncFsheet(); }); }
 function bindFilter(){
   { /* 絞り込みシートの開閉・クリア、チップの×。シートは再描画しても、開いたまま・スクロール位置そのままにする */
     const fs = $("#fsheet"), fb = fs && fs.querySelector(".fsheet-body");
@@ -1616,7 +1654,7 @@ function bindFilter(){
       if(fOpen) fb.scrollTop = fsScroll;
       fs.addEventListener("touchmove", e => { if(!e.target.closest(".fsheet-body")) e.preventDefault(); }, {passive: false}); /* シートの外側・見出し・下のボタンをなぞっても、後ろの画面は動かさない */
       const closeS = () => { if(kwFlush()) fDirty = true; document.body.classList.remove("fs-lock"); fOpen = false; fsScroll = 0; msOpen = ""; fs.hidden = true; if(fDirty){ fDirty = false; render(); return; } /* 金額・期間を入力したときは、閉じるときにチップへ反映する */ fs.querySelectorAll(".mpanel").forEach(p => { p.hidden = true; }); fs.querySelectorAll(".msb").forEach(b => b.setAttribute("aria-expanded", "false")); };
-      const op = $("#fOpen"); if(op) op.onclick = () => { document.body.classList.add("fs-lock"); fOpen = true; fsScroll = 0; fb.scrollTop = 0; fs.classList.remove("up"); void fs.offsetWidth; fs.classList.add("up"); fs.hidden = false; };
+      const op = $("#fOpen"); if(op) op.onclick = () => { document.body.classList.add("fs-lock"); fOpen = true; fsScroll = 0; fb.scrollTop = 0; fs.classList.remove("up"); void fs.offsetWidth; fs.classList.add("up"); fs.hidden = false; syncFsheet(); };
       $("#fsScrim").onclick = closeS; $("#fsClose").onclick = closeS; $("#fsDone").onclick = closeS;
       $("#fsClear").onclick = () => { fsScroll = fb.scrollTop; msOpen = ""; clearPulls(); };
     }
@@ -1633,6 +1671,7 @@ function bindFilter(){
   }
   bindMs();
   bindKw();
+  syncFsheet();
   { /* 日付指定: 「日付を追加」で月・日のホイールを開き、選んだ月日を足す。シートは開いたまま・スクロール位置そのままにする */
     const keep = () => { const fb = $("#fsheet .fsheet-body"); if(fb) fsScroll = fb.scrollTop; KW_FIELDS.forEach(F => { const x = $("#kwi_" + F.f); if(x) kwDraft[F.f] = x.value; }); msOpen = ""; };
     const add = $("#dAdd");
@@ -2828,7 +2867,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.26.6</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.26.10</div>
   `;
   makeAccordion();
   document.querySelectorAll("#app [data-tp]").forEach(b => b.onclick = () => {
