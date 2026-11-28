@@ -14,7 +14,7 @@
 <style>
 
 :root{
-  --bg:#edeff4; --surface:#ffffff; --ink:#15171f; --sub:#5e6372; --line:#d9dce6;
+  --bg:#f7f8fb; --surface:#ffffff; --ink:#15171f; --sub:#5e6372; --line:#d9dce6;
   --accent:#1f2330; --accent-ink:#ffffff; --accent-soft:#e4e6ee; --ok:#15803d; --danger:#c62828;
   --g-owarai:#d9730d; --g-butai:#7c4dcc; --g-talk:#0f8a8a; --g-sports:#3f8f1f; --g-exhibit:#2f6fd0; --g-other:#6b7280; --g-yellow:#b8860b; --g-red:#d0382c; --g-indigo:#3f4fc4; --g-brown:#8a5a2b; --g-music:#d93a6b;
   --font-body:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN",system-ui,sans-serif;
@@ -2828,7 +2828,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.26.1</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.26.3</div>
   `;
   makeAccordion();
   document.querySelectorAll("#app [data-tp]").forEach(b => b.onclick = () => {
