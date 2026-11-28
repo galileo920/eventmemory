@@ -44,7 +44,7 @@ html,body{height:100%;overflow:hidden;overscroll-behavior:none}
 body{position:fixed;inset:0;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
 #scroller{position:relative;z-index:7;flex:1 1 auto;min-height:0;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
 button,input,textarea{font:inherit;color:inherit}
-.bar{position:relative;flex:none;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding-block:12px;padding-left:var(--gutter-l);padding-right:var(--gutter-r)}
+.bar{position:relative;flex:none;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);padding-block:12px;padding-left:var(--gutter-l);padding-right:var(--gutter-r)}
 .bar-in{max-width:none;margin:0 auto;display:flex;align-items:baseline;justify-content:space-between;gap:12px}
 .bar-in{position:relative;min-height:31px} /* 歯車・戻るが隠れる画面(登録・編集など)でも、ヘッダーの高さを保つ */
 .hdlogo{position:absolute;left:50%;top:50%;height:27px;width:auto;transform:translate(-50%,-50%);display:block;pointer-events:none;-webkit-user-select:none;user-select:none} /* ヘッダー中央のアプリのロゴ(背景なし・歯車と同じくらいの大きさ) */
@@ -2829,7 +2829,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.26.4</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.26.5</div>
   `;
   makeAccordion();
   document.querySelectorAll("#app [data-tp]").forEach(b => b.onclick = () => {
