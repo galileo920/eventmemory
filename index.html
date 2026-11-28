@@ -257,7 +257,7 @@ button.line{width:100%;text-align:left;cursor:pointer}
 #viewToggle svg{width:18px;height:18px;display:block}
 .cal-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px}
 .cal-ym{display:flex;align-items:center;gap:6px}
-.cal-sel{height:36px;padding:0 8px;font:inherit;font-size:16px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
+.cal-sel{flex:none;height:36px;padding:0 8px;font:inherit;font-size:16px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
 .cal-mc{font-size:12px;color:var(--sub);white-space:nowrap;margin-left:2px}
 .cal-nav{display:flex;gap:6px}
 .cal-nav button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:4px 12px;min-width:38px;font-size:12px;font-weight:500;line-height:1.4;cursor:pointer;-webkit-appearance:none}
@@ -2828,7 +2828,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.26.0</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.26.1</div>
   `;
   makeAccordion();
   document.querySelectorAll("#app [data-tp]").forEach(b => b.onclick = () => {
