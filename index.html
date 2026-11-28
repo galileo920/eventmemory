@@ -255,6 +255,24 @@ button.line{width:100%;text-align:left;cursor:pointer}
 #listBody.grid .yhead,#listBody.grid .empty{grid-column:1/-1}
 #viewToggle{display:inline-flex;align-items:center;justify-content:center}
 #viewToggle svg{width:18px;height:18px;display:block}
+.cal-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px}
+.cal-ym{display:flex;align-items:center;gap:6px}
+.cal-sel{height:36px;padding:0 8px;font:inherit;font-size:16px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
+.cal-mc{font-size:12px;color:var(--sub);white-space:nowrap;margin-left:2px}
+.cal-nav{display:flex;gap:6px}
+.cal-nav button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:4px 12px;min-width:38px;font-size:12px;font-weight:500;line-height:1.4;cursor:pointer;-webkit-appearance:none}
+.cal-nav button.arw{font-size:18px;line-height:1.1;padding:2px 12px 4px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.cal-dow{font-size:12px;text-align:center;color:var(--sub);padding:2px 0}
+.cal-cell{display:flex;flex-direction:column;align-items:center;min-height:54px;padding:5px 2px 4px;background:var(--surface);border:1.5px solid var(--line);border-radius:8px;cursor:pointer;overflow:hidden}
+.cal-cell.out{opacity:.4}
+.cal-cell.sel{border-color:var(--accent);background:var(--accent-soft)}
+.cal-cell .n{font-family:var(--font-mono);font-size:12px;line-height:1.3}
+.cal-cell.today .n{font-weight:700;text-decoration:underline}
+.cal-cell .ds{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;margin-top:6px}
+.cdot{display:block;width:7px;height:7px;border-radius:50%;background:var(--g,var(--g-music))}
+.cal-cell .dn{font-size:11px;color:var(--sub);line-height:7px}
+.cal-day{margin:14px 0 8px;font-size:12px;font-weight:500;color:var(--sub)}
 .stub.old{border-width:2px;border-color:color-mix(in srgb,var(--g) 38%,var(--surface))}
 .stub.old .when{flex:0 0 76px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:12px 6px;border-right:2px dashed color-mix(in srgb,var(--g) 38%,var(--surface));background:color-mix(in srgb,var(--g) 14%,var(--surface))}
 .stub.old .when .y{font-family:var(--font-mono);font-size:11px;color:var(--sub)}
@@ -590,7 +608,7 @@ const cleanGName = v => String(v == null ? "" : v).replace(/["\\<>\r\n]/g, "").t
 function applyGenreStyle(){
   let st = document.getElementById("gstyle");
   if(!st){ st = document.createElement("style"); st.id = "gstyle"; document.head.appendChild(st); }
-  st.textContent = GENRES.map(g => `.stub[data-g="${g}"],.ticket[data-g="${g}"]{--g:var(${PAL[genreCfg[g].color].v})}`).join("\n");
+  st.textContent = GENRES.map(g => `.stub[data-g="${g}"],.ticket[data-g="${g}"],.cdot[data-g="${g}"]{--g:var(${PAL[genreCfg[g].color].v})}`).join("\n");
 }
 function setGenres(list){
   const src = Array.isArray(list) ? list.filter(g => g && typeof g === "object") : [], seen = new Set(), arr = [];
@@ -2236,21 +2254,22 @@ function listRows(){
 /* アプリを開いたときは、いつも「サムネイルなし」から始める(切り替えは、開いている間だけ有効) */
 let lvMode = "old";
 /* 表示設定: 一覧の「表示切り替え」に出す種類(1種類だけなら切り替えボタンを出さない)と、一覧に出す内容(イベント名のみ/出演者と会場も)。この端末に保存 */
-const LV_ORDER = ["old", "tour", "thumb", "grid"], LV_LS = "livelog_lvmodes", LI_LS = "livelog_lvinfo";
+const LV_ORDER = ["old", "tour", "thumb", "grid", "cal"], LV_LS = "livelog_lvmodes", LI_LS = "livelog_lvinfo";
 const lvEnabled = () => { let a = null; try { a = JSON.parse(localStorage.getItem(LV_LS) || "null"); } catch(e){} const r = Array.isArray(a) ? LV_ORDER.filter(k => a.includes(k)) : []; return r.length ? r : LV_ORDER.slice(); };
 const lvInfoAll = () => { try { return localStorage.getItem(LI_LS) !== "title"; } catch(e){ return true; } };
-const listView = () => { const en = lvEnabled(); return en.includes(lvMode) ? lvMode : en[0]; };
-const LV_NAMES = {thumb: "サムネイルあり", grid: "サムネイルのみ", old: "サムネイルなし", tour: "イベントごと"};
+const listView = () => { const en = lvEnabled(), v = en.includes(lvMode) ? lvMode : en[0]; return v === "cal" && bulk ? "old" : v; }; /* 選択モード(一括編集)中は、カレンダーではなく「サムネイルなし」で表示 */
+const LV_NAMES = {thumb: "サムネイルあり", grid: "サムネイルのみ", old: "サムネイルなし", tour: "イベントごと", cal: "カレンダー"};
 const lvLabel = () => LV_NAMES[listView()];
 const lvAria = () => `一覧の見た目: ${lvLabel()}(押すと切り替え)`;
 const LV_ICONS = {
   thumb: '<rect x="3" y="3" width="18" height="9" rx="2"/><path d="M3 14.5h18M3 18h18M3 21.5h18"/>',
   grid: '<rect x="3" y="3" width="5" height="5" rx="1"/><rect x="9.5" y="3" width="5" height="5" rx="1"/><rect x="16" y="3" width="5" height="5" rx="1"/><rect x="3" y="9.5" width="5" height="5" rx="1"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><rect x="16" y="9.5" width="5" height="5" rx="1"/><rect x="3" y="16" width="5" height="5" rx="1"/><rect x="9.5" y="16" width="5" height="5" rx="1"/><rect x="16" y="16" width="5" height="5" rx="1"/>',
+  cal: '<rect x="3" y="4.5" width="18" height="16.5" rx="2"/><path d="M3 9.5h18M8 3v3M16 3v3"/>',
   old: '<path d="M3 6h18M3 12h18M3 18h18"/>',
   tour: '<rect x="3" y="3" width="18" height="5" rx="1.5"/><path d="M8 12.5h13M8 16.5h13M8 20.5h13M4.5 11v10"/>'
 };
 const lvIcon = () => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${LV_ICONS[listView()]}</svg>`;
-/* 切り替えの順番: サムネイルなし → イベントごと → サムネイルあり → サムネイルのみ → サムネイルなし */
+/* 切り替えの順番: サムネイルなし → イベントごと → サムネイルあり → サムネイルのみ → カレンダー → サムネイルなし */
 const cycleLv = () => { const en = lvEnabled(), i = en.indexOf(listView()); lvMode = en[(i + 1) % en.length]; }; /* 設定で選んだ種類だけを順に切り替える */
 /* 一覧の年見出しで折りたたんでいる年(アプリを開いている間だけ覚える) */
 const yCollapsed = new Set();
@@ -2453,9 +2472,62 @@ function grpCardHtml(it, head){
       <div class="what"><div class="who">${esc(g.title)}</div>${lvInfoAll() && ar ? `<div class="ttl">${LIC_P}${esc(ar)}</div>` : ""}${lvInfoAll() && where ? `<div class="where">${LIC_V}${esc(where)}</div>` : ""}<div class="gm"><span class="gn">全${mem.length}${esc(gCfg(genreOf(g.anchor)).groupUnit || "公演")}</span><span class="ga" aria-hidden="true">›</span></div></div>
     </div>`;
 }
+let calSpanNow = ""; /* カレンダーから開いた詳細の◀▶が、たどる範囲(日付、または月)。空なら一覧の並び */
+/* ---------- カレンダー表示(一覧の表示切り替えの1つ) ---------- */
+/* 月のカレンダー。日付ごとにジャンル色の点を、イベントの数だけ(最大3つ、4件以上は+件数)出す。日付を押すと、その日のイベントを下に全件並べる */
+let calY = null, calM = 0, calSel = "";
+const calKey = (y, m, d) => y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+const calSpanRows = k => listRows().filter(l => String(l.date || "").startsWith(k)); /* 詳細の◀▶で、選んだ日(日付を外しているときはその月)のイベントだけを、一覧の並び順でたどる */
+function calCardHtml(l){
+  const p = dateParts(l.date);
+  return `<div class="stub old" role="button" tabindex="0" data-g="${esc(genreOf(l))}" data-id="${esc(l.id)}">
+      <div class="when">${p ? `<span class="y">${p.y}</span><b>${p.m}.${p.d}</b><span class="w">${p.w}</span>${l.start ? `<span class="t">${esc(fmtTime(l.start))}</span>` : ""}` : `<b>--</b>`}</div>
+      <div class="what"><div class="who">${esc(l.title || artistLine(l) || "(未入力)")}</div>${lvInfoAll() && l.title && artistsOf(l).length ? `<div class="ttl">${LIC_P}${esc(artistLine(l))}</div>` : ""}${lvInfoAll() ? `<div class="where">${LIC_V}${esc(venueLabel(l))}</div>` : ""}</div>
+    </div>`;
+}
+function fillCal(rows){
+  const box = $("#listBody"); if(!box) return;
+  listYears = [];
+  if(moreObs){ moreObs.disconnect(); moreObs = null; }
+  box.classList.remove("grid");
+  const cn = $("#listCnt");
+  if(cn){ cn.textContent = loaded ? rows.length + "件" : "読み込み中…"; cn.classList.remove("tap", "col"); ["role", "tabindex", "aria-expanded", "aria-label"].forEach(a => cn.removeAttribute(a)); }
+  { const fc = $("#fsCnt"); if(fc) fc.textContent = loaded ? rows.length : 0; }
+  bulkVisible = rows.map(l => l.id);
+  const now = new Date(), todayK = calKey(now.getFullYear(), now.getMonth(), now.getDate());
+  if(calY === null){ calY = now.getFullYear(); calM = now.getMonth(); calSel = todayK; }
+  if(!loaded){ box.innerHTML = `<div class="empty">読み込み中…</div>`; return; }
+  const byDay = new Map(); let undated = 0;
+  rows.forEach(l => { if(!/^\d{4}-\d{2}-\d{2}/.test(l.date || "")){ undated++; return; } const k = l.date.slice(0, 10); if(!byDay.has(k)) byDay.set(k, []); byDay.get(k).push(l); });
+  const first = new Date(calY, calM, 1).getDay(), dim = new Date(calY, calM + 1, 0).getDate(), dp = new Date(calY, calM, 0).getDate(), total = Math.ceil((first + dim) / 7) * 7;
+  let g = "";
+  ["日", "月", "火", "水", "木", "金", "土"].forEach((w, i) => { g += `<div class="cal-dow"${i === 0 ? ' style="color:var(--danger)"' : i === 6 ? ' style="color:var(--g-exhibit)"' : ""}>${w}</div>`; });
+  for(let i = 0; i < total; i++){
+    let d = i - first + 1, y = calY, m = calM, out = false;
+    if(d < 1){ out = true; d = dp + d; m--; if(m < 0){ m = 11; y--; } } else if(d > dim){ out = true; d -= dim; m++; if(m > 11){ m = 0; y++; } }
+    const k = calKey(y, m, d), ev = byDay.get(k) || [];
+    g += `<div class="cal-cell${out ? " out" : ""}${k === calSel ? " sel" : ""}${k === todayK ? " today" : ""}" role="button" tabindex="0" data-k="${k}" aria-label="${m + 1}月${d}日 ${ev.length}件"><span class="n">${d}</span>${ev.length ? `<span class="ds">${ev.slice(0, 3).map(e => `<i class="cdot" data-g="${esc(genreOf(e))}"></i>`).join("")}${ev.length > 3 ? `<span class="dn">+${ev.length - 3}</span>` : ""}</span>` : ""}</div>`;
+  }
+  const mKey = calKey(calY, calM, 1).slice(0, 7), monthRows = rows.filter(l => String(l.date || "").startsWith(mKey)), evs = calSel ? (byDay.get(calSel) || []) : monthRows;
+  const yrs = rows.map(l => +String(l.date || "").slice(0, 4)).filter(Boolean), y0 = Math.min(calY, now.getFullYear(), ...yrs), y1 = Math.max(calY, now.getFullYear(), ...yrs);
+  let yo = ""; for(let y = y1; y >= y0; y--) yo += `<option value="${y}"${y === calY ? " selected" : ""}>${y}年</option>`;
+  let mo = ""; for(let m = 0; m < 12; m++) mo += `<option value="${m}"${m === calM ? " selected" : ""}>${m + 1}月</option>`;
+  box.innerHTML = `<div class="cal-head"><span class="cal-ym"><select class="cal-sel" id="calYSel" aria-label="年">${yo}</select><select class="cal-sel" id="calMSel" aria-label="月">${mo}</select><span class="cal-mc">${monthRows.length}件</span></span><span class="cal-nav"><button type="button" class="arw" id="calPrev" aria-label="前の月">‹</button><button type="button" class="arw" id="calNext" aria-label="次の月">›</button><button type="button" id="calToday">今日</button></span></div><div class="cal-grid">${g}</div>
+    <div class="cal-day">${evs.length}件</div>
+    ${evs.length ? evs.map(calCardHtml).join("") : `<div class="empty" style="padding:24px 12px">${calSel ? "この日" : "この月"}に登録されているイベントはありません</div>`}
+    ${undated ? `<div class="hint" style="text-align:center;margin-top:12px">日付未設定のイベント(${undated}件)は、カレンダーに表示されません。</div>` : ""}`;
+  const mv = n => { calM += n; if(calM < 0){ calM = 11; calY--; } else if(calM > 11){ calM = 0; calY++; } calSel = todayK.slice(0, 7) === calKey(calY, calM, 1).slice(0, 7) ? todayK : ""; fillCal(rows); }; /* 月を変えたとき、その月に今日があれば今日を選び、なければ日付を選ばず、その月の一覧を出す */
+  $("#calPrev").onclick = () => mv(-1);
+  $("#calNext").onclick = () => mv(1);
+  $("#calYSel").onchange = $("#calMSel").onchange = () => { calY = +$("#calYSel").value; calM = +$("#calMSel").value; calSel = todayK.slice(0, 7) === calKey(calY, calM, 1).slice(0, 7) ? todayK : ""; fillCal(rows); };
+  $("#calToday").onclick = () => { calY = now.getFullYear(); calM = now.getMonth(); calSel = todayK; fillCal(rows); };
+  box.querySelectorAll(".cal-cell").forEach(c => { const pick = () => { if(c.dataset.k === calSel){ calSel = ""; fillCal(rows); return; } /* 選んでいる日をもう一度押すと選択を外し、その月の一覧を出す */ calSel = c.dataset.k; calY = +calSel.slice(0, 4); calM = +calSel.slice(5, 7) - 1; fillCal(rows); }; c.onclick = pick; c.onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); pick(); } }; });
+  box.querySelectorAll(".stub").forEach(el => { const open = () => openDetail(el.dataset.id, null, calSel || mKey); el.onclick = open; el.onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); open(); } }; });
+}
 let listShown = 0, listSig = "", moreObs = null;
 function fillList(){
   const rows = listRows(); listYears = [];
+  if(listView() === "cal"){ fillCal(rows); return; }
   const items = bulk || listView() !== "tour" ? rows.map(l => ({l})) : groupItems(rows); /* 「イベントごと」のときだけまとめる(選択モードは全件) */
   const box = $("#listBody");
   if(!box) return;
@@ -2517,7 +2589,7 @@ function fillList(){
   try { fillIcons(); } catch(e){}
   try { fillPics(); } catch(e){}
   bulkSync();
-  const bindStubs = () => box.querySelectorAll(".stub:not([data-b])").forEach(el => { el.dataset.b = "1"; el.onclick = () => { if(el.classList.contains("grp")){ const id = el.dataset.gid; if(grpOpen.has(id)) grpOpen.delete(id); else grpOpen.add(id); const top = el.getBoundingClientRect().top; fillList(); const ne = [...box.querySelectorAll(".stub.grp")].find(x => x.dataset.gid === id); if(ne){ const d = ne.getBoundingClientRect().top - top; if(d) SC.scrollBy(0, d); } return; } if(bulk) bulkToggle(el); else openDetail(el.dataset.id); }; el.onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); el.click(); } }; });
+  const bindStubs = () => box.querySelectorAll(".stub:not([data-b])").forEach(el => { el.dataset.b = "1"; el.onclick = () => { if(el.classList.contains("grp")){ const id = el.dataset.gid; if(grpOpen.has(id)) grpOpen.delete(id); else grpOpen.add(id); const top = el.getBoundingClientRect().top; fillList(); const ne = [...box.querySelectorAll(".stub.grp")].find(x => x.dataset.gid === id); if(ne){ const d = ne.getBoundingClientRect().top - top; if(d) SC.scrollBy(0, d); } return; } if(bulk) bulkToggle(el); else openDetail(el.dataset.id, null, ""); }; el.onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); el.click(); } }; });
   const bindYears = () => box.querySelectorAll(".yhead:not([data-b])").forEach(el => { el.dataset.b = "1"; el.onclick = () => { if(bulk) return; const y = el.dataset.y; if(yCollapsed.has(y)) yCollapsed.delete(y); else yCollapsed.add(y); const top = el.getBoundingClientRect().top; fillList(); const ne = [...box.querySelectorAll(".yhead")].find(x => x.dataset.y === y); if(ne){ const d = ne.getBoundingClientRect().top - top; if(d) SC.scrollBy(0, d); } }; el.onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); el.click(); } }; });
   bindStubs(); bindYears();
   const watch = () => {
@@ -2756,7 +2828,7 @@ function renderSettings(){
       <button class="btn danger" id="wipe">全データを削除</button>
       <div class="status" id="wst"></div>
     </div>
-    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.43</div>
+    <div class="hint" style="text-align:center">イベント件数: ${loaded ? lives.length : "読み込み中"} ／ Ver:1.25.46</div>
   `;
   makeAccordion();
   document.querySelectorAll("#app [data-tp]").forEach(b => b.onclick = () => {
@@ -2911,7 +2983,8 @@ function addDetailLinkFilter(k, q){
 }
 const lkBtn = (k, v) => `<button type="button" class="lk" data-lk="${k}" data-q="${esc(v)}">${esc(v)}</button>`;
 const venueLinks = l => venueNamesOf(l).map(n => lkBtn("venue", n)).join("、") + (l.pref ? (venueNamesOf(l).length ? `<span style="white-space:nowrap">(${lkBtn("pref", l.pref)})</span>` : lkBtn("pref", l.pref)) : "");
-function openDetail(id, from){
+function openDetail(id, from, span){
+  if(typeof span === "string") calSpanNow = span; else if(from) calSpanNow = ""; /* カレンダーから開いたときだけ、◀▶をその日(または月)の範囲にする */
   closeDial();
   const l = lives.find(x => x.id === id);
   if(!l) return;
@@ -2920,7 +2993,7 @@ function openDetail(id, from){
   saveScroll(); sub = true; subKind = "detail";
   SC.scrollTo(0, 0);
   $("#fab").style.display = "none";
-  const nb = (() => { const r = detailFrom ? lives.filter(x => detailFrom.kind === "artist" ? canonArtists(x).includes(detailFrom.value) : venueNamesOf(x).some(v => canon("venue", v) === detailFrom.value)).sort(byOldToNew) : listRows(), i = r.findIndex(x => x.id === l.id); return {prev: i > 0 ? r[i - 1].id : "", next: i >= 0 && i < r.length - 1 ? r[i + 1].id : ""}; })(); /* いまの一覧(絞り込み・並び順)での前後のイベント。詳細集計の「初めて・直近の参加イベント」から開いたときは、その出演者・会場のイベントだけを古い→新しいの順に固定した並び(◀が古い、▶が新しい)での前後 */
+  const nb = (() => { const r = calSpanNow ? calSpanRows(calSpanNow) : detailFrom ? lives.filter(x => detailFrom.kind === "artist" ? canonArtists(x).includes(detailFrom.value) : venueNamesOf(x).some(v => canon("venue", v) === detailFrom.value)).sort(byOldToNew) : listRows(), i = r.findIndex(x => x.id === l.id); return {prev: i > 0 ? r[i - 1].id : "", next: i >= 0 && i < r.length - 1 ? r[i + 1].id : ""}; })(); /* いまの一覧(絞り込み・並び順)での前後のイベント。詳細集計の「初めて・直近の参加イベント」から開いたときは、その出演者・会場のイベントだけを古い→新しいの順に固定した並び(◀が古い、▶が新しい)での前後 */
   const row = (k, v) => v ? `<div class="field"><small>${k}</small><div>${esc(v)}</div></div>` : "";
   $("#app").innerHTML = `
     <div class="ticket" data-g="${esc(genreOf(l))}">
